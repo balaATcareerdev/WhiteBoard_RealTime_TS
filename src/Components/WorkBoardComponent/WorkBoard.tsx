@@ -1,10 +1,14 @@
 import { useRef, useState, useLayoutEffect, useEffect } from "react";
 import { Stage, Layer } from "react-konva";
 import Konva from "konva";
-import { dummyLayerData } from "../../Data/LayerData";
+import { type LayerData } from "../../Data/LayerData";
 import RenderNode from "./RenderNode";
 
-const WorkBoard = () => {
+interface WorkBoardProps {
+  layerData: LayerData;
+}
+
+const WorkBoard = ({ layerData }: WorkBoardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
 
@@ -73,16 +77,9 @@ const WorkBoard = () => {
     setPosition({ x: newX, y: newY });
   }
 
-  const childNodes = [...dummyLayerData.root.children]
-    .sort((a, b) => {
-      const nodeA = dummyLayerData.nodes[a];
-      const nodeB = dummyLayerData.nodes[b];
-      return nodeA.pos - nodeB.pos;
-    })
-    .flatMap((rootId) => {
-      const node = dummyLayerData.nodes[rootId];
-      return node.type == "group" ? [...node.children].reverse() : rootId;
-    });
+  const childNodes = [...layerData.root.children].sort(
+    (a, b) => layerData.nodes[a].pos - layerData.nodes[b].pos
+  );
 
   return (
     <div
@@ -112,11 +109,7 @@ const WorkBoard = () => {
       >
         <Layer>
           {childNodes.map((childId) => (
-            <RenderNode
-              key={childId}
-              nodeId={childId}
-              layerData={dummyLayerData}
-            />
+            <RenderNode key={childId} nodeId={childId} layerData={layerData} />
           ))}
         </Layer>
       </Stage>

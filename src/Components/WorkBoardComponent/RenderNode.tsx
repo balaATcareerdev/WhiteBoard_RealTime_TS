@@ -25,6 +25,7 @@ const RenderNode = ({ nodeId, layerData }: RenderNodeProps) => {
             stroke={shape.props.stroke}
             rotation={shape.props.rotation}
             draggable={true}
+            visible={shape.visibility}
           />
         );
 
@@ -35,17 +36,23 @@ const RenderNode = ({ nodeId, layerData }: RenderNodeProps) => {
 
   if (node.type == "group") {
     const group = node as GroupNode;
+    const sortedGroupElements = [...group.children].sort(
+      (a, b) => layerData.nodes[a].pos - layerData.nodes[b].pos
+    );
     return (
-      <Group
-        key={group.id}
-        x={group.props.x}
-        y={group.props.y}
-        rotation={group.props.rotation}
-      >
-        {group.children.map((childId) => (
-          <RenderNode nodeId={childId} layerData={layerData} key={childId} />
-        ))}
-      </Group>
+      <>
+        <Group
+          key={group.id}
+          x={group.props.x}
+          y={group.props.y}
+          rotation={group.props.rotation}
+          visible={node.visibility}
+        >
+          {sortedGroupElements.map((childId) => (
+            <RenderNode nodeId={childId} layerData={layerData} key={childId} />
+          ))}
+        </Group>
+      </>
     );
   }
   return null;

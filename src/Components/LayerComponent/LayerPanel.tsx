@@ -1,15 +1,28 @@
+import { type Dispatch, type SetStateAction } from "react";
+import type { LayerData } from "../../Data/LayerData";
 import RenderLayerItem from "./RenderLayerItem";
-import { dummyLayerData } from "../../Data/LayerData";
 
-const LayerPanel = () => {
-  const sortedLayerData = [...dummyLayerData.root.children].sort((a, b) => {
-    const nodeA = dummyLayerData.nodes[a];
-    const nodeB = dummyLayerData.nodes[b];
+interface LayerPanelProps {
+  layerData: LayerData;
+  setLayerData: Dispatch<SetStateAction<LayerData>>;
+}
 
-    const posA = nodeA.pos || 0;
-    const posB = nodeB.pos || 0;
+const LayerPanel = ({ layerData, setLayerData }: LayerPanelProps) => {
+  const toggleVisibility = (id: string) => {
+    setLayerData((prev) => ({
+      ...prev,
+      nodes: {
+        ...prev.nodes,
+        [id]: {
+          ...prev.nodes[id],
+          visibility: !prev.nodes[id].visibility,
+        },
+      },
+    }));
+  };
 
-    return posB - posA;
+  const sortedLayerData = [...layerData.root.children].sort((a, b) => {
+    return layerData.nodes[b].pos - layerData.nodes[a].pos;
   });
 
   return (
@@ -18,8 +31,9 @@ const LayerPanel = () => {
       <hr className="border-gray-500 mt-2 mb-2" />
       {sortedLayerData.map((childId) => (
         <RenderLayerItem
+          toggleVisibility={toggleVisibility}
           shapeId={childId}
-          layerData={dummyLayerData}
+          layerData={layerData}
           key={childId}
         />
       ))}

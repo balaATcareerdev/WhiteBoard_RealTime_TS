@@ -1,16 +1,22 @@
 import { useState } from "react";
 import type { LayerData } from "../../Data/LayerData";
-import { FaChevronDown } from "react-icons/fa";
+import GroupLayer from "./GroupLayer";
+import ShapeLayer from "./ShapeLayer";
 
 interface RenderLayerItemProps {
   shapeId: string;
   layerData: LayerData;
+  toggleVisibility: (id: string) => void;
 }
 
-const RenderLayerItem = ({ shapeId, layerData }: RenderLayerItemProps) => {
+const RenderLayerItem = ({
+  shapeId,
+  layerData,
+  toggleVisibility,
+}: RenderLayerItemProps) => {
   const node = layerData.nodes[shapeId];
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(true);
 
   if (node.type == "group") {
     const sortedGroupElem = node.children.sort((a, b) => {
@@ -20,54 +26,20 @@ const RenderLayerItem = ({ shapeId, layerData }: RenderLayerItemProps) => {
       return nodeB.pos - nodeA.pos;
     });
     return (
-      <div
-        className="pl-2 w-full bg-gray-100 py-1 rounded-sm select-none"
-        key={shapeId}
-      >
-        {/* Root Name */}
-        <div className="font-bold text-gray-700 p-1 flex items-center gap-2 cursor-pointer">
-          <span>{node.name}</span>
-          <div
-            className={`p-1 rounded-full hover:bg-gray-300 flex items-center justify-center overflow-hidden transition-all duration-300 ease-in-out`}
-            onClick={() => setOpen((prev) => !prev)}
-          >
-            <FaChevronDown />
-          </div>
-        </div>
-
-        {/* Child Name */}
-        <div className={`${open ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {sortedGroupElem.map((childId) => {
-            return (
-              <div className="pl-2" key={childId}>
-                <RenderLayerItem shapeId={childId} layerData={layerData} />
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <GroupLayer
+        shapeId={shapeId}
+        node={node}
+        open={open}
+        childElements={sortedGroupElem}
+        layerData={layerData}
+        setOpen={setOpen}
+        toggleVisibility={toggleVisibility}
+      />
     );
   }
 
   if (node.type == "shape") {
-    return (
-      <div
-        className={`pl-2 bg-gray-100 rounded-sm select-none ${
-          node.parentId == "root" ? "mt-1 mb-1" : ""
-        }`}
-        key={shapeId}
-      >
-        <p
-          className={`${
-            node.parentId == "root"
-              ? "text-gray-700 rounded-sm font-bold p-1"
-              : "font-semibold text-gray-500"
-          }`}
-        >
-          {node.name}
-        </p>
-      </div>
-    );
+    return <ShapeLayer node={node} toggleVisibility={toggleVisibility} />;
   }
 };
 
