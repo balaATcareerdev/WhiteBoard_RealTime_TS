@@ -1,6 +1,8 @@
 import { type ShapeNode } from "../../Data/LayerData";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { useLayerStore } from "../../Store/LayerStore";
+import { type ChangeEvent } from "react";
 
 interface ShapeLayerProps {
   node: ShapeNode;
@@ -8,24 +10,39 @@ interface ShapeLayerProps {
 }
 
 const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
+  const setSelectedLayers = useLayerStore((state) => state.setSelectedLayers);
+
+  const handleSelectLayer = (e: ChangeEvent<HTMLInputElement>) => {
+    setSelectedLayers(node.id, e.target.checked);
+  };
+
   return (
     <div
-      className={`pl-2 bg-gray-200 select-none px-3 py-2 ${
-        node.parentId === "root" ? "mb-1" : ""
+      className={`pl-2 select-none px-3 py-2 ${
+        node.parentId === "root"
+          ? "mb-1 outline-gray-400 outline rounded-sm"
+          : ""
       }`}
     >
-      <div className="flex items-center gap-1">
-        <div
-          className="p-1 hover:bg-gray-50 rounded-full cursor-pointer"
-          onClick={() => toggleVisibility(node.id)}
-        >
-          {node.visibility ? (
-            <FaEye color="#4a5565" />
-          ) : (
-            <FaEyeSlash color="#4a5565" />
-          )}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1">
+          <div
+            className="p-1 hover:bg-gray-50 rounded-full cursor-pointer"
+            onClick={() => toggleVisibility(node.id)}
+          >
+            {node.visibility ? (
+              <FaEye color="#4a5565" />
+            ) : (
+              <FaEyeSlash color="#4a5565" />
+            )}
+          </div>
+          <p className={`text-gray-600 font-medium`}>{node.name}</p>
         </div>
-        <p className={`text-gray-600 font-medium`}>{node.name}</p>
+        <input
+          type="checkbox"
+          onChange={handleSelectLayer}
+          className="h-4 w-4"
+        />
       </div>
     </div>
   );

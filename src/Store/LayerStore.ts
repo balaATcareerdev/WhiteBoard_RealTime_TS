@@ -1,5 +1,23 @@
 import { create } from "zustand";
 
-export const useLayerStore = create(() => {
-  return {};
-});
+interface LayerStoreProps {
+  selectedLayers: string[];
+  setSelectedLayers: (id: string, status: boolean) => void;
+}
+
+export const useLayerStore = create<LayerStoreProps>((set) => ({
+  selectedLayers: [],
+  setSelectedLayers: (id, status) => {
+    set((state) => {
+      if (status) {
+        return { selectedLayers: [...state.selectedLayers, id] };
+      }
+
+      return {
+        selectedLayers: [...state.selectedLayers].filter(
+          (currentId) => currentId != id
+        ),
+      };
+    });
+  },
+}));

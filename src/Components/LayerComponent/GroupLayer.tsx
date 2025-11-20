@@ -26,7 +26,7 @@ const GroupLayer = ({
   return (
     <div
       key={shapeId}
-      className={`p-2 bg-gray-200 rounded-sm select-none ${
+      className={`p-2 outline-gray-400 outline rounded-sm select-none ${
         node.parentId === "root" ? "mb-1" : ""
       }`}
     >
