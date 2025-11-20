@@ -44,6 +44,7 @@ const WorkBoard = ({ layerData }: WorkBoardProps) => {
     function handleKeyUp(e: KeyboardEvent) {
       if (e.code === "Space") {
         setSpaceDown(false);
+        document.body.style.cursor = "default";
       }
     }
 

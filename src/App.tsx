@@ -10,7 +10,7 @@ const App = () => {
   const [layerData, setLayerData] = useState<LayerData>(dummyLayerData);
 
   return (
-    <div className="font-outfit h-screen flex flex-col relative">
+    <div className="font-outfit min-h-[100vh] h-[100vh] overflow-hidden flex flex-col relative">
       {/* menu */}
       <div className="w-full p-1">
         <Menu setOpenMenu={setOpenMenu} openMenu={openMenu} />
