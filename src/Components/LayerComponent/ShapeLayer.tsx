@@ -18,7 +18,7 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
 
   return (
     <div
-      className={`pl-2 select-none px-3 py-2 ${
+      className={`pl-2 bg-gray-50 select-none px-3 py-2 ${
         node.parentId === "root"
           ? "mb-1 outline-gray-400 outline rounded-sm"
           : ""

@@ -1,25 +1,13 @@
-import { type Dispatch, type SetStateAction } from "react";
 import type { LayerData } from "../../Data/LayerData";
 import RenderLayerItem from "./RenderLayerItem";
+import { useBoardStore } from "../../Store/BoardStore";
 
 interface LayerPanelProps {
   layerData: LayerData;
-  setLayerData: Dispatch<SetStateAction<LayerData>>;
 }
 
-const LayerPanel = ({ layerData, setLayerData }: LayerPanelProps) => {
-  const toggleVisibility = (id: string) => {
-    setLayerData((prev) => ({
-      ...prev,
-      nodes: {
-        ...prev.nodes,
-        [id]: {
-          ...prev.nodes[id],
-          visibility: !prev.nodes[id].visibility,
-        },
-      },
-    }));
-  };
+const LayerPanel = ({ layerData }: LayerPanelProps) => {
+  const toggleVisibility = useBoardStore((state) => state.toggleVisibility);
 
   const sortedLayerData = [...layerData.root.children].sort((a, b) => {
     return layerData.nodes[b].pos - layerData.nodes[a].pos;

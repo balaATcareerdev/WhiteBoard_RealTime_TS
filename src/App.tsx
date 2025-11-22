@@ -3,11 +3,11 @@ import LayerPanel from "./Components/LayerComponent/LayerPanel";
 import Menu from "./Components/ToolBarComponent/Menu";
 import Tools from "./Components/ToolBarComponent/Tools";
 import WorkBoard from "./Components/WorkBoardComponent/WorkBoard";
-import { dummyLayerData, type LayerData } from "./Data/LayerData";
+import { useBoardStore } from "./Store/BoardStore";
 
 const App = () => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
-  const [layerData, setLayerData] = useState<LayerData>(dummyLayerData);
+  const layerData = useBoardStore((state) => state.allShapes);
 
   return (
     <div className="font-outfit min-h-[100vh] h-[100vh] overflow-hidden flex flex-col relative">
@@ -30,7 +30,7 @@ const App = () => {
           <WorkBoard layerData={layerData} />
         </div>
         <div className="w-1/4">
-          <LayerPanel layerData={layerData} setLayerData={setLayerData} />
+          <LayerPanel layerData={layerData} />
         </div>
       </div>
     </div>
