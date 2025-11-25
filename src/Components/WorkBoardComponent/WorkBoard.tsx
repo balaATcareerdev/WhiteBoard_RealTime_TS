@@ -3,6 +3,11 @@ import { Stage, Layer } from "react-konva";
 import Konva from "konva";
 import { type LayerData } from "../../Data/LayerData";
 import RenderNode from "./RenderNode";
+import useDrawHandlers from "../../Hooks/useDrawHandlers";
+import type { KonvaEventObject } from "konva/lib/Node";
+import { useMenuStore } from "../../Store/MenuStore";
+import CurrentShapeRender from "./CurrentShapeRender";
+import { useBoardStore } from "../../Store/BoardStore";
 
 interface WorkBoardProps {
   layerData: LayerData;
@@ -16,6 +21,17 @@ const WorkBoard = ({ layerData }: WorkBoardProps) => {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [spaceDown, setSpaceDown] = useState(false);
+
+  const tool = useMenuStore((state) => state.tool);
+
+  const allShapes = useBoardStore((state) => state.allShapes);
+
+  const { handleMouseClick, handleMouseMove, handleMouseUp, currentAction } =
+    useDrawHandlers({
+      stageRef,
+      tool,
+      allShapes,
+    });
 
   // Measure container size dynamically
   useLayoutEffect(() => {
@@ -107,7 +123,13 @@ const WorkBoard = ({ layerData }: WorkBoardProps) => {
         onDragEnd={() => {
           document.body.style.cursor = "grab";
         }}
+        onMouseDown={(e: KonvaEventObject<MouseEvent>) => handleMouseClick(e)}
+        onMouseMove={() => handleMouseMove()}
+        onMouseUp={() => handleMouseUp()}
       >
+        <Layer>
+          <CurrentShapeRender shapeDetails={currentAction?.shapeDetails} />
+        </Layer>
         <Layer>
           {childNodes.map((childId) => (
             <RenderNode key={childId} nodeId={childId} layerData={layerData} />

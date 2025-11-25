@@ -12,33 +12,50 @@ import ToolIcon from "./ToolIcon";
 import { AiOutlineClear } from "react-icons/ai";
 import { HexColorPicker } from "react-colorful";
 import { useState } from "react";
+import { useMenuStore } from "../../Store/MenuStore";
 
 const Tools = () => {
   const [showColorPalet, setShowColorPalet] = useState(false);
   const [selectedColor, setSelectedColor] = useState("black");
   const [strokeWidth, setStrokeWidth] = useState(4);
+  const setTool = useMenuStore((state) => state.setTool);
+  const tool = useMenuStore((state) => state.tool);
 
   return (
     <div className="flex items-center gap-1 absolute z-100 top-20">
       <div className="bg-white rounded-md mx-auto flex gap-1 p-2 shadow-md cursor-pointer">
         <div className="flex p-1 border-r-2">
-          <ToolIcon size={35} Icon={BiUndo} />
-          <ToolIcon size={35} Icon={BiRedo} />
+          <ToolIcon size={35} Icon={BiUndo} selected={tool === "Undo"} />
+          <ToolIcon size={35} Icon={BiRedo} selected={tool === "Redo"} />
         </div>
 
         <div className="flex items-center gap-2 p-1">
-          <ToolIcon size={25} Icon={BiRectangle} />
-          <ToolIcon size={25} Icon={BiCircle} />
-          <ToolIcon size={20} Icon={FaPenNib} />
-          <ToolIcon size={25} Icon={PiScribbleLoop} />
-          <ToolIcon size={20} Icon={GrCursor} />
-          <ToolIcon size={20} Icon={AiOutlineClear} />
+          <ToolIcon
+            onClick={() => setTool("Rectangle")}
+            size={25}
+            Icon={BiRectangle}
+            selected={tool === "Rectangle"}
+          />
+          <ToolIcon size={25} Icon={BiCircle} selected={tool === "Circle"} />
+          <ToolIcon size={20} Icon={FaPenNib} selected={tool === "Pen"} />
+          <ToolIcon
+            size={25}
+            Icon={PiScribbleLoop}
+            selected={tool === "Scribble"}
+          />
+          <ToolIcon size={20} Icon={GrCursor} selected={tool === "Move"} />
+          <ToolIcon
+            size={20}
+            Icon={AiOutlineClear}
+            selected={tool === "Clear"}
+          />
           <div className="relative">
             <ToolIcon
               size={30}
               Icon={BiSolidColor}
               color={selectedColor}
               onClick={() => setShowColorPalet((prev) => !prev)}
+              selected={tool === "ColorPic"}
             />
             {showColorPalet && (
               <div className="absolute z-50">

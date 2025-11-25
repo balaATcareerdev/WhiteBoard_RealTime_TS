@@ -17,7 +17,8 @@ export interface ShapeNode {
     radius?: number;
     points?: number;
     stroke: string;
-    fill: string | null;
+    strokeWidth: number;
+    fill: string | undefined;
     rotation?: number;
   };
 }
@@ -73,7 +74,7 @@ export const dummyLayerData: LayerData = {
 
     "shape-1": {
       id: "shape-1",
-      name: "Rectangle-1",
+      name: "Rectangle1",
       type: "shape",
       shapeType: "Rectangle",
       parentId: "group-1",
@@ -86,13 +87,14 @@ export const dummyLayerData: LayerData = {
         width: 100,
         height: 200,
         stroke: "Red",
+        strokeWidth: 4,
         fill: "Red",
       },
     },
 
     "shape-3": {
       id: "shape-3",
-      name: "Rectangle-3",
+      name: "Rectangle3",
       type: "shape",
       shapeType: "Rectangle",
       parentId: "group-1",
@@ -104,6 +106,7 @@ export const dummyLayerData: LayerData = {
         width: 50,
         height: 50,
         stroke: "Green",
+        strokeWidth: 5,
         fill: "Green",
       },
     },
@@ -119,13 +122,13 @@ export const dummyLayerData: LayerData = {
 
       props: {
         x: 200,
-        y: 200,
+        y: -100,
       },
     },
 
     "shape-2": {
       id: "shape-2",
-      name: "Rectangle-2",
+      name: "Rectangle2",
       type: "shape",
       shapeType: "Rectangle",
       parentId: "group-2",
@@ -137,13 +140,14 @@ export const dummyLayerData: LayerData = {
         width: 50,
         height: 50,
         stroke: "Blue",
+        strokeWidth: 1,
         fill: "Blue",
       },
     },
 
     "shape-4": {
       id: "shape-4",
-      name: "Rectangle-4",
+      name: "Rectangle4",
       type: "shape",
       shapeType: "Rectangle",
       parentId: "root",
@@ -155,7 +159,8 @@ export const dummyLayerData: LayerData = {
         width: 50,
         height: 50,
         stroke: "Black",
-        fill: "Black",
+        fill: "red",
+        strokeWidth: 1,
       },
     },
   },

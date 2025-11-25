@@ -16,21 +16,21 @@ const Menu = ({ setOpenMenu, openMenu }: MenuProps) => {
       <div className="flex w-full justify-between shadow-sm items-center">
         <div className="flex gap-3 items-center px-3 py-1">
           <img className="w-5" src={icon} alt="" />
-          <span className="font-medium text-gray-500 hover:underline cursor-pointer">
+          <span className="font-normal text-sm text-gray-500 hover:underline cursor-pointer">
             File
           </span>
-          <span className="font-medium text-gray-500 hover:underline cursor-pointer">
+          <span className="font-normal text-sm text-gray-500 hover:underline cursor-pointer">
             Edit
           </span>
-          <span className="font-medium text-gray-500 hover:underline cursor-pointer">
+          <span className="font-normal text-sm text-gray-500 hover:underline cursor-pointer">
             View
           </span>
-          <span className="font-medium text-gray-500 hover:underline cursor-pointer">
+          <span className="font-normal text-sm text-gray-500 hover:underline cursor-pointer">
             Help
           </span>
           <span
             onClick={handleClick}
-            className={`font-medium text-gray-500 cursor-pointer px-1 py-1 select-none rounded-sm ${
+            className={`font-normal text-sm text-gray-500 cursor-pointer px-1 py-1 select-none rounded-sm ${
               openMenu ? "bg-black text-white" : ""
             }`}
           >

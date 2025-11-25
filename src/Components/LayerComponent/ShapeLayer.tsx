@@ -2,7 +2,7 @@ import { type ShapeNode } from "../../Data/LayerData";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { useLayerStore } from "../../Store/LayerStore";
-import { type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 
 interface ShapeLayerProps {
   node: ShapeNode;
@@ -11,6 +11,8 @@ interface ShapeLayerProps {
 
 const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
   const setSelectedLayers = useLayerStore((state) => state.setSelectedLayers);
+
+  const [isRecognized, setIsRecognized] = useState<boolean>(false);
 
   const handleSelectLayer = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedLayers(node.id, e.target.checked);
@@ -36,7 +38,14 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
               <FaEyeSlash color="#4a5565" />
             )}
           </div>
-          <p className={`text-gray-600 font-medium`}>{node.name}</p>
+          <p
+            onClick={() => setIsRecognized(true)}
+            className={`text-gray-600 ${
+              !isRecognized ? "font-bold" : "font-medium"
+            } `}
+          >
+            {node.name}
+          </p>
         </div>
         <input
           type="checkbox"

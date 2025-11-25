@@ -3,6 +3,8 @@ import { create } from "zustand";
 interface LayerStoreProps {
   selectedLayers: string[];
   setSelectedLayers: (id: string, status: boolean) => void;
+  activeLayer: string;
+  setActiveLayer: () => void;
 }
 
 export const useLayerStore = create<LayerStoreProps>((set) => ({
@@ -20,4 +22,6 @@ export const useLayerStore = create<LayerStoreProps>((set) => ({
       };
     });
   },
+  activeLayer: "root",
+  setActiveLayer: () => {},
 }));
