@@ -14,6 +14,8 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
 
   const [isRecognized, setIsRecognized] = useState<boolean>(false);
 
+  const setActiveLayer = useLayerStore((state) => state.setActiveLayer);
+
   const handleSelectLayer = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedLayers(node.id, e.target.checked);
   };
@@ -39,7 +41,14 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
             )}
           </div>
           <p
-            onClick={() => setIsRecognized(true)}
+            onClick={() => {
+              setIsRecognized(true);
+              if (node.parentId === "root") {
+                setActiveLayer("root");
+              } else {
+                setActiveLayer(node.parentId);
+              }
+            }}
             className={`text-gray-600 ${
               !isRecognized ? "font-bold" : "font-medium"
             } `}

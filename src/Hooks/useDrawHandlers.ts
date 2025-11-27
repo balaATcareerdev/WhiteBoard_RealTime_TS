@@ -10,6 +10,7 @@ interface DrawHandlersProps {
   stageRef: RefObject<Konva.Stage | null>;
   tool: ToolType;
   allShapes: LayerData;
+  activeLayer: string;
 }
 
 export type ActionType = {
@@ -22,6 +23,7 @@ export default function useDrawHandlers({
   stageRef,
   tool,
   allShapes,
+  activeLayer,
 }: DrawHandlersProps) {
   const [currentAction, setCurrentAction] = useState<ActionType | null>(null);
   const isDrawing = useRef<boolean>(false);
@@ -46,7 +48,7 @@ export default function useDrawHandlers({
     const x = (pointer.x - stage.x()) / stage.scaleX();
     const y = (pointer.y - stage.y()) / stage.scaleY();
 
-    const newPosition = findPositionOfNewShape(tool, allShapes);
+    const newPosition = findPositionOfNewShape(tool, allShapes, activeLayer);
 
     // switch case
     switch (tool) {
@@ -142,7 +144,7 @@ export default function useDrawHandlers({
     const newShapeData = currentAction?.shapeDetails;
 
     if (!newShapeData) return;
-    addNewShape(newShapeData);
+    addNewShape(newShapeData, activeLayer);
     setCurrentAction(null);
   }
 

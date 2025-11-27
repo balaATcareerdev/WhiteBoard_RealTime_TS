@@ -8,6 +8,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import { useMenuStore } from "../../Store/MenuStore";
 import CurrentShapeRender from "./CurrentShapeRender";
 import { useBoardStore } from "../../Store/BoardStore";
+import { useLayerStore } from "../../Store/LayerStore";
 
 interface WorkBoardProps {
   layerData: LayerData;
@@ -25,12 +26,14 @@ const WorkBoard = ({ layerData }: WorkBoardProps) => {
   const tool = useMenuStore((state) => state.tool);
 
   const allShapes = useBoardStore((state) => state.allShapes);
+  const activeLayer = useLayerStore((state) => state.activeLayer);
 
   const { handleMouseClick, handleMouseMove, handleMouseUp, currentAction } =
     useDrawHandlers({
       stageRef,
       tool,
       allShapes,
+      activeLayer,
     });
 
   // Measure container size dynamically

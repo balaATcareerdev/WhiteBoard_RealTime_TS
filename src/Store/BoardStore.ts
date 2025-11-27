@@ -10,7 +10,7 @@ import {
 interface BoardStoreProps {
   allShapes: LayerData;
   toggleVisibility: (id: string) => void;
-  addNewShape: (newShape: ShapeNode, layer?: string) => void;
+  addNewShape: (newShape: ShapeNode, layer: string) => void;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -30,7 +30,7 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       },
     });
   },
-  addNewShape: (newShape, layer = "root") => {
+  addNewShape: (newShape, layer) => {
     const prev = get().allShapes;
     console.log(layer);
 

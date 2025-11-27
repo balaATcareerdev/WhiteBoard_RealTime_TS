@@ -3,6 +3,8 @@ import type { GroupNode, LayerData } from "../../Data/LayerData";
 import RenderLayerItem from "./RenderLayerItem";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { FaAngleDown } from "react-icons/fa";
+import { useLayerStore } from "../../Store/LayerStore";
 
 interface GroupLayerProps {
   shapeId: string;
@@ -23,34 +25,52 @@ const GroupLayer = ({
   setOpen,
   toggleVisibility,
 }: GroupLayerProps) => {
+  const setActiveLayer = useLayerStore((state) => state.setActiveLayer);
+
+  const activeLayer = useLayerStore((state) => state.activeLayer);
+
   return (
     <div
       key={shapeId}
-      className={`p-2 outline-gray-400 outline rounded-sm select-none bg-gray-50 ${
+      className={`p-2  ${
+        activeLayer === node.id
+          ? "outline-blue-700 outline-2"
+          : "outline-gray-400 outline"
+      }  rounded-sm select-none bg-gray-50 ${
         node.parentId === "root" ? "mb-1" : ""
       }`}
     >
       {/* Root */}
-      <div className="flex items-center gap-1">
-        <div
-          className="p-1 hover:bg-gray-50 rounded-full cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleVisibility(node.id);
-          }}
-        >
-          {node.visibility ? (
-            <FaEye color="#4a5565" />
-          ) : (
-            <FaEyeSlash color="#4a5565" />
-          )}
+      <div
+        onClick={() => {
+          console.log(node.id);
+          setActiveLayer(node.id);
+        }}
+        className={`flex items-center justify-between gap-1 `}
+      >
+        <div className="flex items-center">
+          <div
+            className="p-1 hover:bg-gray-50 rounded-full cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleVisibility(node.id);
+            }}
+          >
+            {node.visibility ? (
+              <FaEye color="#4a5565" />
+            ) : (
+              <FaEyeSlash color="#4a5565" />
+            )}
+          </div>
+          <span className="font-semibold">{node.name}</span>
         </div>
-        <span
-          onClick={() => setOpen((prev) => !prev)}
-          className="font-semibold"
-        >
-          {node.name}
-        </span>
+        <div onClick={() => setOpen((prev) => !prev)}>
+          <FaAngleDown
+            className={`transition-transform duration-200 ${
+              open ? "rotate-180" : "rotate-0"
+            }`}
+          />
+        </div>
       </div>
 
       {/* Child */}

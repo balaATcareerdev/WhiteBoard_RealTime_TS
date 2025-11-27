@@ -4,10 +4,10 @@ interface LayerStoreProps {
   selectedLayers: string[];
   setSelectedLayers: (id: string, status: boolean) => void;
   activeLayer: string;
-  setActiveLayer: () => void;
+  setActiveLayer: (nodeId: string) => void;
 }
 
-export const useLayerStore = create<LayerStoreProps>((set) => ({
+export const useLayerStore = create<LayerStoreProps>((set, get) => ({
   selectedLayers: [],
   setSelectedLayers: (id, status) => {
     set((state) => {
@@ -23,5 +23,12 @@ export const useLayerStore = create<LayerStoreProps>((set) => ({
     });
   },
   activeLayer: "root",
-  setActiveLayer: () => {},
+  setActiveLayer: (nodeId) => {
+    const currentLayer = get().activeLayer;
+    if (currentLayer === nodeId) {
+      set({ activeLayer: "root" });
+      return;
+    }
+    set({ activeLayer: nodeId });
+  },
 }));
