@@ -16,13 +16,19 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
 
   const setActiveLayer = useLayerStore((state) => state.setActiveLayer);
 
+  const activeLayer = useLayerStore((state) => state.activeLayer);
+
   const handleSelectLayer = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedLayers(node.id, e.target.checked);
   };
 
   return (
     <div
-      className={`pl-2 bg-gray-50 select-none px-3 py-2 ${
+      className={`pl-2 ${
+        activeLayer === node.parentId && activeLayer !== "root"
+          ? "bg-blue-200"
+          : "bg-gray-50"
+      } transition duration-300 ease-in-out select-none px-3 py-2 ${
         node.parentId === "root"
           ? "mb-1 outline-gray-400 outline rounded-sm"
           : ""

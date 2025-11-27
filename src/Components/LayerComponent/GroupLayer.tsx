@@ -34,9 +34,9 @@ const GroupLayer = ({
       key={shapeId}
       className={`p-2  ${
         activeLayer === node.id
-          ? "outline-blue-700 outline-2"
-          : "outline-gray-400 outline"
-      }  rounded-sm select-none bg-gray-50 ${
+          ? "outline-blue-700 outline-2 bg-blue-200"
+          : "outline-gray-400 outline bg-gray-50"
+      }  rounded-sm select-none transition-colors duration-300 ease-in-out  ${
         node.parentId === "root" ? "mb-1" : ""
       }`}
     >
