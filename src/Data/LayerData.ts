@@ -94,17 +94,16 @@ export const dummyLayerData: LayerData = {
 
     "shape-3": {
       id: "shape-3",
-      name: "Rectangle3",
+      name: "Circle1",
       type: "shape",
-      shapeType: "Rectangle",
+      shapeType: "Circle",
       parentId: "group-1",
       pos: 1,
       visibility: true,
       props: {
         x: 200,
         y: 200,
-        width: 50,
-        height: 50,
+        radius: 10,
         stroke: "Green",
         strokeWidth: 5,
         fill: "Green",

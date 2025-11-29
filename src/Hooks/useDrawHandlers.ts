@@ -81,6 +81,34 @@ export default function useDrawHandlers({
         }
         break;
 
+      case "Circle":
+        {
+          const action: ActionType = {
+            type: "Add",
+            startingPos: { x, y },
+            shapeDetails: {
+              id: crypto.randomUUID(),
+              name: "Circle-new",
+              type: "shape",
+              shapeType: "Circle",
+              parentId: "root",
+              pos: newPosition,
+              visibility: true,
+              props: {
+                x,
+                y,
+                radius: 0,
+                stroke: "Black",
+                fill: undefined,
+                strokeWidth: 4,
+              },
+            },
+          };
+
+          setCurrentAction(action);
+        }
+        break;
+
       default:
         break;
     }
@@ -111,6 +139,25 @@ export default function useDrawHandlers({
                       ...prev.shapeDetails.props,
                       width: x - prev.startingPos.x,
                       height: y - prev.startingPos.y,
+                    },
+                  },
+                }
+              : prev
+          );
+        }
+        break;
+
+      case "Circle":
+        {
+          setCurrentAction((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  shapeDetails: {
+                    ...prev.shapeDetails,
+                    props: {
+                      ...prev.shapeDetails.props,
+                      radius: x - prev.startingPos.x,
                     },
                   },
                 }

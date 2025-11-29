@@ -36,7 +36,12 @@ const Tools = () => {
             Icon={BiRectangle}
             selected={tool === "Rectangle"}
           />
-          <ToolIcon size={25} Icon={BiCircle} selected={tool === "Circle"} />
+          <ToolIcon
+            onClick={() => setTool("Circle")}
+            size={25}
+            Icon={BiCircle}
+            selected={tool === "Circle"}
+          />
           <ToolIcon size={20} Icon={FaPenNib} selected={tool === "Pen"} />
           <ToolIcon
             size={25}
