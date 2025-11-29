@@ -109,6 +109,55 @@ export default function useDrawHandlers({
         }
         break;
 
+      case "Pen":
+        {
+          const action: ActionType = {
+            type: "Add",
+            startingPos: { x, y },
+            shapeDetails: {
+              id: crypto.randomUUID(),
+              name: "Pen-new",
+              type: "shape",
+              shapeType: "Pen",
+              parentId: "root",
+              pos: newPosition,
+              visibility: true,
+              props: {
+                points: [x, y],
+                stroke: "Black",
+                strokeWidth: 4,
+              },
+            },
+          };
+
+          setCurrentAction(action);
+        }
+        break;
+
+      case "Scribble":
+        {
+          const action: ActionType = {
+            type: "Add",
+            startingPos: { x, y },
+            shapeDetails: {
+              id: crypto.randomUUID(),
+              name: "Scribble-new",
+              type: "shape",
+              shapeType: "Scribble",
+              parentId: "root",
+              pos: newPosition,
+              visibility: true,
+              props: {
+                points: [x, y],
+                stroke: "Black",
+                strokeWidth: 4,
+              },
+            },
+          };
+          setCurrentAction(action);
+        }
+        break;
+
       default:
         break;
     }
@@ -163,6 +212,53 @@ export default function useDrawHandlers({
                 }
               : prev
           );
+        }
+        break;
+
+      case "Pen":
+        {
+          setCurrentAction((prev) => {
+            if (!prev) return prev;
+            const updatedPoints = [...(prev?.shapeDetails.props.points || [])];
+
+            updatedPoints[2] = x;
+            updatedPoints[3] = y;
+
+            return prev
+              ? {
+                  ...prev,
+                  shapeDetails: {
+                    ...prev.shapeDetails,
+                    props: {
+                      ...prev.shapeDetails.props,
+                      points: updatedPoints,
+                    },
+                  },
+                }
+              : prev;
+          });
+        }
+        break;
+
+      case "Scribble":
+        {
+          setCurrentAction((prev) => {
+            if (!prev) return prev;
+            return prev
+              ? {
+                  ...prev,
+                  shapeDetails: {
+                    ...prev.shapeDetails,
+                    props: {
+                      ...prev.shapeDetails.props,
+                      points: [
+                        ...(prev.shapeDetails.props.points || []),
+                      ].concat([x, y]),
+                    },
+                  },
+                }
+              : prev;
+          });
         }
         break;
 

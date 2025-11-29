@@ -10,15 +10,15 @@ export interface ShapeNode {
   visibility: boolean;
 
   props: {
-    x: number;
-    y: number;
+    x?: number;
+    y?: number;
     width?: number;
     height?: number;
     radius?: number;
-    points?: number;
+    points?: number[];
     stroke: string;
     strokeWidth: number;
-    fill: string | undefined;
+    fill?: string | undefined;
     rotation?: number;
   };
 }
@@ -74,21 +74,17 @@ export const dummyLayerData: LayerData = {
 
     "shape-1": {
       id: "shape-1",
-      name: "Rectangle1",
+      name: "Pen-1",
       type: "shape",
-      shapeType: "Rectangle",
+      shapeType: "Pen",
       parentId: "group-1",
       pos: 2,
       visibility: true,
 
       props: {
-        x: 200,
-        y: 100,
-        width: 100,
-        height: 200,
-        stroke: "Red",
+        points: [30, 20, 40, 40],
+        stroke: "Black",
         strokeWidth: 4,
-        fill: "Red",
       },
     },
 

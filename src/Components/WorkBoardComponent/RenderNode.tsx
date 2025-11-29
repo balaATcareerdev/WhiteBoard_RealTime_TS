@@ -1,4 +1,4 @@
-import { Circle, Group, Rect } from "react-konva";
+import { Circle, Group, Line, Rect } from "react-konva";
 import type { GroupNode, LayerData, ShapeNode } from "../../Data/LayerData";
 
 interface RenderNodeProps {
@@ -43,6 +43,19 @@ const RenderNode = ({ nodeId, layerData }: RenderNodeProps) => {
             fill={shape.props.fill}
             draggable={true}
             visible={shape.visibility}
+          />
+        );
+
+      case "Pen":
+      case "Scribble":
+        return (
+          <Line
+            points={shape.props.points}
+            stroke={shape.props.stroke}
+            strokeWidth={shape.props.strokeWidth}
+            tension={0.5}
+            lineCap="round"
+            lineJoin="round"
           />
         );
 

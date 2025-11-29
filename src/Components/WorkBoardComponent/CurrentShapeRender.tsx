@@ -1,4 +1,4 @@
-import { Circle, Rect } from "react-konva";
+import { Circle, Line, Rect } from "react-konva";
 import type { ShapeNode } from "../../Data/LayerData";
 
 interface CurrentShapeRenderProps {
@@ -37,6 +37,19 @@ const CurrentShapeRender = ({ shapeDetails }: CurrentShapeRenderProps) => {
         />
       );
     }
+
+    case "Pen":
+    case "Scribble":
+      return (
+        <Line
+          points={shapeDetails.props.points}
+          stroke={shapeDetails.props.stroke}
+          strokeWidth={shapeDetails.props.strokeWidth}
+          tension={0.5}
+          lineCap="round"
+          lineJoin="round"
+        />
+      );
 
     default:
       break;
