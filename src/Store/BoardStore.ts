@@ -11,6 +11,7 @@ interface BoardStoreProps {
   allShapes: LayerData;
   toggleVisibility: (id: string) => void;
   addNewShape: (newShape: ShapeNode, layer: string) => void;
+  clearShapes: () => void;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -72,6 +73,20 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
         ...prev,
         root: updatedRoot,
         nodes: updatedNodes,
+      },
+    });
+  },
+
+  clearShapes: () => {
+    const prev = get().allShapes;
+    set({
+      allShapes: {
+        ...prev,
+        root: {
+          ...prev.root,
+          children: [],
+        },
+        nodes: {},
       },
     });
   },

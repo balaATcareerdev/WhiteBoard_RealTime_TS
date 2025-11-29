@@ -13,6 +13,7 @@ import { AiOutlineClear } from "react-icons/ai";
 import { HexColorPicker } from "react-colorful";
 import { useState } from "react";
 import { useMenuStore } from "../../Store/MenuStore";
+import { useBoardStore } from "../../Store/BoardStore";
 
 const Tools = () => {
   const [showColorPalet, setShowColorPalet] = useState(false);
@@ -20,6 +21,7 @@ const Tools = () => {
   const [strokeWidth, setStrokeWidth] = useState(4);
   const setTool = useMenuStore((state) => state.setTool);
   const tool = useMenuStore((state) => state.tool);
+  const clearShapes = useBoardStore((state) => state.clearShapes);
 
   return (
     <div className="flex items-center gap-1 absolute z-100 top-20">
@@ -59,6 +61,7 @@ const Tools = () => {
             size={20}
             Icon={AiOutlineClear}
             selected={tool === "Clear"}
+            onClick={() => clearShapes()}
           />
           <div className="relative">
             <ToolIcon
