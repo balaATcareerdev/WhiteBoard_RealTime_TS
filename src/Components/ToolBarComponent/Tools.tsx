@@ -26,19 +26,7 @@ const Tools = () => {
   const strokeWidth = useMenuStore((state) => state.strokeWidth);
   const setStrokeWidth = useMenuStore((state) => state.setStrokeWidth);
 
-  const undoStack = useBoardStore((state) => state.undoStack);
-  const redoStack = useBoardStore((state) => state.redoStack);
-  const modifyStacks = useBoardStore((state) => state.modifyStacks);
-  const updateShapesUndoRedo = useBoardStore(
-    (state) => state.updateShapesUndoRedo
-  );
-
-  const { doUndo, doRedo } = useUndoRedoHandlers({
-    undoStack,
-    redoStack,
-    modifyStacks,
-    updateShapesUndoRedo,
-  });
+  const { doUndo, doRedo } = useUndoRedoHandlers();
 
   return (
     <div className="flex items-center gap-1 absolute z-100 top-20">

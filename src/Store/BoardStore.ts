@@ -1,3 +1,4 @@
+import type Konva from "konva";
 import { create } from "zustand";
 import {
   dummyLayerData,
@@ -7,9 +8,12 @@ import {
   type ShapeNode,
   type UndoType,
 } from "../Data/LayerData";
+import { createRef, type RefObject } from "react";
 
 interface BoardStoreProps {
   allShapes: LayerData;
+  stageRef: RefObject<Konva.Stage | null>;
+  transformerRef: RefObject<Konva.Transformer | null>;
   toggleVisibility: (id: string) => void;
   addNewShape: (newShape: ShapeNode, layer: string) => void;
   clearShapes: () => void;
@@ -25,6 +29,8 @@ interface BoardStoreProps {
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
   allShapes: dummyLayerData,
+  stageRef: createRef<Konva.Stage>(),
+  transformerRef: createRef<Konva.Transformer>(),
   toggleVisibility: (id) => {
     const prev = get().allShapes;
     set({

@@ -1,43 +1,26 @@
-import {
-  useRef,
-  useState,
-  useLayoutEffect,
-  useEffect,
-  type RefObject,
-} from "react";
+import { useRef, useState, useLayoutEffect, useEffect } from "react";
 import { Stage, Layer, Transformer } from "react-konva";
 import Konva from "konva";
 import { type LayerData } from "../../Data/LayerData";
 import RenderNode from "./RenderNode";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
 import type { KonvaEventObject } from "konva/lib/Node";
-import { useMenuStore } from "../../Store/MenuStore";
 import CurrentShapeRender from "./CurrentShapeRender";
 import { useBoardStore } from "../../Store/BoardStore";
-import { useLayerStore } from "../../Store/LayerStore";
 
 interface WorkBoardProps {
   layerData: LayerData;
-  transformerRef: RefObject<Konva.Transformer | null>;
 }
 
-const WorkBoard = ({ layerData, transformerRef }: WorkBoardProps) => {
+const WorkBoard = ({ layerData }: WorkBoardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<Konva.Stage>(null);
+  const stageRef = useBoardStore((state) => state.stageRef);
 
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [spaceDown, setSpaceDown] = useState(false);
-
-  const tool = useMenuStore((state) => state.tool);
-
-  const allShapes = useBoardStore((state) => state.allShapes);
-  const activeLayer = useLayerStore((state) => state.activeLayer);
-  const color = useMenuStore((state) => state.color);
-  const setShowColorPalet = useMenuStore((state) => state.setShowColorPalet);
-  const strokeWidth = useMenuStore((state) => state.strokeWidth);
-  const addNewUndo = useBoardStore((state) => state.addNewUndo);
+  const transformerRef = useBoardStore((state) => state.transformerRef);
 
   const {
     handleMouseClick,
@@ -45,17 +28,7 @@ const WorkBoard = ({ layerData, transformerRef }: WorkBoardProps) => {
     handleMouseUp,
     currentAction,
     activateTransformation,
-  } = useDrawHandlers({
-    stageRef,
-    tool,
-    allShapes,
-    activeLayer,
-    color,
-    setShowColorPalet,
-    strokeWidth,
-    addNewUndo,
-    transformerRef,
-  });
+  } = useDrawHandlers();
 
   // Measure container size dynamically
   useLayoutEffect(() => {

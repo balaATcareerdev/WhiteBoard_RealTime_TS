@@ -1,23 +1,11 @@
 import { useLayerStore } from "./../Store/LayerStore";
 import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
-import { useRef, useState, type RefObject } from "react";
-import type { ToolType } from "../Store/MenuStore";
-import type { LayerData, ShapeNode, UndoType } from "../Data/LayerData";
+import { useRef, useState } from "react";
+import { useMenuStore } from "../Store/MenuStore";
+import type { ShapeNode } from "../Data/LayerData";
 import { useBoardStore } from "../Store/BoardStore";
 import { findPositionOfNewShape } from "../Utils/NewShapeUtils";
-
-interface DrawHandlersProps {
-  stageRef: RefObject<Konva.Stage | null>;
-  tool: ToolType;
-  allShapes: LayerData;
-  activeLayer: string;
-  color: string;
-  setShowColorPalet: (state: boolean) => void;
-  strokeWidth: number;
-  addNewUndo: (newAction: UndoType) => void;
-  transformerRef: RefObject<Konva.Transformer | null>;
-}
 
 export type ActionType = {
   type: "Add";
@@ -25,21 +13,20 @@ export type ActionType = {
   startingPos: { x: number; y: number };
 };
 
-export default function useDrawHandlers({
-  stageRef,
-  tool,
-  allShapes,
-  activeLayer,
-  color,
-  setShowColorPalet,
-  strokeWidth,
-  addNewUndo,
-  transformerRef,
-}: DrawHandlersProps) {
+export default function useDrawHandlers() {
   const [currentAction, setCurrentAction] = useState<ActionType | null>(null);
   const isDrawing = useRef<boolean>(false);
   const addNewShape = useBoardStore((state) => state.addNewShape);
   const setTransformElem = useLayerStore((state) => state.setTransformElem);
+  const tool = useMenuStore((state) => state.tool);
+  const allShapes = useBoardStore((state) => state.allShapes);
+  const activeLayer = useLayerStore((state) => state.activeLayer);
+  const color = useMenuStore((state) => state.color);
+  const setShowColorPalet = useMenuStore((state) => state.setShowColorPalet);
+  const strokeWidth = useMenuStore((state) => state.strokeWidth);
+  const addNewUndo = useBoardStore((state) => state.addNewUndo);
+  const stageRef = useBoardStore((state) => state.stageRef);
+  const transformerRef = useBoardStore((state) => state.transformerRef);
 
   // draw the shape
   function handleMouseClick(e: KonvaEventObject<MouseEvent>) {

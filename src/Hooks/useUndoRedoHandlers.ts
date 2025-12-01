@@ -1,22 +1,15 @@
 import { useEffect } from "react";
 import type { UndoType } from "../Data/LayerData";
+import { useBoardStore } from "../Store/BoardStore";
 
-interface UndoRedoHandlerPropsType {
-  undoStack: UndoType[];
-  redoStack: UndoType[];
-  modifyStacks: (newShape: UndoType[], stackType: string) => void;
-  updateShapesUndoRedo: (
-    latestAction: UndoType,
-    actionType: "undo" | "redo"
-  ) => void;
-}
+export default function useUndoRedoHandlers() {
+  const undoStack = useBoardStore((state) => state.undoStack);
+  const redoStack = useBoardStore((state) => state.redoStack);
+  const modifyStacks = useBoardStore((state) => state.modifyStacks);
+  const updateShapesUndoRedo = useBoardStore(
+    (state) => state.updateShapesUndoRedo
+  );
 
-export default function useUndoRedoHandlers({
-  undoStack,
-  redoStack,
-  modifyStacks,
-  updateShapesUndoRedo,
-}: UndoRedoHandlerPropsType) {
   function doUndo() {
     if (undoStack?.length === 0) return;
     console.log(undoStack);
