@@ -1,10 +1,6 @@
 import type { LayerData } from "../Data/LayerData";
 
-export function findPositionOfNewShape(
-  shapeName: string,
-  allShapes: LayerData,
-  layer: string
-) {
+export function findPositionOfNewShape(allShapes: LayerData, layer: string) {
   const result: number[] = [];
 
   function loopGroup(nodeId: string) {
@@ -15,7 +11,6 @@ export function findPositionOfNewShape(
     } else {
       if (
         allShapes.nodes[nodeId].type === "shape" &&
-        allShapes.nodes[nodeId].shapeType === shapeName &&
         allShapes.nodes[nodeId].parentId === layer
       ) {
         result.push(allShapes.nodes[nodeId].pos);

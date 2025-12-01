@@ -1,5 +1,11 @@
-import { useRef, useState, useLayoutEffect, useEffect } from "react";
-import { Stage, Layer } from "react-konva";
+import {
+  useRef,
+  useState,
+  useLayoutEffect,
+  useEffect,
+  type RefObject,
+} from "react";
+import { Stage, Layer, Transformer } from "react-konva";
 import Konva from "konva";
 import { type LayerData } from "../../Data/LayerData";
 import RenderNode from "./RenderNode";
@@ -12,9 +18,10 @@ import { useLayerStore } from "../../Store/LayerStore";
 
 interface WorkBoardProps {
   layerData: LayerData;
+  transformerRef: RefObject<Konva.Transformer | null>;
 }
 
-const WorkBoard = ({ layerData }: WorkBoardProps) => {
+const WorkBoard = ({ layerData, transformerRef }: WorkBoardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
 
@@ -27,14 +34,28 @@ const WorkBoard = ({ layerData }: WorkBoardProps) => {
 
   const allShapes = useBoardStore((state) => state.allShapes);
   const activeLayer = useLayerStore((state) => state.activeLayer);
+  const color = useMenuStore((state) => state.color);
+  const setShowColorPalet = useMenuStore((state) => state.setShowColorPalet);
+  const strokeWidth = useMenuStore((state) => state.strokeWidth);
+  const addNewUndo = useBoardStore((state) => state.addNewUndo);
 
-  const { handleMouseClick, handleMouseMove, handleMouseUp, currentAction } =
-    useDrawHandlers({
-      stageRef,
-      tool,
-      allShapes,
-      activeLayer,
-    });
+  const {
+    handleMouseClick,
+    handleMouseMove,
+    handleMouseUp,
+    currentAction,
+    activateTransformation,
+  } = useDrawHandlers({
+    stageRef,
+    tool,
+    allShapes,
+    activeLayer,
+    color,
+    setShowColorPalet,
+    strokeWidth,
+    addNewUndo,
+    transformerRef,
+  });
 
   // Measure container size dynamically
   useLayoutEffect(() => {
@@ -135,8 +156,14 @@ const WorkBoard = ({ layerData }: WorkBoardProps) => {
         </Layer>
         <Layer>
           {childNodes.map((childId) => (
-            <RenderNode key={childId} nodeId={childId} layerData={layerData} />
+            <RenderNode
+              key={childId}
+              nodeId={childId}
+              layerData={layerData}
+              activateTransformation={activateTransformation}
+            />
           ))}
+          <Transformer ref={transformerRef} />
         </Layer>
       </Stage>
     </div>

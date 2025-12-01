@@ -5,6 +5,7 @@ import {
   type LayerData,
   type LayerNode,
   type ShapeNode,
+  type UndoType,
 } from "../Data/LayerData";
 
 interface BoardStoreProps {
@@ -12,6 +13,14 @@ interface BoardStoreProps {
   toggleVisibility: (id: string) => void;
   addNewShape: (newShape: ShapeNode, layer: string) => void;
   clearShapes: () => void;
+  undoStack: UndoType[];
+  redoStack: UndoType[];
+  addNewUndo: (newAction: UndoType) => void;
+  modifyStacks: (newStack: UndoType[], stackType: string) => void;
+  updateShapesUndoRedo: (
+    latestAction: UndoType,
+    actionType: "undo" | "redo"
+  ) => void;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -33,7 +42,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
   },
   addNewShape: (newShape, layer) => {
     const prev = get().allShapes;
-    console.log(layer);
 
     const updatedRoot =
       layer === "root"
@@ -89,5 +97,215 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
         nodes: {},
       },
     });
+  },
+
+  undoStack: [],
+  redoStack: [],
+
+  addNewUndo: (newAction) => {
+    const prev = get().undoStack;
+    set({ undoStack: [...prev, newAction] });
+  },
+
+  modifyStacks: (newStack, stackType) => {
+    switch (stackType) {
+      case "undo":
+        set({ undoStack: newStack });
+        break;
+
+      case "redo":
+        set({ redoStack: newStack });
+        break;
+
+      default:
+        break;
+    }
+  },
+
+  updateShapesUndoRedo: (latestAction, actionType) => {
+    let currentData = get().allShapes;
+    const id = latestAction.shapeDetails.id;
+    const parentId = latestAction.shapeDetails.parentId;
+    console.log(latestAction);
+
+    switch (actionType) {
+      case "undo":
+        switch (latestAction.type) {
+          case "Add":
+            {
+              if (parentId === "root") {
+                const updatedRoot = {
+                  ...currentData.root,
+                  children: currentData.root.children.filter(
+                    (child) => child !== id
+                  ),
+                };
+                currentData = {
+                  ...currentData,
+                  root: updatedRoot,
+                };
+              } else if (currentData.nodes[parentId].type === "group") {
+                currentData = {
+                  ...currentData,
+                  nodes: {
+                    ...currentData.nodes,
+                    [parentId]: {
+                      ...currentData.nodes[parentId],
+                      children: [
+                        ...currentData.nodes[parentId].children,
+                      ].filter((child) => child !== id),
+                    },
+                  },
+                };
+              }
+              currentData = {
+                ...currentData,
+                nodes: Object.fromEntries(
+                  Object.entries(currentData.nodes).filter(
+                    ([node]) => node !== id
+                  )
+                ),
+              };
+              console.log(currentData);
+
+              set({ allShapes: currentData });
+            }
+            break;
+
+          case "Remove":
+            {
+              const id = latestAction.shapeDetails.id;
+              const parentId = latestAction.shapeDetails.parentId;
+
+              currentData = {
+                ...currentData,
+                nodes: {
+                  ...currentData.nodes,
+                  [id]: latestAction.shapeDetails,
+                },
+              };
+
+              if (parentId === "root") {
+                currentData = {
+                  ...currentData,
+                  root: {
+                    ...currentData.root,
+                    children: [...currentData.root.children, id],
+                  },
+                };
+              } else if (currentData.nodes[parentId].type === "group") {
+                currentData = {
+                  ...currentData,
+                  nodes: {
+                    ...currentData.nodes,
+                    [parentId]: {
+                      ...currentData.nodes[parentId],
+                      children: [...currentData.nodes[parentId].children, id],
+                    },
+                  },
+                };
+              }
+            }
+
+            set({ allShapes: currentData });
+            break;
+
+          default:
+            break;
+        }
+        break;
+
+      case "redo":
+        {
+          switch (latestAction.type) {
+            case "Remove":
+              {
+                const id = latestAction.shapeDetails.id;
+                const parentId = latestAction.shapeDetails.parentId;
+
+                currentData = {
+                  ...currentData,
+                  nodes: {
+                    ...currentData.nodes,
+                    [id]: latestAction.shapeDetails,
+                  },
+                };
+
+                if (parentId === "root") {
+                  currentData = {
+                    ...currentData,
+                    root: {
+                      ...currentData.root,
+                      children: [...currentData.root.children, id],
+                    },
+                  };
+                } else if (currentData.nodes[parentId].type === "group") {
+                  currentData = {
+                    ...currentData,
+                    nodes: {
+                      ...currentData.nodes,
+                      [parentId]: {
+                        ...currentData.nodes[parentId],
+                        children: [...currentData.nodes[parentId].children, id],
+                      },
+                    },
+                  };
+                }
+              }
+
+              set({ allShapes: currentData });
+              break;
+
+            case "Add":
+              {
+                if (parentId === "root") {
+                  const updatedRoot = {
+                    ...currentData.root,
+                    children: currentData.root.children.filter(
+                      (child) => child !== id
+                    ),
+                  };
+                  currentData = {
+                    ...currentData,
+                    root: updatedRoot,
+                  };
+                } else if (currentData.nodes[parentId].type === "group") {
+                  currentData = {
+                    ...currentData,
+                    nodes: {
+                      ...currentData.nodes,
+                      [parentId]: {
+                        ...currentData.nodes[parentId],
+                        children: [
+                          ...currentData.nodes[parentId].children,
+                        ].filter((child) => child !== id),
+                      },
+                    },
+                  };
+                }
+                currentData = {
+                  ...currentData,
+                  nodes: Object.fromEntries(
+                    Object.entries(currentData.nodes).filter(
+                      ([node]) => node !== id
+                    )
+                  ),
+                };
+                console.log(currentData);
+
+                set({ allShapes: currentData });
+              }
+              break;
+              break;
+
+            default:
+              break;
+          }
+        }
+        break;
+
+      default:
+        break;
+    }
   },
 }));

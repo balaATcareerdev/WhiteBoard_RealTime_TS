@@ -18,6 +18,8 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
 
   const activeLayer = useLayerStore((state) => state.activeLayer);
 
+  const transformElem = useLayerStore((state) => state.transformElem);
+
   const handleSelectLayer = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedLayers(node.id, e.target.checked);
   };
@@ -38,7 +40,12 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
         <div className="flex items-center gap-1">
           <div
             className="p-1 hover:bg-gray-50 rounded-full cursor-pointer"
-            onClick={() => toggleVisibility(node.id)}
+            onClick={() => {
+              toggleVisibility(node.id);
+              if (node.id === transformElem) {
+                // deactive the transform
+              }
+            }}
           >
             {node.visibility ? (
               <FaEye color="#4a5565" />

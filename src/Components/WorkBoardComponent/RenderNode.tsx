@@ -1,12 +1,19 @@
 import { Circle, Group, Line, Rect } from "react-konva";
 import type { GroupNode, LayerData, ShapeNode } from "../../Data/LayerData";
+import Konva from "konva";
+import type { KonvaEventObject } from "konva/lib/Node";
 
 interface RenderNodeProps {
   nodeId: string;
   layerData: LayerData;
+  activateTransformation: (e: KonvaEventObject<MouseEvent, Konva.Node>) => void;
 }
 
-const RenderNode = ({ nodeId, layerData }: RenderNodeProps) => {
+const RenderNode = ({
+  nodeId,
+  layerData,
+  activateTransformation,
+}: RenderNodeProps) => {
   const node = layerData.nodes[nodeId];
   if (!node) return;
 
@@ -24,9 +31,9 @@ const RenderNode = ({ nodeId, layerData }: RenderNodeProps) => {
             fill={shape.props.fill}
             stroke={shape.props.stroke}
             rotation={shape.props.rotation}
-            draggable={true}
             visible={shape.visibility}
             strokeWidth={shape.props.strokeWidth}
+            onClick={(e) => activateTransformation(e)}
           />
         );
 
@@ -41,8 +48,8 @@ const RenderNode = ({ nodeId, layerData }: RenderNodeProps) => {
             strokeWidth={shape.props.strokeWidth}
             rotation={shape.props.rotation}
             fill={shape.props.fill}
-            draggable={true}
             visible={shape.visibility}
+            onClick={(e) => activateTransformation(e)}
           />
         );
 
@@ -73,7 +80,12 @@ const RenderNode = ({ nodeId, layerData }: RenderNodeProps) => {
       <>
         <Group key={group.id} visible={node.visibility}>
           {sortedGroupElements.map((childId) => (
-            <RenderNode nodeId={childId} layerData={layerData} key={childId} />
+            <RenderNode
+              nodeId={childId}
+              layerData={layerData}
+              key={childId}
+              activateTransformation={activateTransformation}
+            />
           ))}
         </Group>
       </>

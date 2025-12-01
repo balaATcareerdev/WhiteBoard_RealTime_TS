@@ -5,6 +5,8 @@ interface LayerStoreProps {
   setSelectedLayers: (id: string, status: boolean) => void;
   activeLayer: string;
   setActiveLayer: (nodeId: string) => void;
+  transformElem: string | null;
+  setTransformElem: (newId: string | null) => void;
 }
 
 export const useLayerStore = create<LayerStoreProps>((set, get) => ({
@@ -30,5 +32,9 @@ export const useLayerStore = create<LayerStoreProps>((set, get) => ({
       return;
     }
     set({ activeLayer: nodeId });
+  },
+  transformElem: null,
+  setTransformElem: (newId: string | null) => {
+    set({ transformElem: newId });
   },
 }));

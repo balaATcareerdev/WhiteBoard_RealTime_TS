@@ -7,7 +7,6 @@ interface CurrentShapeRenderProps {
 
 const CurrentShapeRender = ({ shapeDetails }: CurrentShapeRenderProps) => {
   if (!shapeDetails) return null;
-  console.log(shapeDetails.shapeType);
 
   switch (shapeDetails.shapeType) {
     case "Rectangle":

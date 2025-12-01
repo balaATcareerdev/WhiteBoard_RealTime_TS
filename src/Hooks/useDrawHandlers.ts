@@ -1,8 +1,9 @@
+import { useLayerStore } from "./../Store/LayerStore";
 import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useRef, useState, type RefObject } from "react";
 import type { ToolType } from "../Store/MenuStore";
-import type { LayerData, ShapeNode } from "../Data/LayerData";
+import type { LayerData, ShapeNode, UndoType } from "../Data/LayerData";
 import { useBoardStore } from "../Store/BoardStore";
 import { findPositionOfNewShape } from "../Utils/NewShapeUtils";
 
@@ -11,6 +12,11 @@ interface DrawHandlersProps {
   tool: ToolType;
   allShapes: LayerData;
   activeLayer: string;
+  color: string;
+  setShowColorPalet: (state: boolean) => void;
+  strokeWidth: number;
+  addNewUndo: (newAction: UndoType) => void;
+  transformerRef: RefObject<Konva.Transformer | null>;
 }
 
 export type ActionType = {
@@ -24,10 +30,16 @@ export default function useDrawHandlers({
   tool,
   allShapes,
   activeLayer,
+  color,
+  setShowColorPalet,
+  strokeWidth,
+  addNewUndo,
+  transformerRef,
 }: DrawHandlersProps) {
   const [currentAction, setCurrentAction] = useState<ActionType | null>(null);
   const isDrawing = useRef<boolean>(false);
   const addNewShape = useBoardStore((state) => state.addNewShape);
+  const setTransformElem = useLayerStore((state) => state.setTransformElem);
 
   // draw the shape
   function handleMouseClick(e: KonvaEventObject<MouseEvent>) {
@@ -37,7 +49,8 @@ export default function useDrawHandlers({
     const clickedOnEmptyArea = node === e.target.getStage();
 
     if (clickedOnEmptyArea) {
-      // do nothing
+      setShowColorPalet(false);
+      deactiveTransformation();
     }
 
     // get pointer
@@ -48,7 +61,7 @@ export default function useDrawHandlers({
     const x = (pointer.x - stage.x()) / stage.scaleX();
     const y = (pointer.y - stage.y()) / stage.scaleY();
 
-    const newPosition = findPositionOfNewShape(tool, allShapes, activeLayer);
+    const newPosition = findPositionOfNewShape(allShapes, activeLayer);
 
     // switch case
     switch (tool) {
@@ -62,7 +75,7 @@ export default function useDrawHandlers({
               name: "Rectangle-New",
               type: "shape",
               shapeType: "Rectangle",
-              parentId: "root",
+              parentId: activeLayer,
               pos: newPosition,
               visibility: true,
               props: {
@@ -70,9 +83,9 @@ export default function useDrawHandlers({
                 y,
                 width: 0,
                 height: 0,
-                stroke: "Black",
+                stroke: color,
                 fill: undefined,
-                strokeWidth: 4,
+                strokeWidth: strokeWidth,
               },
             },
           };
@@ -91,16 +104,16 @@ export default function useDrawHandlers({
               name: "Circle-new",
               type: "shape",
               shapeType: "Circle",
-              parentId: "root",
+              parentId: activeLayer,
               pos: newPosition,
               visibility: true,
               props: {
                 x,
                 y,
                 radius: 0,
-                stroke: "Black",
+                stroke: color,
                 fill: undefined,
-                strokeWidth: 4,
+                strokeWidth: strokeWidth,
               },
             },
           };
@@ -119,13 +132,13 @@ export default function useDrawHandlers({
               name: "Pen-new",
               type: "shape",
               shapeType: "Pen",
-              parentId: "root",
+              parentId: activeLayer,
               pos: newPosition,
               visibility: true,
               props: {
-                points: [x, y],
-                stroke: "Black",
-                strokeWidth: 4,
+                points: [x, y, x, y],
+                stroke: color,
+                strokeWidth: strokeWidth,
               },
             },
           };
@@ -144,13 +157,13 @@ export default function useDrawHandlers({
               name: "Scribble-new",
               type: "shape",
               shapeType: "Scribble",
-              parentId: "root",
+              parentId: activeLayer,
               pos: newPosition,
               visibility: true,
               props: {
                 points: [x, y],
-                stroke: "Black",
-                strokeWidth: 4,
+                stroke: color,
+                strokeWidth: strokeWidth,
               },
             },
           };
@@ -279,6 +292,9 @@ export default function useDrawHandlers({
             return;
           }
         }
+        if (currentAction) {
+          addNewUndo(currentAction);
+        }
         break;
       default:
         break;
@@ -291,18 +307,31 @@ export default function useDrawHandlers({
     setCurrentAction(null);
   }
 
+  function activateTransformation(e: KonvaEventObject<MouseEvent, Konva.Node>) {
+    if (tool !== "Move") return;
+    setTransformElem(e.currentTarget.id());
+    const currentTarget = e.currentTarget;
+    transformerRef.current?.nodes([currentTarget]);
+  }
+
+  function deactiveTransformation() {
+    transformerRef?.current?.nodes([]);
+  }
+
   // useEffect(() => {
   //   if (currentAction) console.log(currentAction);
   // }, [currentAction]);
 
-  useEffect(() => {
-    console.log(allShapes);
-  }, [allShapes]);
+  // useEffect(() => {
+  //   console.log(allShapes);
+  // }, [allShapes]);
 
   return {
     handleMouseClick,
     handleMouseMove,
     handleMouseUp,
     currentAction,
+    activateTransformation,
+    deactiveTransformation,
   };
 }

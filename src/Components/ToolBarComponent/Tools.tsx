@@ -11,24 +11,51 @@ import { GrCursor } from "react-icons/gr";
 import ToolIcon from "./ToolIcon";
 import { AiOutlineClear } from "react-icons/ai";
 import { HexColorPicker } from "react-colorful";
-import { useState } from "react";
 import { useMenuStore } from "../../Store/MenuStore";
 import { useBoardStore } from "../../Store/BoardStore";
+import useUndoRedoHandlers from "../../Hooks/useUndoRedoHandlers";
 
 const Tools = () => {
-  const [showColorPalet, setShowColorPalet] = useState(false);
-  const [selectedColor, setSelectedColor] = useState("black");
-  const [strokeWidth, setStrokeWidth] = useState(4);
   const setTool = useMenuStore((state) => state.setTool);
   const tool = useMenuStore((state) => state.tool);
   const clearShapes = useBoardStore((state) => state.clearShapes);
+  const setColor = useMenuStore((state) => state.setColor);
+  const color = useMenuStore((state) => state.color);
+  const showColorPalet = useMenuStore((state) => state.showColorPalet);
+  const setShowColorPalet = useMenuStore((state) => state.setShowColorPalet);
+  const strokeWidth = useMenuStore((state) => state.strokeWidth);
+  const setStrokeWidth = useMenuStore((state) => state.setStrokeWidth);
+
+  const undoStack = useBoardStore((state) => state.undoStack);
+  const redoStack = useBoardStore((state) => state.redoStack);
+  const modifyStacks = useBoardStore((state) => state.modifyStacks);
+  const updateShapesUndoRedo = useBoardStore(
+    (state) => state.updateShapesUndoRedo
+  );
+
+  const { doUndo, doRedo } = useUndoRedoHandlers({
+    undoStack,
+    redoStack,
+    modifyStacks,
+    updateShapesUndoRedo,
+  });
 
   return (
     <div className="flex items-center gap-1 absolute z-100 top-20">
       <div className="bg-white rounded-md mx-auto flex gap-1 p-2 shadow-md cursor-pointer">
         <div className="flex p-1 border-r-2">
-          <ToolIcon size={35} Icon={BiUndo} selected={tool === "Undo"} />
-          <ToolIcon size={35} Icon={BiRedo} selected={tool === "Redo"} />
+          <ToolIcon
+            onClick={() => doUndo()}
+            size={35}
+            Icon={BiUndo}
+            selected={tool === "Undo"}
+          />
+          <ToolIcon
+            onClick={() => doRedo()}
+            size={35}
+            Icon={BiRedo}
+            selected={tool === "Redo"}
+          />
         </div>
 
         <div className="flex items-center gap-2 p-1">
@@ -56,7 +83,12 @@ const Tools = () => {
             Icon={PiScribbleLoop}
             selected={tool === "Scribble"}
           />
-          <ToolIcon size={20} Icon={GrCursor} selected={tool === "Move"} />
+          <ToolIcon
+            onClick={() => setTool("Move")}
+            size={20}
+            Icon={GrCursor}
+            selected={tool === "Move"}
+          />
           <ToolIcon
             size={20}
             Icon={AiOutlineClear}
@@ -67,13 +99,13 @@ const Tools = () => {
             <ToolIcon
               size={30}
               Icon={BiSolidColor}
-              color={selectedColor}
-              onClick={() => setShowColorPalet((prev) => !prev)}
+              color={color}
+              onClick={() => setShowColorPalet(!showColorPalet)}
               selected={tool === "ColorPic"}
             />
             {showColorPalet && (
               <div className="absolute z-50">
-                <HexColorPicker onChange={setSelectedColor} />
+                <HexColorPicker onChange={setColor} />
               </div>
             )}
           </div>

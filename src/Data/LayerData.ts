@@ -160,3 +160,39 @@ export const dummyLayerData: LayerData = {
     },
   },
 };
+
+export type UndoRedoType = "Add" | "Remove" | "Update";
+
+export interface AddType {
+  type: UndoRedoType;
+  startingPos: { x: number; y: number };
+  shapeDetails: ShapeNode;
+}
+
+export type UndoType = AddType;
+
+// dummy undo redo
+export const dummyUndo: UndoType[] = [
+  {
+    type: "Add",
+    startingPos: { x: 100, y: 200 },
+    shapeDetails: {
+      id: crypto.randomUUID(),
+      name: "Rectangle-New",
+      type: "shape",
+      shapeType: "Rectangle",
+      parentId: "root",
+      pos: 4,
+      visibility: true,
+      props: {
+        x: 100,
+        y: 200,
+        width: 0,
+        height: 0,
+        stroke: "Red",
+        fill: undefined,
+        strokeWidth: 4,
+      },
+    },
+  },
+];

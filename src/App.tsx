@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import LayerPanel from "./Components/LayerComponent/LayerPanel";
 import Menu from "./Components/ToolBarComponent/Menu";
 import Tools from "./Components/ToolBarComponent/Tools";
 import WorkBoard from "./Components/WorkBoardComponent/WorkBoard";
 import { useBoardStore } from "./Store/BoardStore";
+import Konva from "konva";
 
 const App = () => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const layerData = useBoardStore((state) => state.allShapes);
+  const transformerRef = useRef<Konva.Transformer | null>(null);
 
   return (
     <div className="font-outfit min-h-[100vh] h-[100vh] overflow-hidden flex flex-col relative">
@@ -27,7 +29,7 @@ const App = () => {
       {/* WorkSpace */}
       <div className="flex flex-1">
         <div className="flex-1 relative overflow-hidden">
-          <WorkBoard layerData={layerData} />
+          <WorkBoard layerData={layerData} transformerRef={transformerRef} />
         </div>
         <div className="w-1/4">
           <LayerPanel layerData={layerData} />
