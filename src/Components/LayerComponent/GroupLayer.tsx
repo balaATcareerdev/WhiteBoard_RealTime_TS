@@ -5,6 +5,7 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { FaAngleDown } from "react-icons/fa";
 import { useLayerStore } from "../../Store/LayerStore";
+import useDrawHandlers from "../../Hooks/useDrawHandlers";
 
 interface GroupLayerProps {
   shapeId: string;
@@ -28,6 +29,9 @@ const GroupLayer = ({
   const setActiveLayer = useLayerStore((state) => state.setActiveLayer);
 
   const activeLayer = useLayerStore((state) => state.activeLayer);
+  const transformElem = useLayerStore((state) => state.transformElem);
+
+  const { deactiveTransformation } = useDrawHandlers();
 
   return (
     <div
@@ -54,6 +58,9 @@ const GroupLayer = ({
             onClick={(e) => {
               e.stopPropagation();
               toggleVisibility(node.id);
+              if (transformElem && node.children.includes(transformElem)) {
+                deactiveTransformation();
+              }
             }}
           >
             {node.visibility ? (

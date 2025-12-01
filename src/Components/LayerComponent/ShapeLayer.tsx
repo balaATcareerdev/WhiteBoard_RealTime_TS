@@ -3,6 +3,9 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { useLayerStore } from "../../Store/LayerStore";
 import { useState, type ChangeEvent } from "react";
+import useDrawHandlers from "../../Hooks/useDrawHandlers";
+import { parentGroupVisibility } from "../../Utils/ShapeDataUtils";
+import { useBoardStore } from "../../Store/BoardStore";
 
 interface ShapeLayerProps {
   node: ShapeNode;
@@ -19,10 +22,11 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
   const activeLayer = useLayerStore((state) => state.activeLayer);
 
   const transformElem = useLayerStore((state) => state.transformElem);
-
+  const allShapes = useBoardStore((state) => state.allShapes);
   const handleSelectLayer = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedLayers(node.id, e.target.checked);
   };
+  const { deactiveTransformation } = useDrawHandlers();
 
   return (
     <div
@@ -41,13 +45,20 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
           <div
             className="p-1 hover:bg-gray-50 rounded-full cursor-pointer"
             onClick={() => {
-              toggleVisibility(node.id);
+              if (
+                node.parentId === "root" ||
+                parentGroupVisibility(allShapes, node.parentId)
+              ) {
+                toggleVisibility(node.id);
+              }
               if (node.id === transformElem) {
-                // deactive the transform
+                deactiveTransformation();
               }
             }}
           >
-            {node.visibility ? (
+            {node.visibility &&
+            (node.parentId === "root" ||
+              parentGroupVisibility(allShapes, node.parentId)) ? (
               <FaEye color="#4a5565" />
             ) : (
               <FaEyeSlash color="#4a5565" />

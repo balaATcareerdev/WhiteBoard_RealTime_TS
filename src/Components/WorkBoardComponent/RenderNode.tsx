@@ -23,7 +23,7 @@ const RenderNode = ({
       case "Rectangle":
         return (
           <Rect
-            key={shape.id}
+            id={shape.id}
             x={shape.props.x}
             y={shape.props.y}
             width={shape.props.width}
@@ -40,7 +40,7 @@ const RenderNode = ({
       case "Circle":
         return (
           <Circle
-            key={shape.id}
+            id={shape.id}
             x={shape.props.x}
             y={shape.props.y}
             radius={shape.props.radius}
@@ -57,6 +57,7 @@ const RenderNode = ({
       case "Scribble":
         return (
           <Line
+            id={shape.id}
             points={shape.props.points}
             stroke={shape.props.stroke}
             strokeWidth={shape.props.strokeWidth}
