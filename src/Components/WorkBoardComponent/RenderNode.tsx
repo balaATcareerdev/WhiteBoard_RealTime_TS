@@ -2,6 +2,8 @@ import { Circle, Group, Line, Rect } from "react-konva";
 import type { GroupNode, LayerData, ShapeNode } from "../../Data/LayerData";
 import Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
+import useShapeChangeHandlers from "../../Hooks/useShapeChangeHandlers";
+import { useMenuStore } from "../../Store/MenuStore";
 
 interface RenderNodeProps {
   nodeId: string;
@@ -14,6 +16,10 @@ const RenderNode = ({
   layerData,
   activateTransformation,
 }: RenderNodeProps) => {
+  const tool = useMenuStore((state) => state.tool);
+
+  const { dragShape, transformShape } = useShapeChangeHandlers();
+
   const node = layerData.nodes[nodeId];
   if (!node) return;
 
@@ -33,7 +39,10 @@ const RenderNode = ({
             rotation={shape.props.rotation}
             visible={shape.visibility}
             strokeWidth={shape.props.strokeWidth}
+            draggable={tool === "Move"}
+            onDragEnd={(e) => dragShape(e, shape.id, true)}
             onClick={(e) => activateTransformation(e)}
+            onTransformEnd={(e) => transformShape(e, shape.id)}
           />
         );
 
@@ -49,6 +58,8 @@ const RenderNode = ({
             rotation={shape.props.rotation}
             fill={shape.props.fill}
             visible={shape.visibility}
+            draggable={tool === "Move"}
+            onDragEnd={(e) => dragShape(e, shape.id, true)}
             onClick={(e) => activateTransformation(e)}
           />
         );

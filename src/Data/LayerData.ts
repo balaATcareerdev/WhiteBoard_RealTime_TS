@@ -164,12 +164,26 @@ export const dummyLayerData: LayerData = {
 export type UndoRedoType = "Add" | "Remove" | "Update";
 
 export interface AddType {
-  type: UndoRedoType;
+  type: "Add";
   startingPos: { x: number; y: number };
   shapeDetails: ShapeNode;
 }
 
-export type UndoType = AddType;
+export interface RemoveType {
+  type: "Remove";
+  startingPos: { x: number; y: number };
+  shapeDetails: ShapeNode;
+}
+
+export interface UpdateType {
+  type: "Update";
+  id: string;
+  parentId: string;
+  prev: Partial<ShapeNode["props"]>;
+  next: Partial<ShapeNode["props"]>;
+}
+
+export type UndoType = AddType | UpdateType | RemoveType;
 
 // dummy undo redo
 export const dummyUndo: UndoType[] = [
@@ -193,6 +207,17 @@ export const dummyUndo: UndoType[] = [
         fill: undefined,
         strokeWidth: 4,
       },
+    },
+  },
+  {
+    type: "Update",
+    id: "shape-1",
+    parentId: "group-1",
+    prev: {
+      x: 100,
+    },
+    next: {
+      x: 200,
     },
   },
 ];

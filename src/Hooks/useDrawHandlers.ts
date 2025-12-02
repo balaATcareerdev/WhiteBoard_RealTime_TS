@@ -305,14 +305,6 @@ export default function useDrawHandlers() {
     transformerRef?.current?.nodes([]);
   }
 
-  // useEffect(() => {
-  //   if (currentAction) console.log(currentAction);
-  // }, [currentAction]);
-
-  // useEffect(() => {
-  //   console.log(allShapes);
-  // }, [allShapes]);
-
   return {
     handleMouseClick,
     handleMouseMove,

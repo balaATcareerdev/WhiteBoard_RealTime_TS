@@ -8,7 +8,6 @@ import { useBoardStore } from "./Store/BoardStore";
 const App = () => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const layerData = useBoardStore((state) => state.allShapes);
-  // const transformerRef = useRef<Konva.Transformer | null>(null);
 
   return (
     <div className="font-outfit min-h-[100vh] h-[100vh] overflow-hidden flex flex-col relative">

@@ -47,7 +47,6 @@ const GroupLayer = ({
       {/* Root */}
       <div
         onClick={() => {
-          console.log(node.id);
           setActiveLayer(node.id);
         }}
         className={`flex items-center justify-between gap-1 `}

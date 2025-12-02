@@ -7,6 +7,7 @@ import {
   type LayerNode,
   type ShapeNode,
   type UndoType,
+  type UpdateType,
 } from "../Data/LayerData";
 import { createRef, type RefObject } from "react";
 
@@ -25,6 +26,7 @@ interface BoardStoreProps {
     latestAction: UndoType,
     actionType: "undo" | "redo"
   ) => void;
+  updateSingleShape: (action: UpdateType) => void;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -46,6 +48,8 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       },
     });
   },
+
+  // ! new Shape Add - When Drawing
   addNewShape: (newShape, layer) => {
     const prev = get().allShapes;
 
@@ -108,11 +112,13 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
   undoStack: [],
   redoStack: [],
 
+  // ! After Drawing/updating a shape - use this addNewUndo to update the undo
   addNewUndo: (newAction) => {
     const prev = get().undoStack;
     set({ undoStack: [...prev, newAction] });
   },
 
+  // ! gets a full new stack for undo|redo and replace it
   modifyStacks: (newStack, stackType) => {
     switch (stackType) {
       case "undo":
@@ -128,11 +134,17 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
     }
   },
 
+  // ! when clicked on the undo or redo - update the shape - only for the ||**undo redo handlers hook**||
   updateShapesUndoRedo: (latestAction, actionType) => {
     let currentData = get().allShapes;
-    const id = latestAction.shapeDetails.id;
-    const parentId = latestAction.shapeDetails.parentId;
-    console.log(latestAction);
+    const id =
+      latestAction.type === "Update"
+        ? latestAction.id
+        : latestAction.shapeDetails.id;
+    const parentId =
+      latestAction.type === "Update"
+        ? latestAction.parentId
+        : latestAction.shapeDetails.parentId;
 
     switch (actionType) {
       case "undo":
@@ -172,7 +184,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
                   )
                 ),
               };
-              console.log(currentData);
 
               set({ allShapes: currentData });
             }
@@ -180,9 +191,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
 
           case "Remove":
             {
-              const id = latestAction.shapeDetails.id;
-              const parentId = latestAction.shapeDetails.parentId;
-
               currentData = {
                 ...currentData,
                 nodes: {
@@ -214,6 +222,30 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
             }
 
             set({ allShapes: currentData });
+            break;
+
+          case "Update":
+            {
+              const node = currentData.nodes[id];
+              if (!node || node.type !== "shape") break;
+
+              const shapeNode = node as ShapeNode;
+
+              currentData = {
+                ...currentData,
+                nodes: {
+                  ...currentData.nodes,
+                  [id]: {
+                    ...shapeNode,
+                    props: {
+                      ...shapeNode.props,
+                      ...latestAction.prev,
+                    },
+                  },
+                },
+              };
+              set({ allShapes: currentData });
+            }
             break;
 
           default:
@@ -297,11 +329,34 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
                     )
                   ),
                 };
-                console.log(currentData);
 
                 set({ allShapes: currentData });
               }
               break;
+
+            case "Update":
+              {
+                const node = currentData.nodes[id];
+                if (!node || node.type !== "shape") break;
+
+                const shapeNode = node as ShapeNode;
+
+                currentData = {
+                  ...currentData,
+                  nodes: {
+                    ...currentData.nodes,
+                    [id]: {
+                      ...shapeNode,
+                      props: {
+                        ...shapeNode.props,
+                        ...latestAction.prev,
+                      },
+                    },
+                  },
+                };
+              }
+
+              set({ allShapes: currentData });
               break;
 
             default:
@@ -313,5 +368,31 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       default:
         break;
     }
+  },
+
+  // ! Update the Props of a shape
+  // ? Todo Update the pos, parentId of the shape
+  updateSingleShape: (action) => {
+    const prev = get().allShapes;
+    const node = prev.nodes[action.id];
+    if (!node || node.type !== "shape") return;
+
+    const updatedNodes: ShapeNode = {
+      ...node,
+      props: {
+        ...node.props,
+        ...action.next,
+      },
+    };
+
+    set({
+      allShapes: {
+        ...prev,
+        nodes: {
+          ...prev.nodes,
+          [action.id]: updatedNodes,
+        },
+      },
+    });
   },
 }));

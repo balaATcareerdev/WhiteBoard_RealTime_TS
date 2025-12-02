@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import type { UndoType } from "../Data/LayerData";
 import { useBoardStore } from "../Store/BoardStore";
 
@@ -10,21 +9,21 @@ export default function useUndoRedoHandlers() {
     (state) => state.updateShapesUndoRedo
   );
 
+  //! Undo CLick
   function doUndo() {
     if (undoStack?.length === 0) return;
-    console.log(undoStack);
 
     const latestAction: UndoType = undoStack[undoStack.length - 1];
+    console.log(latestAction);
 
     if (!latestAction) return;
-    console.log(latestAction);
 
     const updatedUndoStack = undoStack.slice(0, -1);
 
-    // update undo
+    //? update undo without the latest action
     modifyStacks(updatedUndoStack, "undo");
 
-    // update redo
+    //? update redo with the latest action
     const updatedRedoStack: UndoType[] = [
       ...redoStack,
       InverseType(latestAction),
@@ -34,11 +33,12 @@ export default function useUndoRedoHandlers() {
     updateShapesUndoRedo(latestAction, "undo");
   }
 
+  // ! Redo CLick
   function doRedo() {
     if (redoStack.length === 0) return;
     const updatedRedoStack = redoStack.slice(0, -1);
 
-    // update redo
+    //? update redo without the latest redo
     modifyStacks(updatedRedoStack, "redo");
 
     const latestRedo = redoStack[redoStack.length - 1];
@@ -47,12 +47,10 @@ export default function useUndoRedoHandlers() {
       InverseType(latestRedo),
     ];
 
-    console.log(latestRedo);
-
-    // update undo
+    //? update undo with the latestRedo
     modifyStacks(updatedUndoStack, "undo");
 
-    // update shape
+    //? update shape
     updateShapesUndoRedo(latestRedo, "redo");
   }
 
@@ -70,14 +68,18 @@ export default function useUndoRedoHandlers() {
           type: "Add",
         };
 
+      case "Update":
+        return {
+          ...action,
+          type: "Update",
+          prev: action.next,
+          next: action.prev,
+        };
+
       default:
         return action;
     }
   }
-
-  useEffect(() => {
-    console.log(undoStack);
-  }, [undoStack]);
 
   return { doUndo, doRedo };
 }
