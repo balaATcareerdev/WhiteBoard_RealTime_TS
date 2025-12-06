@@ -78,7 +78,7 @@ export const dummyLayerData: LayerData = {
       type: "shape",
       shapeType: "Rectangle",
       parentId: "group-1",
-      pos: 2,
+      pos: 1,
       visibility: true,
 
       props: {

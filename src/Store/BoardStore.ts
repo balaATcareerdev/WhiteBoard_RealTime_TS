@@ -27,6 +27,7 @@ interface BoardStoreProps {
     actionType: "undo" | "redo"
   ) => void;
   updateSingleShape: (action: UpdateType) => void;
+  updateShapeNodes: (updatedShapes: LayerNode[]) => void;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -392,6 +393,24 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
           ...prev.nodes,
           [action.id]: updatedNodes,
         },
+      },
+    });
+  },
+
+  updateShapeNodes: (updatedShapes) => {
+    const nodes = get().allShapes.nodes;
+
+    updatedShapes.forEach((item) => {
+      nodes[item.id] = {
+        ...nodes[item.id],
+        pos: item.pos,
+      };
+    });
+
+    set({
+      allShapes: {
+        ...get().allShapes,
+        nodes,
       },
     });
   },
