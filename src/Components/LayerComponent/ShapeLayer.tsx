@@ -100,8 +100,9 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
         {/* check */}
         <input
           type="checkbox"
+          onClick={(e) => e.stopPropagation()}
           onChange={handleSelectLayer}
-          className="h-4 w-4"
+          className="h-5 w-5"
         />
       </div>
     </div>
