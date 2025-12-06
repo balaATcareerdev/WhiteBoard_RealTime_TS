@@ -41,6 +41,11 @@ export const useLayerStore = create<LayerStoreProps>((set, get) => ({
   },
   layerToDraw: "root",
   setLayerToDraw: (newLayer) => {
+    console.log(newLayer);
+    if (get().layerToDraw === newLayer) {
+      set({ layerToDraw: "root" });
+      return;
+    }
     set({ layerToDraw: newLayer });
   },
 }));
