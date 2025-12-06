@@ -14,9 +14,9 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
   });
 
   return (
-    <div className=" bg-gray-50 shadow-lg h-full p-1 rounded-l-2xl px-2 border-l-2 border-gray-200">
+    <div className="p-1 border-l-2 border-gray-200 h-full">
       <h1 className="font-medium text-lg text-gray-700">Layers</h1>
-      <hr className="border-gray-500 mt-2 mb-2" />
+      <hr className="border-gray-200 mt-2 mb-2" />
       {sortedLayerData.map((childId) => (
         <RenderLayerItem
           toggleVisibility={toggleVisibility}

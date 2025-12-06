@@ -4,7 +4,7 @@ export type ToolType =
   | "Rectangle"
   | "Circle"
   | "Scribble"
-  | "Pen"
+  | "Line"
   | "Move"
   | "Clear"
   | "ColorPic"

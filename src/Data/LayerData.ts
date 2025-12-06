@@ -1,4 +1,4 @@
-export type ShapeType = "Rectangle" | "Circle" | "Scribble" | "Pen";
+export type ShapeType = "Rectangle" | "Circle" | "Scribble" | "Line";
 
 export interface ShapeNode {
   id: string;
@@ -53,7 +53,7 @@ export interface LayerData {
 // dummy data
 export const dummyLayerData: LayerData = {
   root: {
-    children: ["group-1", "group-2", "shape-4"], //! orders in the panel
+    children: ["group-1"], //! orders in the panel
   },
   nodes: {
     "group-1": {
@@ -61,7 +61,7 @@ export const dummyLayerData: LayerData = {
       name: "Group-1",
       type: "group",
       parentId: "root",
-      children: ["shape-1", "shape-3"],
+      children: ["shape-1", "shape-3", "group-3"],
       pos: 2,
       visibility: true,
 
@@ -76,7 +76,7 @@ export const dummyLayerData: LayerData = {
       id: "shape-1",
       name: "Pen-1",
       type: "shape",
-      shapeType: "Pen",
+      shapeType: "Line",
       parentId: "group-1",
       pos: 2,
       visibility: true,
@@ -126,7 +126,7 @@ export const dummyLayerData: LayerData = {
       name: "Rectangle2",
       type: "shape",
       shapeType: "Rectangle",
-      parentId: "group-2",
+      parentId: "group-3",
       pos: 1,
       visibility: true,
       props: {
@@ -156,6 +156,36 @@ export const dummyLayerData: LayerData = {
         stroke: "Black",
         fill: "red",
         strokeWidth: 1,
+      },
+    },
+
+    "group-3": {
+      id: "group-3",
+      name: "Group-3",
+      type: "group",
+      parentId: "group-1",
+      children: ["shape-2", "group-4"],
+      pos: 3,
+      visibility: true,
+
+      props: {
+        x: 200,
+        y: -100,
+      },
+    },
+
+    "group-4": {
+      id: "group-4",
+      name: "Group-4",
+      type: "group",
+      parentId: "group-3",
+      children: ["shape-2"],
+      pos: 4,
+      visibility: true,
+
+      props: {
+        x: 200,
+        y: -100,
       },
     },
   },

@@ -6,6 +6,7 @@ import { useMenuStore } from "../Store/MenuStore";
 import type { ShapeNode } from "../Data/LayerData";
 import { useBoardStore } from "../Store/BoardStore";
 import { findPositionOfNewShape } from "../Utils/NewShapeUtils";
+import { Tools } from "../constants/ToolConst";
 
 export type ActionType = {
   type: "Add";
@@ -52,14 +53,14 @@ export default function useDrawHandlers() {
 
     // switch case
     switch (tool) {
-      case "Rectangle":
+      case Tools.Rectangle:
         {
           const action: ActionType = {
             type: "Add",
             startingPos: { x, y },
             shapeDetails: {
               id: crypto.randomUUID(),
-              name: "Rectangle-New",
+              name: `${Tools.Rectangle}-New`,
               type: "shape",
               shapeType: "Rectangle",
               parentId: activeLayer,
@@ -88,9 +89,9 @@ export default function useDrawHandlers() {
             startingPos: { x, y },
             shapeDetails: {
               id: crypto.randomUUID(),
-              name: "Circle-new",
+              name: `${Tools.Circle}-new`,
               type: "shape",
-              shapeType: "Circle",
+              shapeType: tool,
               parentId: activeLayer,
               pos: newPosition,
               visibility: true,
@@ -109,16 +110,16 @@ export default function useDrawHandlers() {
         }
         break;
 
-      case "Pen":
+      case "Line":
         {
           const action: ActionType = {
             type: "Add",
             startingPos: { x, y },
             shapeDetails: {
               id: crypto.randomUUID(),
-              name: "Pen-new",
+              name: `${Tools.Line}-new`,
               type: "shape",
-              shapeType: "Pen",
+              shapeType: tool,
               parentId: activeLayer,
               pos: newPosition,
               visibility: true,
@@ -141,9 +142,9 @@ export default function useDrawHandlers() {
             startingPos: { x, y },
             shapeDetails: {
               id: crypto.randomUUID(),
-              name: "Scribble-new",
+              name: `${Tools.Scribble}-new`,
               type: "shape",
-              shapeType: "Scribble",
+              shapeType: tool,
               parentId: activeLayer,
               pos: newPosition,
               visibility: true,
@@ -176,7 +177,7 @@ export default function useDrawHandlers() {
     const y = (pointer.y - stageRef.current.y()) / stageRef.current.scaleY();
 
     switch (tool) {
-      case "Rectangle":
+      case Tools.Rectangle:
         {
           setCurrentAction((prev) =>
             prev
@@ -196,7 +197,7 @@ export default function useDrawHandlers() {
         }
         break;
 
-      case "Circle":
+      case Tools.Circle:
         {
           setCurrentAction((prev) =>
             prev
@@ -215,7 +216,7 @@ export default function useDrawHandlers() {
         }
         break;
 
-      case "Pen":
+      case Tools.Line:
         {
           setCurrentAction((prev) => {
             if (!prev) return prev;
@@ -240,7 +241,7 @@ export default function useDrawHandlers() {
         }
         break;
 
-      case "Scribble":
+      case Tools.Scribble:
         {
           setCurrentAction((prev) => {
             if (!prev) return prev;

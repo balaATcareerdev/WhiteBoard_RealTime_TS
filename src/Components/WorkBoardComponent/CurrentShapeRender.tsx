@@ -1,5 +1,6 @@
 import { Circle, Line, Rect } from "react-konva";
 import type { ShapeNode } from "../../Data/LayerData";
+import { Tools } from "../../constants/ToolConst";
 
 interface CurrentShapeRenderProps {
   shapeDetails?: ShapeNode;
@@ -9,7 +10,7 @@ const CurrentShapeRender = ({ shapeDetails }: CurrentShapeRenderProps) => {
   if (!shapeDetails) return null;
 
   switch (shapeDetails.shapeType) {
-    case "Rectangle":
+    case Tools.Rectangle:
       return (
         <Rect
           x={shapeDetails.props.x}
@@ -23,7 +24,7 @@ const CurrentShapeRender = ({ shapeDetails }: CurrentShapeRenderProps) => {
         />
       );
 
-    case "Circle": {
+    case Tools.Circle: {
       return (
         <Circle
           x={shapeDetails.props.x}
@@ -37,8 +38,8 @@ const CurrentShapeRender = ({ shapeDetails }: CurrentShapeRenderProps) => {
       );
     }
 
-    case "Pen":
-    case "Scribble":
+    case Tools.Line:
+    case Tools.Scribble:
       return (
         <Line
           points={shapeDetails.props.points}

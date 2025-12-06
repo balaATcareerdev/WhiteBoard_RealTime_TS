@@ -4,6 +4,7 @@ import Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
 import useShapeChangeHandlers from "../../Hooks/useShapeChangeHandlers";
 import { useMenuStore } from "../../Store/MenuStore";
+import { Tools } from "../../constants/ToolConst";
 
 interface RenderNodeProps {
   nodeId: string;
@@ -26,7 +27,7 @@ const RenderNode = ({
   if (node.type == "shape") {
     const shape = node as ShapeNode;
     switch (shape.shapeType) {
-      case "Rectangle":
+      case Tools.Rectangle:
         return (
           <Rect
             id={shape.id}
@@ -46,7 +47,7 @@ const RenderNode = ({
           />
         );
 
-      case "Circle":
+      case Tools.Circle:
         return (
           <Circle
             id={shape.id}
@@ -64,8 +65,8 @@ const RenderNode = ({
           />
         );
 
-      case "Pen":
-      case "Scribble":
+      case Tools.Line:
+      case Tools.Scribble:
         return (
           <Line
             id={shape.id}

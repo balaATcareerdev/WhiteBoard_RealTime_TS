@@ -60,10 +60,10 @@ const Tools = () => {
             selected={tool === "Circle"}
           />
           <ToolIcon
-            onClick={() => setTool("Pen")}
+            onClick={() => setTool("Line")}
             size={20}
             Icon={FaPenNib}
-            selected={tool === "Pen"}
+            selected={tool === "Line"}
           />
           <ToolIcon
             onClick={() => setTool("Scribble")}

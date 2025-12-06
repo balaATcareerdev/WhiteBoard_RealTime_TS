@@ -6,6 +6,7 @@ import { FaEyeSlash } from "react-icons/fa";
 import { FaAngleDown } from "react-icons/fa";
 import { useLayerStore } from "../../Store/LayerStore";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
+import { CiFolderOn } from "react-icons/ci";
 
 interface GroupLayerProps {
   shapeId: string;
@@ -36,24 +37,22 @@ const GroupLayer = ({
   return (
     <div
       key={shapeId}
-      className={`p-2  ${
-        activeLayer === node.id
-          ? "outline-blue-700 outline-2 bg-blue-200"
-          : "outline-gray-400 outline bg-gray-50"
-      }  rounded-sm select-none transition-colors duration-300 ease-in-out  ${
-        node.parentId === "root" ? "mb-1" : ""
-      }`}
+      className={`select-none ${node.parentId === "root" ? "" : "pl-10"}`}
     >
-      {/* Root */}
+      {/* Root Header */}
       <div
+        className={`flex ${
+          node.parentId === "root" ? "" : "border-gray-100 border-l-2"
+        } items-center justify-between px-1 hover:bg-gray-100 py-1 ${
+          activeLayer === node.id ? "bg-blue-50" : ""
+        }`}
         onClick={() => {
           setActiveLayer(node.id);
         }}
-        className={`flex items-center justify-between gap-1 `}
       >
         <div className="flex items-center">
+          {/* Eye */}
           <div
-            className="p-1 hover:bg-gray-50 rounded-full cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               toggleVisibility(node.id);
@@ -68,8 +67,15 @@ const GroupLayer = ({
               <FaEyeSlash color="#4a5565" />
             )}
           </div>
-          <span className="font-semibold">{node.name}</span>
+
+          {/* Logo and name */}
+          <div className={`flex items-center text-lg pl-4 gap-1`}>
+            <CiFolderOn />
+            <span>{node.name}</span>
+          </div>
         </div>
+
+        {/* Right includes the Collapse*/}
         <div onClick={() => setOpen((prev) => !prev)}>
           <FaAngleDown
             className={`transition-transform duration-200 ${
@@ -80,15 +86,20 @@ const GroupLayer = ({
       </div>
 
       {/* Child */}
-      <div className={`${open ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      <div
+        className={`transition-all duration-200 overflow-hidden ${
+          open
+            ? "max-h-96 opacity-100 pointer-events-auto"
+            : "max-h-0 opacity-0 pointer-events-none"
+        }`}
+      >
         {childElements.map((childId) => (
-          <div key={childId}>
-            <RenderLayerItem
-              shapeId={childId}
-              layerData={layerData}
-              toggleVisibility={toggleVisibility}
-            />
-          </div>
+          <RenderLayerItem
+            shapeId={childId}
+            layerData={layerData}
+            toggleVisibility={toggleVisibility}
+            key={childId}
+          />
         ))}
       </div>
     </div>
