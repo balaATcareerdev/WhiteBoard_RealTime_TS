@@ -14,7 +14,11 @@ export type ActionType = {
   startingPos: { x: number; y: number };
 };
 
-export default function useDrawHandlers() {
+export default function useDrawHandlers({
+  spaceDown = false,
+}: {
+  spaceDown?: boolean;
+} = {}) {
   const [currentAction, setCurrentAction] = useState<ActionType | null>(null);
   const isDrawing = useRef<boolean>(false);
   const addNewShape = useBoardStore((state) => state.addNewShape);
@@ -28,9 +32,11 @@ export default function useDrawHandlers() {
   const addNewUndo = useBoardStore((state) => state.addNewUndo);
   const stageRef = useBoardStore((state) => state.stageRef);
   const transformerRef = useBoardStore((state) => state.transformerRef);
+  const layerToDraw = useLayerStore((state) => state.layerToDraw);
 
   // draw the shape
   function handleMouseClick(e: KonvaEventObject<MouseEvent>) {
+    if (spaceDown) return;
     const node = e.target;
     const stage = stageRef.current;
     if (!stage) return;
@@ -49,7 +55,7 @@ export default function useDrawHandlers() {
     const x = (pointer.x - stage.x()) / stage.scaleX();
     const y = (pointer.y - stage.y()) / stage.scaleY();
 
-    const newPosition = findPositionOfNewShape(allShapes, activeLayer);
+    const newPosition = findPositionOfNewShape(allShapes, layerToDraw);
 
     // switch case
     switch (tool) {
@@ -63,7 +69,7 @@ export default function useDrawHandlers() {
               name: `${Tools.Rectangle}-New`,
               type: "shape",
               shapeType: "Rectangle",
-              parentId: activeLayer,
+              parentId: layerToDraw,
               pos: newPosition,
               visibility: true,
               props: {
@@ -77,6 +83,7 @@ export default function useDrawHandlers() {
               },
             },
           };
+          console.log(action);
 
           setCurrentAction(action);
         }
@@ -166,6 +173,7 @@ export default function useDrawHandlers() {
   }
 
   function handleMouseMove() {
+    if (spaceDown) return;
     // do nothing when not drawing
     if (!isDrawing.current) return;
     if (!stageRef.current) return;
@@ -269,6 +277,7 @@ export default function useDrawHandlers() {
   }
 
   function handleMouseUp() {
+    if (spaceDown) return;
     isDrawing.current = false;
     switch (tool) {
       case "Rectangle":
@@ -291,7 +300,8 @@ export default function useDrawHandlers() {
     const newShapeData = currentAction?.shapeDetails;
 
     if (!newShapeData) return;
-    addNewShape(newShapeData, activeLayer);
+    addNewShape(newShapeData, layerToDraw);
+
     setCurrentAction(null);
   }
 

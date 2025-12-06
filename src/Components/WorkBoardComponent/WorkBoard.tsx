@@ -28,7 +28,7 @@ const WorkBoard = ({ layerData }: WorkBoardProps) => {
     handleMouseUp,
     currentAction,
     activateTransformation,
-  } = useDrawHandlers();
+  } = useDrawHandlers({ spaceDown });
 
   // Measure container size dynamically
   useLayoutEffect(() => {

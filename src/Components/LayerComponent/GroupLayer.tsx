@@ -7,6 +7,8 @@ import { FaAngleDown } from "react-icons/fa";
 import { useLayerStore } from "../../Store/LayerStore";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
 import { CiFolderOn } from "react-icons/ci";
+import { layerToDrawShape } from "../../Utils/ShapeDataUtils";
+import { useBoardStore } from "../../Store/BoardStore";
 
 interface GroupLayerProps {
   shapeId: string;
@@ -33,6 +35,8 @@ const GroupLayer = ({
   const transformElem = useLayerStore((state) => state.transformElem);
 
   const { deactiveTransformation } = useDrawHandlers();
+  const setLayerToDraw = useLayerStore((state) => state.setLayerToDraw);
+  const allShapes = useBoardStore((state) => state.allShapes);
 
   return (
     <div
@@ -48,6 +52,8 @@ const GroupLayer = ({
         }`}
         onClick={() => {
           setActiveLayer(node.id);
+          const layerToDraw = layerToDrawShape(allShapes, node.id);
+          setLayerToDraw(layerToDraw);
         }}
       >
         <div className="flex items-center">

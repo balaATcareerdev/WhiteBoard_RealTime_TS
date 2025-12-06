@@ -7,6 +7,8 @@ interface LayerStoreProps {
   setActiveLayer: (nodeId: string) => void;
   transformElem: string | null;
   setTransformElem: (newId: string | null) => void;
+  layerToDraw: string;
+  setLayerToDraw: (newLayer: string) => void;
 }
 
 export const useLayerStore = create<LayerStoreProps>((set, get) => ({
@@ -36,5 +38,9 @@ export const useLayerStore = create<LayerStoreProps>((set, get) => ({
   transformElem: null,
   setTransformElem: (newId: string | null) => {
     set({ transformElem: newId });
+  },
+  layerToDraw: "root",
+  setLayerToDraw: (newLayer) => {
+    set({ layerToDraw: newLayer });
   },
 }));

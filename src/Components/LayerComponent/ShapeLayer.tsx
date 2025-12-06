@@ -4,7 +4,10 @@ import { FaEyeSlash } from "react-icons/fa";
 import { useLayerStore } from "../../Store/LayerStore";
 import { type ChangeEvent } from "react";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
-import { parentGroupVisibility } from "../../Utils/ShapeDataUtils";
+import {
+  layerToDrawShape,
+  parentGroupVisibility,
+} from "../../Utils/ShapeDataUtils";
 import { useBoardStore } from "../../Store/BoardStore";
 import { RiRectangleLine } from "react-icons/ri";
 import { FaRegCircle } from "react-icons/fa";
@@ -37,12 +40,17 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
   const handleSelectLayer = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedLayers(node.id, e.target.checked);
   };
-  const { deactiveTransformation } = useDrawHandlers();
+  const { deactiveTransformation } = useDrawHandlers({});
+  const setLayerToDraw = useLayerStore((state) => state.setLayerToDraw);
 
   return (
     <div
       className={`select-none ${node.parentId === "root" ? "" : "pl-10"}`}
-      onClick={() => setActiveLayer(node.id)}
+      onClick={() => {
+        setActiveLayer(node.id);
+        const layerToDraw = layerToDrawShape(allShapes, node.id);
+        setLayerToDraw(layerToDraw);
+      }}
     >
       <div
         className={`flex justify-between items-center hover:bg-gray-100 py-1 pr-1 ${
@@ -56,7 +64,7 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
             className="p-1 w-6"
             onClick={(e) => {
               e.stopPropagation();
-              if (node.id !== activeLayer) return;
+              if (node.id !== activeLayer && node.parentId !== "root") return;
               if (
                 node.parentId === "root" ||
                 parentGroupVisibility(allShapes, node.parentId)

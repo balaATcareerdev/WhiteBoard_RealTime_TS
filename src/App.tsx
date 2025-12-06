@@ -10,7 +10,7 @@ const App = () => {
   const layerData = useBoardStore((state) => state.allShapes);
 
   return (
-    <div className="font-outfit min-h-[100vh] h-[100vh] overflow-hidden flex flex-col relative">
+    <div className="font-outfit min-h-screen h-screen flex flex-col overflow-hidden">
       {/* menu */}
       <div className="w-full p-1">
         <Menu setOpenMenu={setOpenMenu} openMenu={openMenu} />
@@ -25,11 +25,13 @@ const App = () => {
         </div>
       </div>
       {/* WorkSpace */}
-      <div className="flex flex-1">
+      <div className="flex flex-1 min-h-0">
         <div className="flex-1 relative overflow-hidden">
           <WorkBoard layerData={layerData} />
         </div>
-        <div className="w-1/4">
+
+        {/* layer panel */}
+        <div className="w-1/4 flex flex-col min-h-0 border-l border-gray-300">
           <LayerPanel layerData={layerData} />
         </div>
       </div>

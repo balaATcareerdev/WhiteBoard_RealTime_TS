@@ -76,6 +76,7 @@ const RenderNode = ({
             tension={0.5}
             lineCap="round"
             lineJoin="round"
+            visible={shape.visibility}
           />
         );
 
