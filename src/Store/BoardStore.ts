@@ -28,6 +28,7 @@ interface BoardStoreProps {
   ) => void;
   updateSingleShape: (action: UpdateType) => void;
   updateShapeNodes: (updatedShapes: LayerNode[]) => void;
+  deleteShapeGroup: (shapeOrGroupId: string) => void;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -411,6 +412,53 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       allShapes: {
         ...get().allShapes,
         nodes,
+      },
+    });
+  },
+
+  deleteShapeGroup: (shapeOrGroupId) => {
+    const allShapes = get().allShapes;
+    let updatedChildren = allShapes.root.children;
+    const nodes = allShapes.nodes;
+    const node = allShapes.nodes[shapeOrGroupId];
+    const parentId = node.parentId;
+    if (!node) return;
+
+    const newNodes = { ...nodes };
+
+    const deleteNode = (id: string) => {
+      const node = newNodes[id];
+      if (!node) return;
+
+      // If group, recursively delete children
+      if (node.type === "group") {
+        node.children.forEach(deleteNode);
+      }
+
+      // Delete the node itself
+      delete newNodes[id];
+    };
+
+    if (parentId === "root") {
+      updatedChildren = updatedChildren.filter((id) => id !== node.id);
+    } else {
+      const parentNode = { ...newNodes[parentId] };
+      if (parentNode && parentNode.type === "group") {
+        parentNode.children = parentNode.children.filter(
+          (id) => id !== node.id
+        );
+        newNodes[parentNode.id] = parentNode;
+      }
+    }
+
+    deleteNode(node.id);
+
+    set({
+      allShapes: {
+        root: {
+          children: updatedChildren,
+        },
+        nodes: newNodes,
       },
     });
   },

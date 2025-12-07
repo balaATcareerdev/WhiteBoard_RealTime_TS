@@ -24,5 +24,8 @@ export function findPositionOfNewShape(allShapes: LayerData, layer: string) {
 
   allShapes.root.children.forEach(loopGroup);
 
-  return Math.max(...result) + 1;
+  if (result.length > 0) {
+    return Math.max(...result) + 1;
+  }
+  return 1;
 }

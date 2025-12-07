@@ -156,7 +156,7 @@ export default function useDrawHandlers({
               pos: newPosition,
               visibility: true,
               props: {
-                points: [x, y],
+                points: [x, y, x, y],
                 stroke: color,
                 strokeWidth: strokeWidth,
               },
@@ -286,6 +286,17 @@ export default function useDrawHandlers({
             currentAction?.shapeDetails.props.width === 0 ||
             currentAction?.shapeDetails.props.height === 0
           ) {
+            return;
+          }
+        }
+        if (currentAction) {
+          addNewUndo(currentAction);
+        }
+        break;
+
+      case "Circle":
+        {
+          if (currentAction?.shapeDetails.props.radius === 0) {
             return;
           }
         }
