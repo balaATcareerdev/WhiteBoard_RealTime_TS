@@ -29,6 +29,7 @@ interface BoardStoreProps {
   updateSingleShape: (action: UpdateType) => void;
   updateShapeNodes: (updatedShapes: LayerNode[]) => void;
   deleteShapeGroup: (shapeOrGroupId: string) => void;
+  groupUngroup: (state: "Group" | "Ungroup", activeLayer: string) => void;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -459,6 +460,51 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
           children: updatedChildren,
         },
         nodes: newNodes,
+      },
+    });
+  },
+
+  groupUngroup: (state, activeLayer) => {
+    const allShapes = get().allShapes;
+    const nodes = allShapes.nodes;
+    let children = [...allShapes.root.children];
+    const node = nodes[activeLayer];
+    if (!node) return;
+    let { [activeLayer]: _, ...nodesCopy } = { ...nodes };
+    // let nodesCopy = { ...nodes };
+    const targetParentId = node.parentId;
+
+    if (state === "Ungroup" && node.type === "group") {
+      console.log(node.children);
+      children = children.filter((id) => id !== activeLayer);
+
+      node.children.forEach(updateParent);
+      console.log(nodesCopy);
+      console.log(children);
+    }
+
+    function updateParent(nodeId: string) {
+      console.log(nodesCopy);
+
+      nodesCopy = {
+        ...nodesCopy,
+        [nodeId]: {
+          ...nodesCopy[nodeId],
+          parentId: targetParentId,
+        },
+      };
+
+      if (targetParentId === "root") {
+        children.push(nodeId);
+      }
+    }
+
+    set({
+      allShapes: {
+        root: {
+          children,
+        },
+        nodes: nodesCopy,
       },
     });
   },
