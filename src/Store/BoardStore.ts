@@ -30,6 +30,10 @@ interface BoardStoreProps {
   updateShapeNodes: (updatedShapes: LayerNode[]) => void;
   deleteShapeGroup: (shapeOrGroupId: string) => void;
   groupUngroup: (state: "Group" | "Ungroup", activeLayer: string) => void;
+  updatePositionOfLayer: (
+    nodes: Record<string, LayerNode>,
+    groupId: string
+  ) => Record<string, LayerNode>;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -466,46 +470,85 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
 
   groupUngroup: (state, activeLayer) => {
     const allShapes = get().allShapes;
-    const nodes = allShapes.nodes;
-    let children = [...allShapes.root.children];
-    const node = nodes[activeLayer];
-    if (!node) return;
-    let { [activeLayer]: _, ...nodesCopy } = { ...nodes };
-    // let nodesCopy = { ...nodes };
-    const targetParentId = node.parentId;
+    let childrenRoot: string[] = [...allShapes.root.children];
+    const nodes = { ...allShapes.nodes };
 
-    if (state === "Ungroup" && node.type === "group") {
-      console.log(node.children);
-      children = children.filter((id) => id !== activeLayer);
+    const group = nodes[activeLayer];
+    if (!group) return;
+    const parentId = group.parentId; //! Root
 
-      node.children.forEach(updateParent);
+    if (state === "Ungroup" && group.type === "group") {
+      // Type Groups Only
+
+      let { [activeLayer]: _, ...nodesCopy } = { ...nodes };
       console.log(nodesCopy);
-      console.log(children);
+
+      // Update the Root, if its a root elements
+      if (childrenRoot && group.parentId === "root") {
+        childrenRoot = childrenRoot.filter((id) => id !== activeLayer);
+        console.log(childrenRoot);
+      }
+
+      const layersToModify = group.children;
+      layersToModify.forEach((id: string) => {
+        nodesCopy = {
+          ...nodesCopy,
+          [id]: {
+            ...nodesCopy[id],
+            pos: group.pos,
+            parentId,
+          },
+        };
+        if (group.parentId === "root") {
+          childrenRoot.push(id);
+        }
+      });
+
+      console.log(nodesCopy);
+      console.log(layersToModify);
+
+      console.log(get().updatePositionOfLayer(nodesCopy, group.parentId));
+      const updatedNodesPos = get().updatePositionOfLayer(
+        nodesCopy,
+        group.parentId
+      );
+
+      console.log(updatedNodesPos);
+
+      set({
+        allShapes: {
+          ...allShapes,
+          root: {
+            children: childrenRoot,
+          },
+          nodes: updatedNodesPos,
+        },
+      });
     }
+  },
 
-    function updateParent(nodeId: string) {
-      console.log(nodesCopy);
+  updatePositionOfLayer: (nodes, groupId) => {
+    let nodesCopy = { ...nodes };
+    const arrayOfNodes = Object.entries(nodes)
+      .filter(([_, node]) => node.parentId === groupId)
+      .sort(([, nodeA], [_, nodeB]) => nodeB.pos - nodeA.pos)
+      .map(([id]) => id);
 
+    arrayOfNodes.forEach((id) => {
+      console.log(id, arrayOfNodes.length - arrayOfNodes.indexOf(id));
+      const pos = arrayOfNodes.length - arrayOfNodes.indexOf(id);
       nodesCopy = {
         ...nodesCopy,
-        [nodeId]: {
-          ...nodesCopy[nodeId],
-          parentId: targetParentId,
+        [id]: {
+          ...nodesCopy[id],
+          pos,
         },
       };
-
-      if (targetParentId === "root") {
-        children.push(nodeId);
-      }
-    }
-
-    set({
-      allShapes: {
-        root: {
-          children,
-        },
-        nodes: nodesCopy,
-      },
     });
+
+    console.log(arrayOfNodes);
+
+    console.log(nodesCopy);
+    return nodesCopy;
   },
 }));

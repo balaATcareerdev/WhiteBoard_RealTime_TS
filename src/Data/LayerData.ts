@@ -53,7 +53,7 @@ export interface LayerData {
 // dummy data
 export const dummyLayerData: LayerData = {
   root: {
-    children: ["group-1", "shape-3"], //! orders in the panel
+    children: ["group-1", "circ-1", "circ-2", "circ-3"], //! orders in the panel
   },
   nodes: {
     "group-1": {
@@ -61,8 +61,8 @@ export const dummyLayerData: LayerData = {
       name: "Group-1",
       type: "group",
       parentId: "root",
-      children: ["shape-1"],
-      pos: 2,
+      children: ["rec-1", "rec-2"],
+      pos: 3,
       visibility: true,
 
       props: {
@@ -72,9 +72,28 @@ export const dummyLayerData: LayerData = {
       },
     },
 
-    "shape-1": {
-      id: "shape-1",
+    "rec-1": {
+      id: "rec-1",
       name: "Rectangle-1",
+      type: "shape",
+      shapeType: "Rectangle",
+      parentId: "group-1",
+      pos: 2,
+      visibility: true,
+
+      props: {
+        x: 100,
+        y: 200,
+        width: 100,
+        height: 100,
+        stroke: "Black",
+        strokeWidth: 4,
+      },
+    },
+
+    "rec-2": {
+      id: "rec-2",
+      name: "Rectangle-2",
       type: "shape",
       shapeType: "Rectangle",
       parentId: "group-1",
@@ -91,9 +110,27 @@ export const dummyLayerData: LayerData = {
       },
     },
 
-    "shape-3": {
-      id: "shape-3",
+    "circ-1": {
+      id: "circ-1",
       name: "Circle1",
+      type: "shape",
+      shapeType: "Circle",
+      parentId: "root",
+      pos: 2,
+      visibility: true,
+      props: {
+        x: 200,
+        y: 200,
+        radius: 10,
+        stroke: "Green",
+        strokeWidth: 5,
+        fill: "Green",
+      },
+    },
+
+    "circ-2": {
+      id: "circ-2",
+      name: "Circle2",
       type: "shape",
       shapeType: "Circle",
       parentId: "root",
@@ -106,6 +143,24 @@ export const dummyLayerData: LayerData = {
         stroke: "Green",
         strokeWidth: 5,
         fill: "Green",
+      },
+    },
+
+    "circ-3": {
+      id: "circ-3",
+      name: "Circle3",
+      type: "shape",
+      shapeType: "Circle",
+      parentId: "root",
+      pos: 4,
+      visibility: true,
+      props: {
+        x: 200,
+        y: 200,
+        radius: 10,
+        stroke: "Green",
+        strokeWidth: 5,
+        fill: "Blue",
       },
     },
   },
