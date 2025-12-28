@@ -34,6 +34,7 @@ interface BoardStoreProps {
     nodes: Record<string, LayerNode>,
     groupId: string
   ) => Record<string, LayerNode>;
+  setLockShape: (id: string) => void;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -42,16 +43,36 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
   transformerRef: createRef<Konva.Transformer>(),
   toggleVisibility: (id) => {
     const prev = get().allShapes;
+
+    let nodes = { ...prev.nodes };
+    let node = { ...nodes[id] };
+
+    node = {
+      ...node,
+      visibility: !node.visibility,
+    };
+
+    nodes = {
+      ...nodes,
+      [id]: node,
+    };
+
+    if (node.type === "group") {
+      node.children.forEach((id) => {
+        nodes = {
+          ...nodes,
+          [id]: {
+            ...nodes[id],
+            visibility: node.visibility,
+          },
+        };
+      });
+    }
+
     set({
       allShapes: {
         ...prev,
-        nodes: {
-          ...prev.nodes,
-          [id]: {
-            ...prev.nodes[id],
-            visibility: !prev.nodes[id].visibility,
-          },
-        },
+        nodes,
       },
     });
   },
@@ -550,5 +571,43 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
 
     console.log(nodesCopy);
     return nodesCopy;
+  },
+
+  setLockShape: (id) => {
+    console.log("Change Lock");
+
+    const allShapes = get().allShapes;
+    let updatedNodes = { ...allShapes.nodes };
+    let node = { ...updatedNodes[id] };
+
+    node = {
+      ...node,
+      lock: !node.lock,
+    };
+    updatedNodes = {
+      ...updatedNodes,
+      [id]: node,
+    };
+
+    if (node.type === "group") {
+      node.children.forEach((id) => {
+        updatedNodes = {
+          ...updatedNodes,
+          [id]: {
+            ...updatedNodes[id],
+            lock: node.lock,
+          },
+        };
+      });
+    }
+
+    console.log(updatedNodes);
+
+    set({
+      allShapes: {
+        ...allShapes,
+        nodes: updatedNodes,
+      },
+    });
   },
 }));

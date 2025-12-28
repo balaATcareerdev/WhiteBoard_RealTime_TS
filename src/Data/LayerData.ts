@@ -8,6 +8,7 @@ export interface ShapeNode {
   parentId: string;
   pos: number;
   visibility: boolean;
+  lock: boolean;
 
   props: {
     x?: number;
@@ -31,6 +32,7 @@ export interface GroupNode {
   children: string[];
   pos: number;
   visibility: boolean;
+  lock: boolean;
 
   props: {
     x: number;
@@ -64,6 +66,7 @@ export const dummyLayerData: LayerData = {
       children: ["rec-1", "rec-2"],
       pos: 3,
       visibility: true,
+      lock: false,
 
       props: {
         x: 200,
@@ -80,6 +83,7 @@ export const dummyLayerData: LayerData = {
       parentId: "group-1",
       pos: 2,
       visibility: true,
+      lock: true,
 
       props: {
         x: 100,
@@ -99,6 +103,7 @@ export const dummyLayerData: LayerData = {
       parentId: "group-1",
       pos: 1,
       visibility: true,
+      lock: true,
 
       props: {
         x: 100,
@@ -118,6 +123,8 @@ export const dummyLayerData: LayerData = {
       parentId: "root",
       pos: 2,
       visibility: true,
+      lock: false,
+
       props: {
         x: 200,
         y: 200,
@@ -136,6 +143,8 @@ export const dummyLayerData: LayerData = {
       parentId: "root",
       pos: 1,
       visibility: true,
+      lock: false,
+
       props: {
         x: 200,
         y: 200,
@@ -154,6 +163,8 @@ export const dummyLayerData: LayerData = {
       parentId: "root",
       pos: 4,
       visibility: true,
+      lock: false,
+
       props: {
         x: 200,
         y: 200,
@@ -203,6 +214,7 @@ export const dummyUndo: UndoType[] = [
       parentId: "root",
       pos: 4,
       visibility: true,
+      lock: false,
       props: {
         x: 100,
         y: 200,

@@ -27,7 +27,6 @@ const RenderLayerItem = ({
     });
     return (
       <GroupLayer
-        shapeId={shapeId}
         node={node}
         open={open}
         childElements={sortedGroupElem}

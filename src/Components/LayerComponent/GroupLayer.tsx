@@ -1,17 +1,20 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { GroupNode, LayerData } from "../../Data/LayerData";
-import RenderLayerItem from "./RenderLayerItem";
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
 import { FaAngleDown } from "react-icons/fa";
 import { useLayerStore } from "../../Store/LayerStore";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
-import { CiFolderOn } from "react-icons/ci";
 import { layerToDrawShape } from "../../Utils/ShapeDataUtils";
 import { useBoardStore } from "../../Store/BoardStore";
+import Icon from "./Icon";
+import { FcFolder } from "react-icons/fc";
+import { AiTwotoneLock } from "react-icons/ai";
+import { AiTwotoneUnlock } from "react-icons/ai";
+import { PiEyesFill } from "react-icons/pi";
+import { PiSmileyXEyes } from "react-icons/pi";
+
+import ShapeList from "./ShapeList";
 
 interface GroupLayerProps {
-  shapeId: string;
   node: GroupNode;
   open: boolean;
   childElements: string[];
@@ -21,7 +24,6 @@ interface GroupLayerProps {
 }
 
 const GroupLayer = ({
-  shapeId,
   node,
   open,
   childElements,
@@ -37,17 +39,13 @@ const GroupLayer = ({
   const { deactiveTransformation } = useDrawHandlers();
   const setLayerToDraw = useLayerStore((state) => state.setLayerToDraw);
   const allShapes = useBoardStore((state) => state.allShapes);
+  const setLockShape = useBoardStore((state) => state.setLockShape);
 
   return (
-    <div
-      key={shapeId}
-      className={`select-none ${node.parentId === "root" ? "" : "pl-10"}`}
-    >
-      {/* Root Header */}
+    <div className={`select-none p-2`}>
+      {/* Header */}
       <div
-        className={`flex ${
-          node.parentId === "root" ? "" : "border-gray-100 border-l-2"
-        } items-center justify-between px-1 hover:bg-gray-100 py-1 ${
+        className={`grid grid-cols-[1fr_30px_30px] cursor-pointer hover:bg-gray-100 ${
           activeLayer === node.id ? "bg-blue-50" : ""
         }`}
         onClick={() => {
@@ -56,57 +54,60 @@ const GroupLayer = ({
           setLayerToDraw(layerToDraw);
         }}
       >
+        {/* Left Side Content */}
         <div className="flex items-center">
-          {/* Eye */}
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleVisibility(node.id);
-              if (transformElem && node.children.includes(transformElem)) {
-                deactiveTransformation();
-              }
-            }}
-          >
-            {node.visibility ? (
-              <FaEye color="#4a5565" />
-            ) : (
-              <FaEyeSlash color="#4a5565" />
-            )}
+          <div onClick={() => setOpen((prev) => !prev)}>
+            <FaAngleDown
+              className={`transition-transform duration-200 ${
+                open ? "rotate-180" : "rotate-0"
+              }`}
+            />
           </div>
-
-          {/* Logo and name */}
-          <div className={`flex items-center text-lg pl-4 gap-1`}>
-            <CiFolderOn />
-            <span>{node.name}</span>
+          <div className="flex items-center">
+            <Icon Sym={FcFolder} size={25} isHover={false} />
+            <span className="text-lg">
+              {node.name.length > 10
+                ? node.name.slice(0, 10) + "..."
+                : node.name}
+            </span>
           </div>
         </div>
 
-        {/* Right includes the Collapse*/}
-        <div onClick={() => setOpen((prev) => !prev)}>
-          <FaAngleDown
-            className={`transition-transform duration-200 ${
-              open ? "rotate-180" : "rotate-0"
-            }`}
-          />
-        </div>
+        {/* Right Side */}
+        <Icon
+          Sym={node.visibility ? PiEyesFill : PiSmileyXEyes}
+          size={20}
+          color="#000000"
+          isHover={true}
+          opFunc={(e) => {
+            e.stopPropagation();
+            toggleVisibility(node.id);
+            if (transformElem && node.children.includes(transformElem)) {
+              deactiveTransformation();
+            }
+          }}
+        />
+        <Icon
+          Sym={node.lock ? AiTwotoneLock : AiTwotoneUnlock}
+          size={20}
+          color="#000000"
+          isHover={true}
+          opFunc={(e) => {
+            e.stopPropagation();
+            setLockShape(node.id);
+          }}
+        />
       </div>
 
-      {/* Child */}
+      {/* CHildren */}
       <div
-        className={`transition-all duration-200 overflow-hidden ${
+        className={`transition-all duration-200 overflow-hidden pl-4 ${
           open
             ? "max-h-96 opacity-100 pointer-events-auto"
             : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
-        {childElements.map((childId) => (
-          <RenderLayerItem
-            shapeId={childId}
-            layerData={layerData}
-            toggleVisibility={toggleVisibility}
-            key={childId}
-          />
-        ))}
+        <ShapeList childElements={childElements} layerData={layerData} />
       </div>
     </div>
   );

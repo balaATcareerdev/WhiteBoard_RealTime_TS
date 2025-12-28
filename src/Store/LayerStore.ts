@@ -9,8 +9,6 @@ interface LayerStoreProps {
   setTransformElem: (newId: string | null) => void;
   layerToDraw: string;
   setLayerToDraw: (newLayer: string) => void;
-  lockedLayer: string[];
-  setLockedLayers: (id: string) => void;
 }
 
 export const useLayerStore = create<LayerStoreProps>((set, get) => ({
@@ -49,14 +47,5 @@ export const useLayerStore = create<LayerStoreProps>((set, get) => ({
       return;
     }
     set({ layerToDraw: newLayer });
-  },
-  lockedLayer: [],
-  setLockedLayers: (id) => {
-    const prev = get().lockedLayer;
-    if (prev.includes(id)) {
-      set({ lockedLayer: prev.filter((childId) => childId !== id) });
-      return;
-    }
-    set({ lockedLayer: [...prev, id] });
   },
 }));
