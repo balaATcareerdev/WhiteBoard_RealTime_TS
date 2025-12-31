@@ -1,4 +1,3 @@
-import { useState } from "react";
 import LayerPanel from "./Components/LayerComponent/LayerPanel";
 import Menu from "./Components/ToolBarComponent/Menu";
 import Tools from "./Components/ToolBarComponent/Tools";
@@ -6,26 +5,20 @@ import WorkBoard from "./Components/WorkBoardComponent/WorkBoard";
 import { useBoardStore } from "./Store/BoardStore";
 
 const App = () => {
-  const [openMenu, setOpenMenu] = useState<boolean>(false);
   const layerData = useBoardStore((state) => state.allShapes);
 
   return (
     <div className="font-outfit min-h-screen h-screen flex flex-col overflow-hidden">
       {/* menu */}
       <div className="w-full p-1">
-        <Menu setOpenMenu={setOpenMenu} openMenu={openMenu} />
-        <div
-          className={`overflow-hidden transition-all duration-300 ${
-            openMenu
-              ? "max-h-40 opacity-100 pointer-events-auto"
-              : "max-h-0 opacity-0 pointer-events-none"
-          }`}
-        >
-          <Tools />
-        </div>
+        <Menu />
       </div>
       {/* WorkSpace */}
       <div className="flex flex-1 min-h-0">
+        <div>
+          <Tools />
+        </div>
+
         <div className="flex-1 relative overflow-hidden">
           <WorkBoard layerData={layerData} />
         </div>

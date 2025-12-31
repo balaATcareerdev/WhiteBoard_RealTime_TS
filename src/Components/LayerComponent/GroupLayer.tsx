@@ -65,7 +65,7 @@ const GroupLayer = ({
           </div>
           <div className="flex items-center">
             <Icon Sym={FcFolder} size={25} isHover={false} />
-            <span className="text-lg">
+            <span className="text-lg font-montserrat font-medium">
               {node.name.length > 10
                 ? node.name.slice(0, 10) + "..."
                 : node.name}

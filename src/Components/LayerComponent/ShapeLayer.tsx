@@ -44,7 +44,7 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
       {/* Left Side */}
       <div className="flex items-center">
         <div className="flex flex-col">
-          <span className="text-lg">
+          <span className="text-lg font-montserrat font-medium">
             {node.name.length > 15 ? node.name.slice(0, 15) : node.name}
           </span>
           <span className="text-gray-600">
