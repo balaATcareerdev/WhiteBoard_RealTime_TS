@@ -15,7 +15,6 @@ const ShapeList = ({
 }: ShapeListProps) => {
   const toggleVisibility = useBoardStore((state) => state.toggleVisibility);
 
-  console.log(childElements);
   return (
     <div>
       {sortedLayerData &&

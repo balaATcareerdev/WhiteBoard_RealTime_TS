@@ -4,6 +4,7 @@ import { GiPencilRuler } from "react-icons/gi";
 import { FaPencil } from "react-icons/fa6";
 import { FaHandSpock } from "react-icons/fa";
 import { MdCleaningServices } from "react-icons/md";
+import { IoIosColorFill } from "react-icons/io";
 
 import ToolIcon from "./ToolIcon";
 import { useMenuStore } from "../../Store/MenuStore";
@@ -11,11 +12,16 @@ import { useMenuStore } from "../../Store/MenuStore";
 import { Tools as ToolList } from "../../constants/ToolConst";
 import { useBoardStore } from "../../Store/BoardStore";
 
+import { HexColorPicker } from "react-colorful";
+
 const Tools = () => {
   const tool = useMenuStore((state) => state.tool);
   const setTool = useMenuStore((state) => state.setTool);
   const clearShapes = useBoardStore((state) => state.clearShapes);
-
+  // const [showColorPalet, setShowColorPalet] = useState(true);
+  const setColor = useMenuStore((state) => state.setColor);
+  const showColorPalet = useMenuStore((state) => state.showColorPalet);
+  const setShowColorPalet = useMenuStore((state) => state.setShowColorPalet);
   return (
     <div className="flex flex-col p-2 gap-1 border-r border-b border-gray-200">
       <ToolIcon
@@ -66,6 +72,20 @@ const Tools = () => {
           clearShapes();
         }}
       />
+      <div className="relative">
+        <div
+          onClick={() => setShowColorPalet(!showColorPalet)}
+          className={`p-2  rounded-md cursor-pointer transition-colors duration-300`}
+        >
+          <IoIosColorFill size={40} />
+        </div>
+
+        {showColorPalet && (
+          <div className="absolute z-50">
+            <HexColorPicker onChange={setColor} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

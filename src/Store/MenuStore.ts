@@ -24,7 +24,7 @@ interface MenuStoreProps {
 
 export const useMenuStore = create<MenuStoreProps>((set) => ({
   tool: "Rectangle",
-  color: "Black",
+  color: "#000000",
   showColorPalet: false,
   strokeWidth: 4,
 

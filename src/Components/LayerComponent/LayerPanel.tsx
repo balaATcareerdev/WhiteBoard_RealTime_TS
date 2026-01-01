@@ -36,9 +36,9 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
       </div>
 
       {/* Properties */}
-      {activeLayer !== "root" && (
-        <div className="max-h-[40%] min-h-0 overflow-y-auto border-t no-scrollbar">
-          <Properties id={activeLayer} />
+      {activeLayer !== "root" && layerData.nodes[activeLayer] && (
+        <div className="max-h-[40%] min-h-0 overflow-y-auto border-t border-gray-300 no-scrollbar">
+          <Properties node={layerData.nodes[activeLayer]} />
         </div>
       )}
     </div>

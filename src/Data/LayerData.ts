@@ -17,7 +17,7 @@ export interface ShapeNode {
     height?: number;
     radius?: number;
     points?: number[];
-    stroke: string;
+    stroke: string | undefined;
     strokeWidth: number;
     fill?: string | undefined;
     rotation?: number;
@@ -90,7 +90,8 @@ export const dummyLayerData: LayerData = {
         y: 200,
         width: 100,
         height: 100,
-        stroke: "Black",
+        fill: "",
+        stroke: "#278c5c",
         strokeWidth: 4,
       },
     },
@@ -110,8 +111,9 @@ export const dummyLayerData: LayerData = {
         y: 200,
         width: 100,
         height: 100,
-        stroke: "Black",
+        stroke: "#2733a7",
         strokeWidth: 4,
+        fill: undefined,
       },
     },
 
@@ -129,9 +131,9 @@ export const dummyLayerData: LayerData = {
         x: 200,
         y: 200,
         radius: 10,
-        stroke: "Green",
+        stroke: "#008000",
         strokeWidth: 5,
-        fill: "Green",
+        fill: "#2733a7",
       },
     },
 
@@ -149,9 +151,9 @@ export const dummyLayerData: LayerData = {
         x: 200,
         y: 200,
         radius: 10,
-        stroke: "Green",
+        stroke: undefined,
         strokeWidth: 5,
-        fill: "Green",
+        fill: "#a6e22e",
       },
     },
 
@@ -169,9 +171,9 @@ export const dummyLayerData: LayerData = {
         x: 200,
         y: 200,
         radius: 10,
-        stroke: "Green",
+        stroke: "#3284c9",
         strokeWidth: 5,
-        fill: "Blue",
+        fill: "#2733a7",
       },
     },
   },

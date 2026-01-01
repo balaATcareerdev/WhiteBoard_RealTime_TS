@@ -36,7 +36,9 @@ const RenderNode = ({
             width={shape.props.width}
             height={shape.props.height}
             fill={shape.props.fill}
+            fillEnabled={!!shape.props.fill}
             stroke={shape.props.stroke}
+            strokeEnabled={!!shape.props.stroke}
             rotation={shape.props.rotation}
             visible={shape.visibility}
             strokeWidth={shape.props.strokeWidth}
@@ -56,8 +58,10 @@ const RenderNode = ({
             radius={shape.props.radius}
             stroke={shape.props.stroke}
             strokeWidth={shape.props.strokeWidth}
+            strokeEnabled={!!shape.props.stroke}
             rotation={shape.props.rotation}
             fill={shape.props.fill}
+            fillEnabled={!!shape.props.fill}
             visible={shape.visibility}
             draggable={tool === "Move"}
             onDragEnd={(e) => dragShape(e, shape.id, true)}

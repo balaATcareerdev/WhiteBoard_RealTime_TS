@@ -35,6 +35,11 @@ interface BoardStoreProps {
     groupId: string
   ) => Record<string, LayerNode>;
   setLockShape: (id: string) => void;
+  updateProps: (
+    id: string,
+    propName: string,
+    value: number | string | number[] | undefined
+  ) => void;
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
@@ -607,6 +612,41 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       allShapes: {
         ...allShapes,
         nodes: updatedNodes,
+      },
+    });
+  },
+
+  updateProps: (id, propName, value) => {
+    const allShapes = get().allShapes;
+    const nodes = {
+      ...allShapes.nodes,
+    };
+    const node = nodes[id];
+
+    console.log(propName);
+
+    const updatedNodes = {
+      ...nodes,
+      [id]: {
+        ...nodes[id],
+        name: propName === "name" ? value : node.name,
+        props: {
+          ...node.props,
+          [propName]:
+            propName !== "name" && node.type !== "group"
+              ? value
+              : node.props[propName as keyof typeof node.props],
+        },
+      },
+    };
+
+    console.log(updatedNodes[id]);
+    set({
+      allShapes: {
+        ...allShapes,
+        nodes: {
+          ...updatedNodes,
+        },
       },
     });
   },

@@ -72,6 +72,7 @@ export default function useDrawHandlers({
               parentId: layerToDraw,
               pos: newPosition,
               visibility: true,
+              lock: false,
               props: {
                 x,
                 y,
@@ -80,6 +81,7 @@ export default function useDrawHandlers({
                 stroke: color,
                 fill: undefined,
                 strokeWidth: strokeWidth,
+                rotation: 0,
               },
             },
           };
@@ -102,6 +104,7 @@ export default function useDrawHandlers({
               parentId: activeLayer,
               pos: newPosition,
               visibility: true,
+              lock: false,
               props: {
                 x,
                 y,
@@ -130,7 +133,9 @@ export default function useDrawHandlers({
               parentId: activeLayer,
               pos: newPosition,
               visibility: true,
+              lock: false,
               props: {
+                rotation: 0,
                 points: [x, y, x, y],
                 stroke: color,
                 strokeWidth: strokeWidth,
@@ -155,6 +160,7 @@ export default function useDrawHandlers({
               parentId: activeLayer,
               pos: newPosition,
               visibility: true,
+              lock: false,
               props: {
                 points: [x, y, x, y],
                 stroke: color,

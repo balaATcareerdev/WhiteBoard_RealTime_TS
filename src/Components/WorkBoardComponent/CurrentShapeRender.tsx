@@ -20,6 +20,8 @@ const CurrentShapeRender = ({ shapeDetails }: CurrentShapeRenderProps) => {
           stroke={shapeDetails.props.stroke}
           strokeWidth={shapeDetails.props.strokeWidth}
           fill={shapeDetails.props.fill}
+          fillEnabled={!!shapeDetails.props.fill}
+          strokeEnabled={!!shapeDetails.props.stroke}
           visible={shapeDetails.visibility}
         />
       );
@@ -34,6 +36,8 @@ const CurrentShapeRender = ({ shapeDetails }: CurrentShapeRenderProps) => {
           strokeWidth={shapeDetails.props.strokeWidth}
           fill={shapeDetails.props.fill}
           visible={shapeDetails.visibility}
+          fillEnabled={!!shapeDetails.props.fill}
+          strokeEnabled={!!shapeDetails.props.stroke}
         />
       );
     }
