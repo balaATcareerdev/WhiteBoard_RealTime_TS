@@ -24,21 +24,22 @@ interface BoardStoreProps {
   modifyStacks: (newStack: UndoType[], stackType: string) => void;
   updateShapesUndoRedo: (
     latestAction: UndoType,
-    actionType: "undo" | "redo"
+    actionType: "undo" | "redo",
   ) => void;
   updateSingleShape: (action: UpdateType) => void;
   updateShapeNodes: (updatedShapes: LayerNode[]) => void;
   deleteShapeGroup: (shapeOrGroupId: string) => void;
   groupUngroup: (state: "Group" | "Ungroup", activeLayer: string) => void;
+  duplicateLayer: (shapeId: string) => void;
   updatePositionOfLayer: (
     nodes: Record<string, LayerNode>,
-    groupId: string
+    groupId: string,
   ) => Record<string, LayerNode>;
   setLockShape: (id: string) => void;
   updateProps: (
     id: string,
     propName: string,
-    value: number | string | number[] | undefined
+    value: number | string | number[] | undefined,
   ) => void;
 }
 
@@ -188,7 +189,7 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
                 const updatedRoot = {
                   ...currentData.root,
                   children: currentData.root.children.filter(
-                    (child) => child !== id
+                    (child) => child !== id,
                   ),
                 };
                 currentData = {
@@ -213,8 +214,8 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
                 ...currentData,
                 nodes: Object.fromEntries(
                   Object.entries(currentData.nodes).filter(
-                    ([node]) => node !== id
-                  )
+                    ([node]) => node !== id,
+                  ),
                 ),
               };
 
@@ -333,7 +334,7 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
                   const updatedRoot = {
                     ...currentData.root,
                     children: currentData.root.children.filter(
-                      (child) => child !== id
+                      (child) => child !== id,
                     ),
                   };
                   currentData = {
@@ -358,8 +359,8 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
                   ...currentData,
                   nodes: Object.fromEntries(
                     Object.entries(currentData.nodes).filter(
-                      ([node]) => node !== id
-                    )
+                      ([node]) => node !== id,
+                    ),
                   ),
                 };
 
@@ -476,7 +477,7 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       const parentNode = { ...newNodes[parentId] };
       if (parentNode && parentNode.type === "group") {
         parentNode.children = parentNode.children.filter(
-          (id) => id !== node.id
+          (id) => id !== node.id,
         );
         newNodes[parentNode.id] = parentNode;
       }
@@ -536,7 +537,7 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       console.log(get().updatePositionOfLayer(nodesCopy, group.parentId));
       const updatedNodesPos = get().updatePositionOfLayer(
         nodesCopy,
-        group.parentId
+        group.parentId,
       );
 
       console.log(updatedNodesPos);
@@ -551,6 +552,54 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
         },
       });
     }
+  },
+
+  duplicateLayer: (shapeId) => {
+    const allShapes = get().allShapes;
+    const root = { ...allShapes.root };
+    let nodes = { ...allShapes.nodes };
+    const nodeToDuplicate = nodes[shapeId];
+    if (!nodeToDuplicate) return;
+    const newId = crypto.randomUUID();
+    console.log("Duplicate");
+
+    const duplicatedNode: LayerNode = {
+      ...nodeToDuplicate,
+      id: newId,
+      name: nodeToDuplicate.name + " Copy",
+      pos: nodeToDuplicate.pos + 1,
+    };
+
+    nodes = {
+      ...nodes,
+      [newId]: duplicatedNode,
+    };
+
+    if (nodeToDuplicate.parentId === "root") {
+      root.children.push(newId);
+    } else {
+      const parentNode = nodes[nodeToDuplicate.parentId];
+      if (parentNode.type === "group") {
+        parentNode.children.push(newId);
+        nodes = {
+          ...nodes,
+          [nodeToDuplicate.parentId]: parentNode,
+        };
+      }
+    }
+
+    const updatedNodesPos = get().updatePositionOfLayer(
+      nodes,
+      nodeToDuplicate.parentId,
+    );
+
+    set({
+      allShapes: {
+        ...allShapes,
+        root: root,
+        nodes: updatedNodesPos,
+      },
+    });
   },
 
   updatePositionOfLayer: (nodes, groupId) => {

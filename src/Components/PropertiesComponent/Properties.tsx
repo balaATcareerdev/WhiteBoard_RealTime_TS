@@ -10,6 +10,10 @@ import { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import SaveColorButton from "./PropertiesPanelButtons/SaveColorButton";
 import RemoveColorButton from "./PropertiesPanelButtons/RemoveColorButton";
+import { FaTurnUp } from "react-icons/fa6";
+import { FaTurnDown } from "react-icons/fa6";
+import useLayerMenuHandlers from "../../Hooks/useLayerMenuHandlers";
+import { useLayerStore } from "../../Store/LayerStore";
 
 interface PropertiesProps {
   node: LayerNode;
@@ -80,21 +84,53 @@ const Properties = ({ node }: PropertiesProps) => {
 
   const [fillColorPaletVisible, setFillColorPaletVisible] = useState(false);
   const [strokeColorPaletVisible, setStrokeColorPaletVisible] = useState(false);
+  const deleteShapeGroup = useBoardStore((state) => state.deleteShapeGroup);
+  const duplicateLayer = useBoardStore((state) => state.duplicateLayer);
+  const { handleUpDown } = useLayerMenuHandlers();
+  const groupUngroup = useBoardStore((state) => state.groupUngroup);
+  const activeLayer = useLayerStore((state) => state.activeLayer);
 
   return (
     <div className="border-t border-gray-200 p-2">
       <Header title="Properties" />
 
       <div className="flex gap-1 mt-5">
-        <PropertiesButton Icon={GoDuplicate} text="Duplicate" color="#289947" />
-        <PropertiesButton Icon={MdDelete} text="Delete" color="#ff0033" />
+        <PropertiesButton
+          Icon={GoDuplicate}
+          text="Duplicate"
+          color="#289947"
+          funct={() => duplicateLayer(node.id)}
+        />
+        <PropertiesButton
+          Icon={MdDelete}
+          text="Delete"
+          color="#ff0033"
+          funct={() => deleteShapeGroup(node.id)}
+        />
         {node.type === "group" && (
           <PropertiesButton
             Icon={FaRegObjectUngroup}
             text="Ungroup"
             color="#FFA500"
+            funct={() => groupUngroup("Ungroup", activeLayer)}
           />
         )}
+        <PropertiesButton
+          Icon={FaTurnUp}
+          text="Up"
+          color="#0078D4"
+          funct={() => {
+            handleUpDown("Up");
+          }}
+          disabled={node.lock}
+        />
+        <PropertiesButton
+          Icon={FaTurnDown}
+          text="Down"
+          color="#0078D4"
+          funct={() => handleUpDown("Down")}
+          disabled={node.lock}
+        />
       </div>
 
       {/* Name */}
@@ -110,7 +146,7 @@ const Properties = ({ node }: PropertiesProps) => {
             updateProps(
               node.id,
               "name",
-              localTemp.name ? localTemp.name : "No Name"
+              localTemp.name ? localTemp.name : "No Name",
             )
           }
         />
@@ -192,7 +228,7 @@ const Properties = ({ node }: PropertiesProps) => {
                   inputValueUpdate(
                     node.id,
                     e.target.name,
-                    Number(localTemp.width)
+                    Number(localTemp.width),
                   )
                 }
                 onKeyDown={handleKeyDown}
@@ -218,7 +254,7 @@ const Properties = ({ node }: PropertiesProps) => {
                   inputValueUpdate(
                     node.id,
                     e.target.name,
-                    Number(localTemp.height)
+                    Number(localTemp.height),
                   )
                 }
                 onKeyDown={handleKeyDown}
@@ -278,7 +314,7 @@ const Properties = ({ node }: PropertiesProps) => {
                         onChange={(e) => {
                           const newPoints = [...localTemp.points];
                           newPoints[index] = isNaN(Number(e.target.value))
-                            ? node.props.points ?? []
+                            ? (node.props.points ?? [])
                             : Number(e.target.value);
                           setLocalTemp({
                             ...localTemp,
@@ -289,7 +325,7 @@ const Properties = ({ node }: PropertiesProps) => {
                           inputValueUpdate(
                             node.id,
                             e.target.name,
-                            localTemp.points
+                            localTemp.points,
                           )
                         }
                         onKeyDown={handleKeyDown}
@@ -316,7 +352,7 @@ const Properties = ({ node }: PropertiesProps) => {
                       onChange={(e) => {
                         const newPoints = [...localTemp.points];
                         newPoints[index + 2] = isNaN(Number(e.target.value))
-                          ? node.props.points ?? []
+                          ? (node.props.points ?? [])
                           : Number(e.target.value);
 
                         setLocalTemp({
@@ -328,7 +364,7 @@ const Properties = ({ node }: PropertiesProps) => {
                         inputValueUpdate(
                           node.id,
                           e.target.name,
-                          localTemp.points
+                          localTemp.points,
                         )
                       }
                       onKeyDown={handleKeyDown}
@@ -361,7 +397,7 @@ const Properties = ({ node }: PropertiesProps) => {
               inputValueUpdate(
                 node.id,
                 e.target.name,
-                Number(localTemp.rotation)
+                Number(localTemp.rotation),
               )
             }
             onKeyDown={handleKeyDown}

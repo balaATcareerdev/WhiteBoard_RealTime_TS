@@ -34,7 +34,9 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
     <div
       className={`grid grid-cols-[1fr_30px_30px] cursor-pointer items-center ${
         node.parentId === "root" ? "px-2" : ""
-      } ${activeLayer === node.id ? "bg-blue-50" : ""} my-2 hover:bg-gray-100`}
+      } ${
+        activeLayer === node.id ? "bg-blue-50 text-[#155dfc]" : ""
+      } my-2 hover:bg-gray-100`}
       onClick={() => {
         setActiveLayer(node.id);
         const layerToDraw = layerToDrawShape(allShapes, node.id);

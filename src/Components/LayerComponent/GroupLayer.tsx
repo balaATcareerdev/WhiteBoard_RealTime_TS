@@ -46,7 +46,7 @@ const GroupLayer = ({
       {/* Header */}
       <div
         className={`grid grid-cols-[1fr_30px_30px] cursor-pointer hover:bg-gray-100 ${
-          activeLayer === node.id ? "bg-blue-50" : ""
+          activeLayer === node.id ? "bg-blue-50 text-[#155dfc]" : ""
         }`}
         onClick={() => {
           setActiveLayer(node.id);

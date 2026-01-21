@@ -6,13 +6,12 @@ export default function useLayerMenuHandlers() {
   const allShapes = useBoardStore((state) => state.allShapes);
   const activeLayer = useLayerStore((state) => state.activeLayer);
   const updateShapeNodes = useBoardStore((state) => state.updateShapeNodes);
-  const lockedLayer = useLayerStore((state) => state.lockedLayer);
 
   function handleUpDown(state: "Up" | "Down") {
-    if (lockedLayer.includes(activeLayer)) return;
-
     const nodes: Record<string, LayerNode> = allShapes.nodes;
     const node = nodes[activeLayer];
+
+    if (node.lock) return;
     const targetChildren = getSiblingsNode(node, nodes);
     if (!targetChildren) return;
     // update the position based on the target and selected node
@@ -51,7 +50,7 @@ export default function useLayerMenuHandlers() {
 
   function getSiblingsNodeData(
     nodes: Record<string, LayerNode>,
-    targetChildren: string[]
+    targetChildren: string[],
   ) {
     const result: LayerNode[] = [];
 
