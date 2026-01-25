@@ -87,7 +87,7 @@ const Properties = ({ node }: PropertiesProps) => {
   const deleteShapeGroup = useBoardStore((state) => state.deleteShapeGroup);
   const duplicateLayer = useBoardStore((state) => state.duplicateLayer);
   const { handleUpDown } = useLayerMenuHandlers();
-  const groupUngroup = useBoardStore((state) => state.groupUngroup);
+  const unGroup = useBoardStore((state) => state.unGroup);
   const activeLayer = useLayerStore((state) => state.activeLayer);
 
   return (
@@ -112,7 +112,7 @@ const Properties = ({ node }: PropertiesProps) => {
             Icon={FaRegObjectUngroup}
             text="Ungroup"
             color="#FFA500"
-            funct={() => groupUngroup("Ungroup", activeLayer)}
+            funct={() => unGroup(activeLayer)}
           />
         )}
         <PropertiesButton

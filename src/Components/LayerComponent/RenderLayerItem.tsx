@@ -17,6 +17,7 @@ const RenderLayerItem = ({
   const node = layerData.nodes[shapeId];
 
   const [open, setOpen] = useState<boolean>(true);
+  if (!node) return null;
 
   if (node.type == "group") {
     const sortedGroupElem = node.children.sort((a, b) => {

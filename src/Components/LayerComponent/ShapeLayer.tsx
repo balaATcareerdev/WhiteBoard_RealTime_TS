@@ -30,14 +30,28 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
 
   const setLockShape = useBoardStore((state) => state.setLockShape);
 
+  const setSelectedLayers = useLayerStore((state) => state.setSelectedLayers);
+
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
+
+  const onMultiSelect = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedLayers(node.id, !selectedLayers.includes(node.id));
+  };
+
   return (
     <div
       className={`grid grid-cols-[1fr_30px_30px] cursor-pointer items-center ${
         node.parentId === "root" ? "px-2" : ""
-      } ${
-        activeLayer === node.id ? "bg-blue-50 text-[#155dfc]" : ""
-      } my-2 hover:bg-gray-100`}
-      onClick={() => {
+      } ${activeLayer === node.id ? "bg-blue-50 text-[#155dfc]" : ""}
+      ${selectedLayers.includes(node.id) ? "bg-red-100 text-red-500" : activeLayer === node.id ? "bg-blue-50 text-[#155dfc]" : ""}
+      my-2 hover:bg-gray-100`}
+      onClick={(e) => {
+        if (e.shiftKey) {
+          console.log("Shift Key Pressed");
+          onMultiSelect(e);
+          return;
+        }
         setActiveLayer(node.id);
         const layerToDraw = layerToDrawShape(allShapes, node.id);
         setLayerToDraw(layerToDraw);

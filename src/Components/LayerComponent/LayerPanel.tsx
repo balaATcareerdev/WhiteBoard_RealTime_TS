@@ -1,4 +1,5 @@
 import type { LayerData } from "../../Data/LayerData";
+import { useBoardStore } from "../../Store/BoardStore";
 import { useLayerStore } from "../../Store/LayerStore";
 import Header from "../CommonComponent/Header";
 import Properties from "../PropertiesComponent/Properties";
@@ -15,6 +16,12 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
 
   const activeLayer = useLayerStore((state) => state.activeLayer);
 
+  const createGroup = useBoardStore((state) => state.createGroup);
+
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
+
+  const unSelectAllLayers = useLayerStore((state) => state.unSelectAllLayers);
+
   if (sortedLayerData.length === 0) {
     return (
       <div className="p-5">
@@ -28,13 +35,22 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
   return (
     <div className="select-none h-full flex flex-col">
       {/* Header */}
-      <Header title="Layers" />
-
+      <div className="border-b border-gray-200 flex items-center gap-2">
+        <Header title="Layers" />
+        <button
+          className="text-lg font-outfit outline outline-[#155dfc] text-[#155dfc] px-2 py-1 rounded-lg cursor-pointer hover:outline-none hover:bg-[#155dfc] hover:text-white active:scale-95 transition-all duration-300 active:bg-blue-500"
+          onClick={() => {
+            createGroup(selectedLayers);
+            unSelectAllLayers();
+          }}
+        >
+          Create Group +
+        </button>
+      </div>
       {/* Elem */}
       <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar py-1">
         <ShapeList sortedLayerData={sortedLayerData} layerData={layerData} />
       </div>
-
       {/* Properties */}
       {activeLayer !== "root" && layerData.nodes[activeLayer] && (
         <div className="max-h-[40%] min-h-0 overflow-y-auto border-t border-gray-300 no-scrollbar">

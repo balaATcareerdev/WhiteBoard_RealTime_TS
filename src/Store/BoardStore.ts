@@ -1,7 +1,7 @@
 import type Konva from "konva";
 import { create } from "zustand";
 import {
-  dummyLayerData,
+  // dummyLayerData,
   type GroupNode,
   type LayerData,
   type LayerNode,
@@ -10,6 +10,9 @@ import {
   type UpdateType,
 } from "../Data/LayerData";
 import { createRef, type RefObject } from "react";
+import { getAncestorsOfShape } from "../Utils/NewGroupUtils";
+import { getDestinationLayer } from "../Utils/NewGroupUtils";
+import { useLayerStore } from "./LayerStore";
 
 interface BoardStoreProps {
   allShapes: LayerData;
@@ -29,7 +32,8 @@ interface BoardStoreProps {
   updateSingleShape: (action: UpdateType) => void;
   updateShapeNodes: (updatedShapes: LayerNode[]) => void;
   deleteShapeGroup: (shapeOrGroupId: string) => void;
-  groupUngroup: (state: "Group" | "Ungroup", activeLayer: string) => void;
+  unGroup: (activeLayer: string) => void;
+  createGroup: (selectedShapeIds: string[]) => void;
   duplicateLayer: (shapeId: string) => void;
   updatePositionOfLayer: (
     nodes: Record<string, LayerNode>,
@@ -44,7 +48,12 @@ interface BoardStoreProps {
 }
 
 export const useBoardStore = create<BoardStoreProps>((set, get) => ({
-  allShapes: dummyLayerData,
+  allShapes: {
+    root: {
+      children: [],
+    },
+    nodes: {},
+  },
   stageRef: createRef<Konva.Stage>(),
   transformerRef: createRef<Konva.Transformer>(),
   toggleVisibility: (id) => {
@@ -495,63 +504,166 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
     });
   },
 
-  groupUngroup: (state, activeLayer) => {
+  unGroup: (activeLayer) => {
     const allShapes = get().allShapes;
     let childrenRoot: string[] = [...allShapes.root.children];
     const nodes = { ...allShapes.nodes };
 
     const group = nodes[activeLayer];
     if (!group) return;
+    if (group.type !== "group") return;
     const parentId = group.parentId; //! Root
 
-    if (state === "Ungroup" && group.type === "group") {
-      // Type Groups Only
+    let { [activeLayer]: _, ...nodesCopy } = { ...nodes };
+    console.log(nodesCopy);
 
-      let { [activeLayer]: _, ...nodesCopy } = { ...nodes };
-      console.log(nodesCopy);
+    // Update the Root, if its a root elements
+    if (childrenRoot && group.parentId === "root") {
+      childrenRoot = childrenRoot.filter((id) => id !== activeLayer);
+      console.log(childrenRoot);
+    }
 
-      // Update the Root, if its a root elements
-      if (childrenRoot && group.parentId === "root") {
-        childrenRoot = childrenRoot.filter((id) => id !== activeLayer);
-        console.log(childrenRoot);
+    const layersToModify = group.children;
+    layersToModify.forEach((id: string) => {
+      nodesCopy = {
+        ...nodesCopy,
+        [id]: {
+          ...nodesCopy[id],
+          pos: group.pos,
+          parentId,
+        },
+      };
+      if (group.parentId === "root") {
+        childrenRoot.push(id);
       }
+    });
 
-      const layersToModify = group.children;
-      layersToModify.forEach((id: string) => {
-        nodesCopy = {
-          ...nodesCopy,
-          [id]: {
-            ...nodesCopy[id],
-            pos: group.pos,
-            parentId,
+    console.log(nodesCopy);
+    console.log(layersToModify);
+
+    console.log(get().updatePositionOfLayer(nodesCopy, group.parentId));
+    const updatedNodesPos = get().updatePositionOfLayer(
+      nodesCopy,
+      group.parentId,
+    );
+
+    console.log(updatedNodesPos);
+    set({
+      allShapes: {
+        ...allShapes,
+        root: {
+          children: childrenRoot,
+        },
+        nodes: updatedNodesPos,
+      },
+    });
+  },
+
+  createGroup: (selectedShapeIds) => {
+    const { allShapes } = get();
+    const nodes = { ...allShapes.nodes };
+    const allAncestors: string[][] = [];
+    const childrenRoot: string[] = [...allShapes.root.children];
+
+    // Find All Ancestors
+    selectedShapeIds?.forEach((id) => {
+      const ancestors = getAncestorsOfShape(id, nodes);
+      allAncestors.push(ancestors);
+    });
+
+    if (allAncestors.length === 0) return;
+
+    // Target Destination Layer
+    const destination = getDestinationLayer(allAncestors);
+    console.log("Target", destination);
+
+    // New Node
+    const newGroupId = crypto.randomUUID();
+    const newGroupNode: GroupNode = {
+      id: newGroupId,
+      name: "New Group",
+      type: "group",
+      parentId: destination,
+      children: selectedShapeIds,
+      pos: 0,
+      visibility: true,
+      lock: false,
+
+      props: {
+        x: 0,
+        y: 0,
+        rotation: 0,
+      },
+    };
+
+    console.log(newGroupNode);
+
+    // Add the New Group to the nodes
+    let updatedNodes = {
+      ...nodes,
+      [newGroupId]: newGroupNode,
+    };
+
+    // Update the Parent value of the selected shapes
+    selectedShapeIds.forEach((id) => {
+      const node = updatedNodes[id];
+      if (!node) return;
+      const parentId = node.parentId;
+      if (!node) return;
+
+      if (destination === "root") {
+        const idx = childrenRoot.indexOf(id);
+        if (idx !== -1) childrenRoot.splice(idx, 1);
+      }
+      console.log(newGroupId, "is Being Updated");
+
+      updatedNodes = {
+        ...updatedNodes,
+        [node.id]: {
+          ...node,
+          parentId: newGroupId,
+        },
+        [parentId]:
+          updatedNodes[parentId] &&
+          updatedNodes[parentId].type === "group" &&
+          parentId !== "root"
+            ? {
+                ...updatedNodes[parentId],
+                children: updatedNodes[parentId].children.filter(
+                  (cId) => cId !== id,
+                ),
+              }
+            : updatedNodes[parentId],
+      };
+    });
+
+    // Update the Roots
+    if (destination === "root") {
+      childrenRoot.push(newGroupId);
+    } else {
+      const destinationNode = updatedNodes[destination];
+      if (destinationNode?.type === "group") {
+        updatedNodes = {
+          ...updatedNodes,
+          [destination]: {
+            ...destinationNode,
+            children: [...destinationNode.children, newGroupId],
           },
         };
-        if (group.parentId === "root") {
-          childrenRoot.push(id);
-        }
-      });
-
-      console.log(nodesCopy);
-      console.log(layersToModify);
-
-      console.log(get().updatePositionOfLayer(nodesCopy, group.parentId));
-      const updatedNodesPos = get().updatePositionOfLayer(
-        nodesCopy,
-        group.parentId,
-      );
-
-      console.log(updatedNodesPos);
-
-      set({
-        allShapes: {
-          ...allShapes,
-          root: {
-            children: childrenRoot,
-          },
-          nodes: updatedNodesPos,
-        },
-      });
+      }
     }
+
+    useLayerStore.getState().setActiveLayer(newGroupId);
+
+    set({
+      allShapes: {
+        ...allShapes,
+        nodes: get().updatePositionOfLayer(updatedNodes, destination),
+        root: {
+          children: childrenRoot,
+        },
+      },
+    });
   },
 
   duplicateLayer: (shapeId) => {
@@ -605,7 +717,7 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
   updatePositionOfLayer: (nodes, groupId) => {
     let nodesCopy = { ...nodes };
     const arrayOfNodes = Object.entries(nodes)
-      .filter(([_, node]) => node.parentId === groupId)
+      .filter(([_, node]) => node && node.parentId === groupId)
       .sort(([, nodeA], [_, nodeB]) => nodeB.pos - nodeA.pos)
       .map(([id]) => id);
 

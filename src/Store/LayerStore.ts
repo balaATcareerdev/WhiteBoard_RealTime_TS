@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 interface LayerStoreProps {
   selectedLayers: string[];
+  unSelectAllLayers: () => void;
   setSelectedLayers: (id: string, status: boolean) => void;
   activeLayer: string;
   setActiveLayer: (nodeId: string) => void;
@@ -13,6 +14,11 @@ interface LayerStoreProps {
 
 export const useLayerStore = create<LayerStoreProps>((set, get) => ({
   selectedLayers: [],
+  unSelectAllLayers: () => {
+    set({
+      selectedLayers: [],
+    });
+  },
   setSelectedLayers: (id, status) => {
     set((state) => {
       if (status) {
@@ -21,7 +27,7 @@ export const useLayerStore = create<LayerStoreProps>((set, get) => ({
 
       return {
         selectedLayers: [...state.selectedLayers].filter(
-          (currentId) => currentId != id
+          (currentId) => currentId != id,
         ),
       };
     });

@@ -42,7 +42,9 @@ const GroupLayer = ({
   const setLockShape = useBoardStore((state) => state.setLockShape);
 
   return (
-    <div className={`select-none p-2`}>
+    <div
+      className={`select-none py-2 ${node.parentId === "root" ? "p-2" : ""}`}
+    >
       {/* Header */}
       <div
         className={`grid grid-cols-[1fr_30px_30px] cursor-pointer hover:bg-gray-100 ${
@@ -103,7 +105,7 @@ const GroupLayer = ({
       <div
         className={`transition-all duration-200 overflow-hidden pl-4 ${
           open
-            ? "max-h-96 opacity-100 pointer-events-auto"
+            ? "opacity-100 pointer-events-auto"
             : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
