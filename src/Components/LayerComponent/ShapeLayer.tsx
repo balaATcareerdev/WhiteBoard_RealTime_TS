@@ -25,7 +25,8 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
   const transformElem = useLayerStore((state) => state.transformElem);
   const allShapes = useBoardStore((state) => state.allShapes);
 
-  const { deactiveTransformation } = useDrawHandlers({});
+  const { activateTrasformationFromList, deactiveTransformation } =
+    useDrawHandlers();
   const setLayerToDraw = useLayerStore((state) => state.setLayerToDraw);
 
   const setLockShape = useBoardStore((state) => state.setLockShape);
@@ -37,6 +38,7 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
   const onMultiSelect = (e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedLayers(node.id, !selectedLayers.includes(node.id));
+    setActiveLayer("root");
   };
 
   return (
@@ -55,6 +57,11 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
         setActiveLayer(node.id);
         const layerToDraw = layerToDrawShape(allShapes, node.id);
         setLayerToDraw(layerToDraw);
+        if (activeLayer === node.id) {
+          deactiveTransformation();
+        } else {
+          activateTrasformationFromList(node.id);
+        }
       }}
     >
       {/* Left Side */}

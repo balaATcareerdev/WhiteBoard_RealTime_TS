@@ -1,4 +1,5 @@
 import type { LayerData } from "../../Data/LayerData";
+import useDrawHandlers from "../../Hooks/useDrawHandlers";
 import { useBoardStore } from "../../Store/BoardStore";
 import { useLayerStore } from "../../Store/LayerStore";
 import Header from "../CommonComponent/Header";
@@ -22,6 +23,8 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
 
   const unSelectAllLayers = useLayerStore((state) => state.unSelectAllLayers);
 
+  const { deactiveTransformation } = useDrawHandlers();
+
   if (sortedLayerData.length === 0) {
     return (
       <div className="p-5">
@@ -42,6 +45,7 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
           onClick={() => {
             createGroup(selectedLayers);
             unSelectAllLayers();
+            deactiveTransformation();
           }}
         >
           Create Group +

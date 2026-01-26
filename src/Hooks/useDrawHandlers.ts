@@ -206,7 +206,7 @@ export default function useDrawHandlers({
                     },
                   },
                 }
-              : prev
+              : prev,
           );
         }
         break;
@@ -225,7 +225,7 @@ export default function useDrawHandlers({
                     },
                   },
                 }
-              : prev
+              : prev,
           );
         }
         break;
@@ -333,6 +333,20 @@ export default function useDrawHandlers({
     transformerRef?.current?.nodes([]);
   }
 
+  function activateTrasformationFromList(id: string) {
+    const stage = transformerRef.current?.getStage();
+    console.log(stage);
+
+    if (!stage) return;
+    const node = stage.findOne(`#${id}`);
+
+    console.log(node);
+
+    if (!node) return;
+    setTransformElem(id);
+    transformerRef.current?.nodes([node]);
+  }
+
   return {
     handleMouseClick,
     handleMouseMove,
@@ -340,5 +354,6 @@ export default function useDrawHandlers({
     currentAction,
     activateTransformation,
     deactiveTransformation,
+    activateTrasformationFromList,
   };
 }
