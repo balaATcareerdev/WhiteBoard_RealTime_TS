@@ -85,7 +85,6 @@ export default function useDrawHandlers({
               },
             },
           };
-          console.log(action);
 
           setCurrentAction(action);
         }
@@ -335,12 +334,9 @@ export default function useDrawHandlers({
 
   function activateTrasformationFromList(id: string) {
     const stage = transformerRef.current?.getStage();
-    console.log(stage);
 
     if (!stage) return;
     const node = stage.findOne(`#${id}`);
-
-    console.log(node);
 
     if (!node) return;
     setTransformElem(id);

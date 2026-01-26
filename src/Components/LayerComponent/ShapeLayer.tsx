@@ -50,7 +50,6 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
       my-2 hover:bg-gray-100`}
       onClick={(e) => {
         if (e.shiftKey) {
-          console.log("Shift Key Pressed");
           onMultiSelect(e);
           return;
         }

@@ -6,7 +6,7 @@ export default function useUndoRedoHandlers() {
   const redoStack = useBoardStore((state) => state.redoStack);
   const modifyStacks = useBoardStore((state) => state.modifyStacks);
   const updateShapesUndoRedo = useBoardStore(
-    (state) => state.updateShapesUndoRedo
+    (state) => state.updateShapesUndoRedo,
   );
 
   //! Undo CLick
@@ -14,7 +14,6 @@ export default function useUndoRedoHandlers() {
     if (undoStack?.length === 0) return;
 
     const latestAction: UndoType = undoStack[undoStack.length - 1];
-    console.log(latestAction);
 
     if (!latestAction) return;
 

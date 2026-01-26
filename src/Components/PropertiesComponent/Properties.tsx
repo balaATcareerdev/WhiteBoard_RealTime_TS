@@ -68,10 +68,6 @@ const Properties = ({ node }: PropertiesProps) => {
     setFillColorPaletVisible(false);
   }, [node.id, node?.name, node]);
 
-  useEffect(() => {
-    if (localTemp.stroke) console.log(localTemp.stroke);
-  }, [localTemp]);
-
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       e.currentTarget.blur();

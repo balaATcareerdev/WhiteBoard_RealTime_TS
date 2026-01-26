@@ -515,12 +515,10 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
     const parentId = group.parentId; //! Root
 
     let { [activeLayer]: _, ...nodesCopy } = { ...nodes };
-    console.log(nodesCopy);
 
     // Update the Root, if its a root elements
     if (childrenRoot && group.parentId === "root") {
       childrenRoot = childrenRoot.filter((id) => id !== activeLayer);
-      console.log(childrenRoot);
     }
 
     const layersToModify = group.children;
@@ -538,16 +536,11 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       }
     });
 
-    console.log(nodesCopy);
-    console.log(layersToModify);
-
-    console.log(get().updatePositionOfLayer(nodesCopy, group.parentId));
     const updatedNodesPos = get().updatePositionOfLayer(
       nodesCopy,
       group.parentId,
     );
 
-    console.log(updatedNodesPos);
     set({
       allShapes: {
         ...allShapes,
@@ -575,7 +568,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
 
     // Target Destination Layer
     const destination = getDestinationLayer(allAncestors);
-    console.log("Target", destination);
 
     // New Node
     const newGroupId = crypto.randomUUID();
@@ -596,8 +588,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       },
     };
 
-    console.log(newGroupNode);
-
     // Add the New Group to the nodes
     let updatedNodes = {
       ...nodes,
@@ -615,7 +605,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
         const idx = childrenRoot.indexOf(id);
         if (idx !== -1) childrenRoot.splice(idx, 1);
       }
-      console.log(newGroupId, "is Being Updated");
 
       updatedNodes = {
         ...updatedNodes,
@@ -673,7 +662,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
     const nodeToDuplicate = nodes[shapeId];
     if (!nodeToDuplicate) return;
     const newId = crypto.randomUUID();
-    console.log("Duplicate");
 
     const duplicatedNode: LayerNode = {
       ...nodeToDuplicate,
@@ -722,7 +710,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       .map(([id]) => id);
 
     arrayOfNodes.forEach((id) => {
-      console.log(id, arrayOfNodes.length - arrayOfNodes.indexOf(id));
       const pos = arrayOfNodes.length - arrayOfNodes.indexOf(id);
       nodesCopy = {
         ...nodesCopy,
@@ -733,15 +720,10 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       };
     });
 
-    console.log(arrayOfNodes);
-
-    console.log(nodesCopy);
     return nodesCopy;
   },
 
   setLockShape: (id) => {
-    console.log("Change Lock");
-
     const allShapes = get().allShapes;
     let updatedNodes = { ...allShapes.nodes };
     let node = { ...updatedNodes[id] };
@@ -767,8 +749,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       });
     }
 
-    console.log(updatedNodes);
-
     set({
       allShapes: {
         ...allShapes,
@@ -783,8 +763,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       ...allShapes.nodes,
     };
     const node = nodes[id];
-
-    console.log(propName);
 
     const updatedNodes = {
       ...nodes,
@@ -801,7 +779,6 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       },
     };
 
-    console.log(updatedNodes[id]);
     set({
       allShapes: {
         ...allShapes,

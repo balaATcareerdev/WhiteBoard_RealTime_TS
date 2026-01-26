@@ -18,7 +18,6 @@ export default function useLayerMenuHandlers() {
     const siblingsNode = getSiblingsNodeData(nodes, targetChildren);
 
     const index = siblingsNode.findIndex((node) => node.id === activeLayer);
-    console.log(siblingsNode.slice(index, index + 2));
     let updatedSiblings: LayerNode[] = [];
     if (state === "Down") {
       updatedSiblings = siblingsNode.slice(index, index + 2);
