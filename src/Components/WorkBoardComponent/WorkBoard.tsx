@@ -92,7 +92,7 @@ const WorkBoard = ({ layerData }: WorkBoardProps) => {
   }
 
   const childNodes = [...layerData.root.children].sort(
-    (a, b) => layerData.nodes[a].pos - layerData.nodes[b].pos,
+    (a, b) => layerData && layerData.nodes[a].pos - layerData.nodes[b].pos,
   );
 
   return (

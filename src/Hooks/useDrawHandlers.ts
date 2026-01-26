@@ -1,7 +1,7 @@
 import { useLayerStore } from "./../Store/LayerStore";
 import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMenuStore } from "../Store/MenuStore";
 import type { ShapeNode } from "../Data/LayerData";
 import { useBoardStore } from "../Store/BoardStore";
@@ -33,6 +33,11 @@ export default function useDrawHandlers({
   const stageRef = useBoardStore((state) => state.stageRef);
   const transformerRef = useBoardStore((state) => state.transformerRef);
   const layerToDraw = useLayerStore((state) => state.layerToDraw);
+  const undoStack = useBoardStore((state) => state.undoStack);
+
+  useEffect(() => {
+    console.log(undoStack);
+  }, [undoStack]);
 
   // draw the shape
   function handleMouseClick(e: KonvaEventObject<MouseEvent>) {
@@ -309,6 +314,15 @@ export default function useDrawHandlers({
           addNewUndo(currentAction);
         }
         break;
+
+      case "Line":
+      case "Scribble": {
+        if (currentAction) {
+          addNewUndo(currentAction);
+        }
+        break;
+      }
+
       default:
         break;
     }

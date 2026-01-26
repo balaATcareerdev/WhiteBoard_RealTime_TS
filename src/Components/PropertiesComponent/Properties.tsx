@@ -5,7 +5,7 @@ import PropertiesButton from "./PropertiesPanelButtons/PropertiesButton";
 import { GoDuplicate } from "react-icons/go";
 import { MdDelete } from "react-icons/md";
 import { FaRegObjectUngroup } from "react-icons/fa";
-import type { LayerNode } from "../../Data/LayerData";
+import type { LayerNode, UpdateType } from "../../Data/LayerData";
 import { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import SaveColorButton from "./PropertiesPanelButtons/SaveColorButton";
@@ -14,6 +14,7 @@ import { FaTurnUp } from "react-icons/fa6";
 import { FaTurnDown } from "react-icons/fa6";
 import useLayerMenuHandlers from "../../Hooks/useLayerMenuHandlers";
 import { useLayerStore } from "../../Store/LayerStore";
+import { Tools } from "../../constants/ToolConst";
 
 interface PropertiesProps {
   node: LayerNode;
@@ -86,6 +87,17 @@ const Properties = ({ node }: PropertiesProps) => {
   const unGroup = useBoardStore((state) => state.unGroup);
   const activeLayer = useLayerStore((state) => state.activeLayer);
 
+  const [currentUpdateAction, setCurrentUpdateAction] =
+    useState<UpdateType | null>(null);
+
+  const addNewUndo = useBoardStore((state) => state.addNewUndo);
+
+  useEffect(() => {
+    if (currentUpdateAction) {
+      addNewUndo(currentUpdateAction);
+    }
+  }, [currentUpdateAction, addNewUndo]);
+
   return (
     <div className="border-t border-gray-200 p-2">
       <Header title="Properties" />
@@ -149,56 +161,80 @@ const Properties = ({ node }: PropertiesProps) => {
       </div>
 
       {/* Position */}
-      {node.type === "shape" && (
-        <div className="mt-2">
-          <PropertiesAction text="Position" />
-          <div className="flex gap-1 justify-between">
-            <div>
-              <span className="text-gray-600">x</span>
-              <input
-                type="text"
-                className="bg-gray-200 box-border w-full outline-none p-1 font-outfit rounded-md"
-                value={localTemp.x}
-                name="x"
-                onChange={(e) =>
-                  setLocalTemp({
-                    ...localTemp,
-                    x: isNaN(Number(e.target.value))
-                      ? node.props.x
-                      : Number(e.target.value),
-                  })
-                }
-                onBlur={(e) =>
-                  inputValueUpdate(node.id, e.target.name, Number(localTemp.x))
-                }
-                onKeyDown={handleKeyDown}
-              />
-            </div>
+      {node.type === "shape" &&
+        node.shapeType !== "Line" &&
+        node.shapeType !== "Scribble" && (
+          <div className="mt-2">
+            <PropertiesAction text="Position" />
+            <div className="flex gap-1 justify-between">
+              <div>
+                <span className="text-gray-600">x</span>
+                <input
+                  type="text"
+                  className="bg-gray-200 box-border w-full outline-none p-1 font-outfit rounded-md"
+                  value={localTemp.x}
+                  name="x"
+                  onChange={(e) =>
+                    setLocalTemp({
+                      ...localTemp,
+                      x: isNaN(Number(e.target.value))
+                        ? node.props.x
+                        : Number(e.target.value),
+                    })
+                  }
+                  onBlur={(e) => {
+                    inputValueUpdate(
+                      node.id,
+                      e.target.name,
+                      Number(localTemp.x),
+                    );
+                    setCurrentUpdateAction({
+                      type: "Update",
+                      id: node.id,
+                      parentId: node.parentId,
+                      prev: { x: node.props.x },
+                      next: { x: Number(localTemp.x) },
+                    });
+                  }}
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
 
-            <div>
-              <span className="text-gray-600">y</span>
-              <input
-                type="text"
-                className="bg-gray-200 box-border w-full outline-none p-1 font-outfit rounded-md"
-                value={localTemp.y}
-                name="y"
-                onChange={(e) =>
-                  setLocalTemp({
-                    ...localTemp,
-                    y: isNaN(Number(e.target.value))
-                      ? node.props.y
-                      : Number(e.target.value),
-                  })
-                }
-                onBlur={(e) =>
-                  inputValueUpdate(node.id, e.target.name, Number(localTemp.y))
-                }
-                onKeyDown={handleKeyDown}
-              />
+              <div>
+                <span className="text-gray-600">y</span>
+                <input
+                  type="text"
+                  className="bg-gray-200 box-border w-full outline-none p-1 font-outfit rounded-md"
+                  value={localTemp.y}
+                  name="y"
+                  onChange={(e) =>
+                    setLocalTemp({
+                      ...localTemp,
+                      y: isNaN(Number(e.target.value))
+                        ? node.props.y
+                        : Number(e.target.value),
+                    })
+                  }
+                  onBlur={(e) => {
+                    inputValueUpdate(
+                      node.id,
+                      e.target.name,
+                      Number(localTemp.y),
+                    );
+                    setCurrentUpdateAction({
+                      type: "Update",
+                      id: node.id,
+                      parentId: node.parentId,
+                      prev: { y: node.props.y },
+                      next: { y: Number(localTemp.y) },
+                    });
+                  }}
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Width and Height for Rectangle */}
       {node.type === "shape" && node.shapeType === "Rectangle" && (
@@ -220,13 +256,20 @@ const Properties = ({ node }: PropertiesProps) => {
                       : Number(e.target.value),
                   })
                 }
-                onBlur={(e) =>
+                onBlur={(e) => {
                   inputValueUpdate(
                     node.id,
                     e.target.name,
                     Number(localTemp.width),
-                  )
-                }
+                  );
+                  setCurrentUpdateAction({
+                    type: "Update",
+                    id: node.id,
+                    parentId: node.parentId,
+                    prev: { width: node.props.width },
+                    next: { width: Number(localTemp.width) },
+                  });
+                }}
                 onKeyDown={handleKeyDown}
               />
             </div>
@@ -246,13 +289,20 @@ const Properties = ({ node }: PropertiesProps) => {
                       : Number(e.target.value),
                   })
                 }
-                onBlur={(e) =>
+                onBlur={(e) => {
                   inputValueUpdate(
                     node.id,
                     e.target.name,
                     Number(localTemp.height),
-                  )
-                }
+                  );
+                  setCurrentUpdateAction({
+                    type: "Update",
+                    id: node.id,
+                    parentId: node.parentId,
+                    prev: { height: node.props.height },
+                    next: { height: Number(localTemp.height) },
+                  });
+                }}
                 onKeyDown={handleKeyDown}
               />
             </div>
@@ -277,9 +327,20 @@ const Properties = ({ node }: PropertiesProps) => {
                   : Number(e.target.value),
               })
             }
-            onBlur={(e) =>
-              inputValueUpdate(node.id, e.target.name, Number(localTemp.radius))
-            }
+            onBlur={(e) => {
+              inputValueUpdate(
+                node.id,
+                e.target.name,
+                Number(localTemp.radius),
+              );
+              setCurrentUpdateAction({
+                type: "Update",
+                id: node.id,
+                parentId: node.parentId,
+                prev: { radius: node.props.radius },
+                next: { radius: Number(localTemp.radius) },
+              });
+            }}
             onKeyDown={handleKeyDown}
           />
         </div>
@@ -317,13 +378,20 @@ const Properties = ({ node }: PropertiesProps) => {
                             points: newPoints,
                           });
                         }}
-                        onBlur={(e) =>
+                        onBlur={(e) => {
                           inputValueUpdate(
                             node.id,
                             e.target.name,
                             localTemp.points,
-                          )
-                        }
+                          );
+                          setCurrentUpdateAction({
+                            type: "Update",
+                            id: node.id,
+                            parentId: node.parentId,
+                            prev: { points: node.props.points },
+                            next: { points: localTemp.points },
+                          });
+                        }}
                         onKeyDown={handleKeyDown}
                       />
                     </div>
@@ -356,13 +424,20 @@ const Properties = ({ node }: PropertiesProps) => {
                           points: newPoints,
                         });
                       }}
-                      onBlur={(e) =>
+                      onBlur={(e) => {
                         inputValueUpdate(
                           node.id,
                           e.target.name,
                           localTemp.points,
-                        )
-                      }
+                        );
+                        setCurrentUpdateAction({
+                          type: "Update",
+                          id: node.id,
+                          parentId: node.parentId,
+                          prev: { points: node.props.points },
+                          next: { points: localTemp.points },
+                        });
+                      }}
                       onKeyDown={handleKeyDown}
                     />
                   </div>
@@ -404,72 +479,78 @@ const Properties = ({ node }: PropertiesProps) => {
       {/* Fill Color */}
       {node.type === "shape" && (
         <div>
-          <div className="mt-2">
-            <PropertiesAction text="Fill Color" />
-            <div className="flex gap-1 justify-between items-center relative">
-              {fillColorPaletVisible && (
-                <div className="absolute z-100 left-10 top-10">
-                  <HexColorPicker
-                    color={localTemp.fill}
-                    onChange={(newColor) =>
-                      setLocalTemp({
-                        ...localTemp,
-                        fill: newColor,
-                      })
+          {node.shapeType !== Tools.Line &&
+            node.shapeType !== Tools.Scribble && (
+              <div className="mt-2">
+                <PropertiesAction text="Fill Color" />
+                <div className="flex gap-1 justify-between items-center relative">
+                  {fillColorPaletVisible && (
+                    <div className="absolute z-100 left-10 top-10">
+                      <HexColorPicker
+                        color={localTemp.fill}
+                        onChange={(newColor) =>
+                          setLocalTemp({
+                            ...localTemp,
+                            fill: newColor,
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                  <div
+                    onClick={() => setFillColorPaletVisible(true)}
+                    style={
+                      localTemp.fill
+                        ? {
+                            backgroundColor: `${localTemp.fill}`,
+                          }
+                        : undefined
                     }
+                    className={`w-15 rounded-md cursor-pointer h-7 ${
+                      !localTemp.fill ? "border-2 border-red-500" : ""
+                    }`}
+                  ></div>
+                  <input
+                    type="text"
+                    className="bg-gray-200 box-border w-full outline-none p-1 font-outfit rounded-md"
+                    value={
+                      localTemp.fill ? localTemp.fill.toString() : "No Fill"
+                    }
+                    name="fill"
+                    onFocus={() => setFillColorPaletVisible(true)}
+                  />
+                  {node.props.fill !== localTemp.fill && (
+                    <button
+                      onClick={() => {
+                        setFillColorPaletVisible(false);
+                        setLocalTemp({
+                          ...localTemp,
+                          fill: node.props.fill,
+                        });
+                      }}
+                      className="py-1 px-2 cursor-pointer text-lg text-blue-500 rounded-md border border-blue-500 hover:text-white hover:bg-blue-500  transition-all duration-150 active:scale-95"
+                    >
+                      Cancel
+                    </button>
+                  )}
+
+                  <RemoveColorButton
+                    setFunc={setFillColorPaletVisible}
+                    inputValueUpdate={inputValueUpdate}
+                    id={node.id}
+                    name="fill"
+                  />
+                  <SaveColorButton
+                    setFunc={setFillColorPaletVisible}
+                    inputValueUpdate={inputValueUpdate}
+                    value={localTemp.fill}
+                    setCurrentUpdateAction={setCurrentUpdateAction}
+                    node={node}
+                    propertyType="Fill"
                   />
                 </div>
-              )}
-              <div
-                onClick={() => setFillColorPaletVisible(true)}
-                style={
-                  localTemp.fill
-                    ? {
-                        backgroundColor: `${localTemp.fill}`,
-                      }
-                    : undefined
-                }
-                className={`w-15 rounded-md cursor-pointer h-7 ${
-                  !localTemp.fill ? "border-2 border-red-500" : ""
-                }`}
-              ></div>
-              <input
-                type="text"
-                className="bg-gray-200 box-border w-full outline-none p-1 font-outfit rounded-md"
-                value={localTemp.fill ? localTemp.fill.toString() : "No Fill"}
-                name="fill"
-                onFocus={() => setFillColorPaletVisible(true)}
-              />
-              {node.props.fill !== localTemp.fill && (
-                <button
-                  onClick={() => {
-                    setFillColorPaletVisible(false);
-                    setLocalTemp({
-                      ...localTemp,
-                      fill: node.props.fill,
-                    });
-                  }}
-                  className="py-1 px-2 cursor-pointer text-lg text-blue-500 rounded-md border border-blue-500 hover:text-white hover:bg-blue-500  transition-all duration-150 active:scale-95"
-                >
-                  Cancel
-                </button>
-              )}
-
-              <RemoveColorButton
-                setFunc={setFillColorPaletVisible}
-                inputValueUpdate={inputValueUpdate}
-                id={node.id}
-                name="fill"
-              />
-              <SaveColorButton
-                setFunc={setFillColorPaletVisible}
-                inputValueUpdate={inputValueUpdate}
-                id={node.id}
-                name="fill"
-                value={localTemp.fill}
-              />
-            </div>
-          </div>
+              </div>
+            )}
 
           {/* //!Stroke Color */}
           <div className="mt-2">
@@ -533,9 +614,10 @@ const Properties = ({ node }: PropertiesProps) => {
               <SaveColorButton
                 setFunc={setStrokeColorPaletVisible}
                 inputValueUpdate={inputValueUpdate}
-                id={node.id}
-                name="stroke"
                 value={localTemp.stroke}
+                setCurrentUpdateAction={setCurrentUpdateAction}
+                node={node}
+                propertyType="Stroke"
               />
             </div>
           </div>
