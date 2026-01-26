@@ -19,7 +19,8 @@ const RenderNode = ({
 }: RenderNodeProps) => {
   const tool = useMenuStore((state) => state.tool);
 
-  const { dragShape, transformShape } = useShapeChangeHandlers();
+  const { dragShape, transformShape, startTransform } =
+    useShapeChangeHandlers();
 
   const node = layerData.nodes[nodeId];
   if (!node) return;
@@ -45,6 +46,7 @@ const RenderNode = ({
             draggable={tool === "Move"}
             onDragEnd={(e) => dragShape(e, shape.id, true)}
             onClick={(e) => activateTransformation(e)}
+            onTransformStart={(e) => startTransform(e)}
             onTransformEnd={(e) => transformShape(e, shape.id)}
           />
         );
@@ -92,11 +94,11 @@ const RenderNode = ({
   if (node.type == "group") {
     const group = node as GroupNode;
     const sortedGroupElements = [...group.children].sort(
-      (a, b) => layerData.nodes[a].pos - layerData.nodes[b].pos
+      (a, b) => layerData.nodes[a].pos - layerData.nodes[b].pos,
     );
     return (
       <>
-        <Group key={group.id} visible={node.visibility}>
+        <Group key={group.id} visible={node.visibility} listening>
           {sortedGroupElements.map((childId) => (
             <RenderNode
               nodeId={childId}

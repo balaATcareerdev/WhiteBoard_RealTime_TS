@@ -7,6 +7,7 @@ import type { ShapeNode } from "../Data/LayerData";
 import { useBoardStore } from "../Store/BoardStore";
 import { findPositionOfNewShape } from "../Utils/NewShapeUtils";
 import { Tools } from "../constants/ToolConst";
+import useShapeChangeHandlers from "./useShapeChangeHandlers";
 
 export type ActionType = {
   type: "Add";
@@ -34,6 +35,7 @@ export default function useDrawHandlers({
   const transformerRef = useBoardStore((state) => state.transformerRef);
   const layerToDraw = useLayerStore((state) => state.layerToDraw);
   const undoStack = useBoardStore((state) => state.undoStack);
+  const { seedTransform } = useShapeChangeHandlers();
 
   useEffect(() => {
     console.log(undoStack);
@@ -353,6 +355,9 @@ export default function useDrawHandlers({
     const node = stage.findOne(`#${id}`);
 
     if (!node) return;
+
+    seedTransform(node);
+
     setTransformElem(id);
     transformerRef.current?.nodes([node]);
   }

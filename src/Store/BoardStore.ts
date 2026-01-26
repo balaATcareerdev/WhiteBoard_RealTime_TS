@@ -149,6 +149,8 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
         },
         nodes: {},
       },
+      undoStack: [],
+      redoStack: [],
     });
   },
 
