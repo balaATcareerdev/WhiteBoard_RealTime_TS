@@ -1,4 +1,4 @@
-import type { LayerNode } from "../Data/LayerData";
+import type { LayerNode } from "../features/layers/type";
 import { useBoardStore } from "../Store/BoardStore";
 import { useLayerStore } from "../Store/LayerStore";
 

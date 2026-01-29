@@ -1,4 +1,4 @@
-import type { UndoType } from "../Data/LayerData";
+import type { HistoryAction } from "../features/history/type";
 import { useBoardStore } from "../Store/BoardStore";
 
 export default function useUndoRedoHandlers() {
@@ -13,7 +13,7 @@ export default function useUndoRedoHandlers() {
   function doUndo() {
     if (undoStack?.length === 0) return;
 
-    const latestAction: UndoType = undoStack[undoStack.length - 1];
+    const latestAction: HistoryAction = undoStack[undoStack.length - 1];
 
     if (!latestAction) return;
 
@@ -23,7 +23,7 @@ export default function useUndoRedoHandlers() {
     modifyStacks(updatedUndoStack, "undo");
 
     //? update redo with the latest action
-    const updatedRedoStack: UndoType[] = [
+    const updatedRedoStack: HistoryAction[] = [
       ...redoStack,
       InverseType(latestAction),
     ];
@@ -41,7 +41,7 @@ export default function useUndoRedoHandlers() {
     modifyStacks(updatedRedoStack, "redo");
 
     const latestRedo = redoStack[redoStack.length - 1];
-    const updatedUndoStack: UndoType[] = [
+    const updatedUndoStack: HistoryAction[] = [
       ...undoStack,
       InverseType(latestRedo),
     ];
@@ -53,7 +53,7 @@ export default function useUndoRedoHandlers() {
     updateShapesUndoRedo(latestRedo, "redo");
   }
 
-  function InverseType(action: UndoType): UndoType {
+  function InverseType(action: HistoryAction): HistoryAction {
     switch (action.type) {
       case "Add":
         return {

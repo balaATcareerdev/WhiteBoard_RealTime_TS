@@ -1,35 +1,33 @@
 import type Konva from "konva";
 import { create } from "zustand";
-import {
-  // dummyLayerData,
-  type GroupNode,
-  type LayerData,
-  type LayerNode,
-  type ShapeNode,
-  type UndoType,
-  type UpdateType,
-} from "../Data/LayerData";
 import { createRef, type RefObject } from "react";
 import { getAncestorsOfShape } from "../Utils/NewGroupUtils";
 import { getDestinationLayer } from "../Utils/NewGroupUtils";
 import { useLayerStore } from "./LayerStore";
+import type {
+  GroupNode,
+  LayerNode,
+  LayerTree,
+  ShapeNode,
+} from "../features/layers/type";
+import type { HistoryAction } from "../features/history/type";
 
 interface BoardStoreProps {
-  allShapes: LayerData;
+  allShapes: LayerTree;
   stageRef: RefObject<Konva.Stage | null>;
   transformerRef: RefObject<Konva.Transformer | null>;
   toggleVisibility: (id: string) => void;
   addNewShape: (newShape: ShapeNode, layer: string) => void;
   clearShapes: () => void;
-  undoStack: UndoType[];
-  redoStack: UndoType[];
-  addNewUndo: (newAction: UndoType) => void;
-  modifyStacks: (newStack: UndoType[], stackType: string) => void;
+  undoStack: HistoryAction[];
+  redoStack: HistoryAction[];
+  addNewUndo: (newAction: HistoryAction) => void;
+  modifyStacks: (newStack: HistoryAction[], stackType: string) => void;
   updateShapesUndoRedo: (
-    latestAction: UndoType,
+    latestAction: HistoryAction,
     actionType: "undo" | "redo",
   ) => void;
-  updateSingleShape: (action: UpdateType) => void;
+  updateSingleShape: (action: HistoryAction) => void;
   updateShapeNodes: (updatedShapes: LayerNode[]) => void;
   deleteShapeGroup: (shapeOrGroupId: string) => void;
   unGroup: (activeLayer: string) => void;
@@ -418,6 +416,7 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
   // ! Update the Props of a shape
   // ? Todo Update the pos, parentId of the shape
   updateSingleShape: (action) => {
+    if (action.type !== "Update") return;
     const prev = get().allShapes;
     const node = prev.nodes[action.id];
     if (!node || node.type !== "shape") return;

@@ -3,24 +3,18 @@ import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
 import { useEffect, useRef, useState } from "react";
 import { useMenuStore } from "../Store/MenuStore";
-import type { ShapeNode } from "../Data/LayerData";
 import { useBoardStore } from "../Store/BoardStore";
 import { findPositionOfNewShape } from "../Utils/NewShapeUtils";
-import { Tools } from "../constants/ToolConst";
+import { Tools } from "../features/tools/tools";
 import useShapeChangeHandlers from "./useShapeChangeHandlers";
-
-export type ActionType = {
-  type: "Add";
-  shapeDetails: ShapeNode;
-  startingPos: { x: number; y: number };
-};
+import { type AddAction } from "../features/history/type";
 
 export default function useDrawHandlers({
   spaceDown = false,
 }: {
   spaceDown?: boolean;
 } = {}) {
-  const [currentAction, setCurrentAction] = useState<ActionType | null>(null);
+  const [currentAction, setCurrentAction] = useState<AddAction | null>(null);
   const isDrawing = useRef<boolean>(false);
   const addNewShape = useBoardStore((state) => state.addNewShape);
   const setTransformElem = useLayerStore((state) => state.setTransformElem);
@@ -68,7 +62,7 @@ export default function useDrawHandlers({
     switch (tool) {
       case Tools.Rectangle:
         {
-          const action: ActionType = {
+          const action: AddAction = {
             type: "Add",
             startingPos: { x, y },
             shapeDetails: {
@@ -99,7 +93,7 @@ export default function useDrawHandlers({
 
       case "Circle":
         {
-          const action: ActionType = {
+          const action: AddAction = {
             type: "Add",
             startingPos: { x, y },
             shapeDetails: {
@@ -128,7 +122,7 @@ export default function useDrawHandlers({
 
       case "Line":
         {
-          const action: ActionType = {
+          const action: AddAction = {
             type: "Add",
             startingPos: { x, y },
             shapeDetails: {
@@ -155,7 +149,7 @@ export default function useDrawHandlers({
 
       case "Scribble":
         {
-          const action: ActionType = {
+          const action: AddAction = {
             type: "Add",
             startingPos: { x, y },
             shapeDetails: {

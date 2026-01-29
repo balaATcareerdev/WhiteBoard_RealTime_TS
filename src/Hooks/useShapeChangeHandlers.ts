@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { useBoardStore } from "../Store/BoardStore";
-import type { UpdateType } from "../Data/LayerData";
+import type { UpdateAction } from "../features/history/type";
 
 const lastTransform = new WeakMap<
   Konva.Node,
@@ -29,7 +29,7 @@ export default function useShapeChangeHandlers() {
       },
     };
 
-    const action: UpdateType = {
+    const action: UpdateAction = {
       type: "Update",
       id: currentShape.id,
       parentId: currentShape.parentId,
@@ -87,7 +87,7 @@ export default function useShapeChangeHandlers() {
     node.scaleY(1);
 
     if (currentShape.shapeType === "Rectangle") {
-      const action: UpdateType = {
+      const action: UpdateAction = {
         type: "Update",
         id,
         parentId: currentShape.parentId,
