@@ -1,4 +1,3 @@
-import { useLayerStore } from "./../Store/LayerStore";
 import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +8,8 @@ import { Tools } from "../features/tools/tools";
 import useShapeChangeHandlers from "./useShapeChangeHandlers";
 import { type AddAction } from "../features/history/type";
 import { useSelectionStore } from "../features/selection/selectionStores";
+import { useTransformStore } from "../features/transform/transformStore";
+import { useLayerTargetStore } from "../features/layers/layerTargetStore";
 
 export default function useDrawHandlers({
   spaceDown = false,
@@ -18,7 +19,9 @@ export default function useDrawHandlers({
   const [currentAction, setCurrentAction] = useState<AddAction | null>(null);
   const isDrawing = useRef<boolean>(false);
   const addNewShape = useBoardStore((state) => state.addNewShape);
-  const setTransformElem = useLayerStore((state) => state.setTransformElem);
+  const setTransformElemId = useTransformStore(
+    (state) => state.setTransformElemId,
+  );
   const tool = useMenuStore((state) => state.tool);
   const allShapes = useBoardStore((state) => state.allShapes);
 
@@ -30,7 +33,7 @@ export default function useDrawHandlers({
   const addNewUndo = useBoardStore((state) => state.addNewUndo);
   const stageRef = useBoardStore((state) => state.stageRef);
   const transformerRef = useBoardStore((state) => state.transformerRef);
-  const layerToDraw = useLayerStore((state) => state.layerToDraw);
+  const targetLayerId = useLayerTargetStore((state) => state.targetLayerId);
   const undoStack = useBoardStore((state) => state.undoStack);
   const { seedTransform } = useShapeChangeHandlers();
 
@@ -59,7 +62,7 @@ export default function useDrawHandlers({
     const x = (pointer.x - stage.x()) / stage.scaleX();
     const y = (pointer.y - stage.y()) / stage.scaleY();
 
-    const newPosition = findPositionOfNewShape(allShapes, layerToDraw);
+    const newPosition = findPositionOfNewShape(allShapes, targetLayerId);
 
     // switch case
     switch (tool) {
@@ -73,7 +76,7 @@ export default function useDrawHandlers({
               name: `${Tools.Rectangle}-New`,
               type: "shape",
               shapeType: "Rectangle",
-              parentId: layerToDraw,
+              parentId: targetLayerId,
               pos: newPosition,
               visibility: true,
               lock: false,
@@ -329,14 +332,14 @@ export default function useDrawHandlers({
     const newShapeData = currentAction?.shapeDetails;
 
     if (!newShapeData) return;
-    addNewShape(newShapeData, layerToDraw);
+    addNewShape(newShapeData, targetLayerId);
 
     setCurrentAction(null);
   }
 
   function activateTransformation(e: KonvaEventObject<MouseEvent, Konva.Node>) {
     if (tool !== "Move") return;
-    setTransformElem(e.currentTarget.id());
+    setTransformElemId(e.currentTarget.id());
     const currentTarget = e.currentTarget;
     transformerRef.current?.nodes([currentTarget]);
   }
@@ -355,7 +358,7 @@ export default function useDrawHandlers({
 
     seedTransform(node);
 
-    setTransformElem(id);
+    setTransformElemId(id);
     transformerRef.current?.nodes([node]);
   }
 

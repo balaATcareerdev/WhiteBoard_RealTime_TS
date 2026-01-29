@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
 import { FaAngleDown } from "react-icons/fa";
-import { useLayerStore } from "../../Store/LayerStore";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
 import { layerToDrawShape } from "../../Utils/ShapeDataUtils";
 import { useBoardStore } from "../../Store/BoardStore";
@@ -14,6 +13,8 @@ import { PiSmileyXEyes } from "react-icons/pi";
 import ShapeList from "./ShapeList";
 import { useSelectionStore } from "../../features/selection/selectionStores";
 import type { GroupNode, LayerTree } from "../../features/layers/type";
+import { useTransformStore } from "../../features/transform/transformStore";
+import { useLayerTargetStore } from "../../features/layers/layerTargetStore";
 
 interface GroupLayerProps {
   node: GroupNode;
@@ -35,10 +36,13 @@ const GroupLayer = ({
   const setActive = useSelectionStore((state) => state.setActive);
 
   const activeId = useSelectionStore((state) => state.activeId);
-  const transformElem = useLayerStore((state) => state.transformElem);
+
+  const transformElemId = useTransformStore((state) => state.transformELemId);
 
   const { deactiveTransformation } = useDrawHandlers();
-  const setLayerToDraw = useLayerStore((state) => state.setLayerToDraw);
+  const setTargetLayerId = useLayerTargetStore(
+    (state) => state.setTargetLayerId,
+  );
   const allShapes = useBoardStore((state) => state.allShapes);
   const setLockShape = useBoardStore((state) => state.setLockShape);
 
@@ -54,7 +58,7 @@ const GroupLayer = ({
         onClick={() => {
           setActive(node.id);
           const layerToDraw = layerToDrawShape(allShapes, node.id);
-          setLayerToDraw(layerToDraw);
+          setTargetLayerId(layerToDraw);
         }}
       >
         {/* Left Side Content */}
@@ -85,7 +89,7 @@ const GroupLayer = ({
           opFunc={(e) => {
             e.stopPropagation();
             toggleVisibility(node.id);
-            if (transformElem && node.children.includes(transformElem)) {
+            if (transformElemId && node.children.includes(transformElemId)) {
               deactiveTransformation();
             }
           }}

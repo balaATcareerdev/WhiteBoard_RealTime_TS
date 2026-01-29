@@ -1,4 +1,3 @@
-import { useLayerStore } from "../../Store/LayerStore";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
 import {
   layerToDrawShape,
@@ -12,6 +11,8 @@ import { PiEyesFill } from "react-icons/pi";
 import { PiSmileyXEyes } from "react-icons/pi";
 import { useSelectionStore } from "../../features/selection/selectionStores";
 import type { ShapeNode } from "../../features/layers/type";
+import { useTransformStore } from "../../features/transform/transformStore";
+import { useLayerTargetStore } from "../../features/layers/layerTargetStore";
 
 interface ShapeLayerProps {
   node: ShapeNode;
@@ -23,12 +24,14 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
 
   const activeId = useSelectionStore((state) => state.activeId);
 
-  const transformElem = useLayerStore((state) => state.transformElem);
+  const transformElemId = useTransformStore((state) => state.transformELemId);
   const allShapes = useBoardStore((state) => state.allShapes);
 
   const { activateTrasformationFromList, deactiveTransformation } =
     useDrawHandlers();
-  const setLayerToDraw = useLayerStore((state) => state.setLayerToDraw);
+  const setTargetLayerId = useLayerTargetStore(
+    (state) => state.setTargetLayerId,
+  );
 
   const setLockShape = useBoardStore((state) => state.setLockShape);
 
@@ -56,7 +59,7 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
         }
         setActive(node.id);
         const layerToDraw = layerToDrawShape(allShapes, node.id);
-        setLayerToDraw(layerToDraw);
+        setTargetLayerId(layerToDraw);
         if (activeId === node.id) {
           deactiveTransformation();
         } else {
@@ -90,7 +93,7 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
           ) {
             toggleVisibility(node.id);
           }
-          if (node.id === transformElem) {
+          if (node.id === transformElemId) {
             deactiveTransformation();
           }
         }}
