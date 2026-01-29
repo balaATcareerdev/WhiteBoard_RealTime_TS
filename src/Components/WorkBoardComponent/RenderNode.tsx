@@ -1,14 +1,18 @@
 import { Circle, Group, Line, Rect } from "react-konva";
-import type { GroupNode, LayerData, ShapeNode } from "../../Data/LayerData";
 import Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
 import useShapeChangeHandlers from "../../Hooks/useShapeChangeHandlers";
-import { useMenuStore } from "../../Store/MenuStore";
-import { Tools } from "../../constants/ToolConst";
+import { useToolStore } from "../../features/tools/toolStore";
+import { Tools } from "../../features/tools/tools";
+import type {
+  GroupNode,
+  LayerTree,
+  ShapeNode,
+} from "../../features/layers/type";
 
 interface RenderNodeProps {
   nodeId: string;
-  layerData: LayerData;
+  layerData: LayerTree;
   activateTransformation: (e: KonvaEventObject<MouseEvent, Konva.Node>) => void;
 }
 
@@ -17,7 +21,7 @@ const RenderNode = ({
   layerData,
   activateTransformation,
 }: RenderNodeProps) => {
-  const tool = useMenuStore((state) => state.tool);
+  const currentTool = useToolStore((state) => state.currentTool);
 
   const { dragShape, transformShape, startTransform } =
     useShapeChangeHandlers();
@@ -43,7 +47,7 @@ const RenderNode = ({
             rotation={shape.props.rotation}
             visible={shape.visibility}
             strokeWidth={shape.props.strokeWidth}
-            draggable={tool === "Move"}
+            draggable={currentTool === Tools.Move}
             onDragEnd={(e) => dragShape(e, shape.id, true)}
             onClick={(e) => activateTransformation(e)}
             onTransformStart={(e) => startTransform(e)}
@@ -65,7 +69,7 @@ const RenderNode = ({
             fill={shape.props.fill}
             fillEnabled={!!shape.props.fill}
             visible={shape.visibility}
-            draggable={tool === "Move"}
+            draggable={currentTool === Tools.Move}
             onDragEnd={(e) => dragShape(e, shape.id, true)}
             onClick={(e) => activateTransformation(e)}
           />

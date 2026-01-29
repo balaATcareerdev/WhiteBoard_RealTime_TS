@@ -16,6 +16,7 @@ import useLayerMenuHandlers from "../../Hooks/useLayerMenuHandlers";
 import { Tools } from "../../features/tools/tools";
 import { useSelectionStore } from "../../features/selection/selectionStores";
 import type { UpdateAction } from "../../features/history/type";
+import { useStyleStore } from "../../features/styles/styleStore";
 
 interface PropertiesProps {
   node: LayerNode;
@@ -94,6 +95,8 @@ const Properties = ({ node }: PropertiesProps) => {
     useState<UpdateAction | null>(null);
 
   const addNewUndo = useBoardStore((state) => state.addNewUndo);
+
+  const setStrokeWidth = useStyleStore((state) => state.setStrokeWidth);
 
   useEffect(() => {
     if (currentUpdateAction) {
@@ -649,7 +652,8 @@ const Properties = ({ node }: PropertiesProps) => {
                     : Number(e.target.value),
                 });
               }}
-              onMouseUp={() => {
+              onMouseUp={(e) => {
+                setStrokeWidth(Number(e.currentTarget.value));
                 inputValueUpdate(node.id, "strokeWidth", localTemp.strokeWidth);
               }}
             />

@@ -1,7 +1,6 @@
 import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
 import { useEffect, useRef, useState } from "react";
-import { useMenuStore } from "../Store/MenuStore";
 import { useBoardStore } from "../Store/BoardStore";
 import { findPositionOfNewShape } from "../Utils/NewShapeUtils";
 import { Tools } from "../features/tools/tools";
@@ -10,6 +9,8 @@ import { type AddAction } from "../features/history/type";
 import { useSelectionStore } from "../features/selection/selectionStores";
 import { useTransformStore } from "../features/transform/transformStore";
 import { useLayerTargetStore } from "../features/layers/layerTargetStore";
+import { useToolStore } from "../features/tools/toolStore";
+import { useStyleStore } from "../features/styles/styleStore";
 
 export default function useDrawHandlers({
   spaceDown = false,
@@ -22,14 +23,14 @@ export default function useDrawHandlers({
   const setTransformElemId = useTransformStore(
     (state) => state.setTransformElemId,
   );
-  const tool = useMenuStore((state) => state.tool);
+  const currentTool = useToolStore((state) => state.currentTool);
   const allShapes = useBoardStore((state) => state.allShapes);
 
   const activeId = useSelectionStore((state) => state.activeId);
 
-  const color = useMenuStore((state) => state.color);
-  const setShowColorPalet = useMenuStore((state) => state.setShowColorPalet);
-  const strokeWidth = useMenuStore((state) => state.strokeWidth);
+  const color = useStyleStore((state) => state.color);
+  const toggleColorPalet = useStyleStore((state) => state.toggleColorPalet);
+  const strokeWidth = useStyleStore((state) => state.strokeWidth);
   const addNewUndo = useBoardStore((state) => state.addNewUndo);
   const stageRef = useBoardStore((state) => state.stageRef);
   const transformerRef = useBoardStore((state) => state.transformerRef);
@@ -50,7 +51,7 @@ export default function useDrawHandlers({
     const clickedOnEmptyArea = node === e.target.getStage();
 
     if (clickedOnEmptyArea) {
-      setShowColorPalet(false);
+      toggleColorPalet(false);
       deactiveTransformation();
     }
 
@@ -65,7 +66,7 @@ export default function useDrawHandlers({
     const newPosition = findPositionOfNewShape(allShapes, targetLayerId);
 
     // switch case
-    switch (tool) {
+    switch (currentTool) {
       case Tools.Rectangle:
         {
           const action: AddAction = {
@@ -97,7 +98,7 @@ export default function useDrawHandlers({
         }
         break;
 
-      case "Circle":
+      case Tools.Circle:
         {
           const action: AddAction = {
             type: "Add",
@@ -106,7 +107,7 @@ export default function useDrawHandlers({
               id: crypto.randomUUID(),
               name: `${Tools.Circle}-new`,
               type: "shape",
-              shapeType: tool,
+              shapeType: currentTool,
               parentId: activeId,
               pos: newPosition,
               visibility: true,
@@ -126,7 +127,7 @@ export default function useDrawHandlers({
         }
         break;
 
-      case "Line":
+      case Tools.Line:
         {
           const action: AddAction = {
             type: "Add",
@@ -135,7 +136,7 @@ export default function useDrawHandlers({
               id: crypto.randomUUID(),
               name: `${Tools.Line}-new`,
               type: "shape",
-              shapeType: tool,
+              shapeType: currentTool,
               parentId: activeId,
               pos: newPosition,
               visibility: true,
@@ -153,7 +154,7 @@ export default function useDrawHandlers({
         }
         break;
 
-      case "Scribble":
+      case Tools.Scribble:
         {
           const action: AddAction = {
             type: "Add",
@@ -162,7 +163,7 @@ export default function useDrawHandlers({
               id: crypto.randomUUID(),
               name: `${Tools.Scribble}-new`,
               type: "shape",
-              shapeType: tool,
+              shapeType: currentTool,
               parentId: activeId,
               pos: newPosition,
               visibility: true,
@@ -196,7 +197,7 @@ export default function useDrawHandlers({
     const x = (pointer.x - stageRef.current.x()) / stageRef.current.scaleX();
     const y = (pointer.y - stageRef.current.y()) / stageRef.current.scaleY();
 
-    switch (tool) {
+    switch (currentTool) {
       case Tools.Rectangle:
         {
           setCurrentAction((prev) =>
@@ -291,8 +292,8 @@ export default function useDrawHandlers({
   function handleMouseUp() {
     if (spaceDown) return;
     isDrawing.current = false;
-    switch (tool) {
-      case "Rectangle":
+    switch (currentTool) {
+      case Tools.Rectangle:
         {
           if (
             currentAction?.shapeDetails.props.width === 0 ||
@@ -338,7 +339,7 @@ export default function useDrawHandlers({
   }
 
   function activateTransformation(e: KonvaEventObject<MouseEvent, Konva.Node>) {
-    if (tool !== "Move") return;
+    if (currentTool !== Tools.Move) return;
     setTransformElemId(e.currentTarget.id());
     const currentTarget = e.currentTarget;
     transformerRef.current?.nodes([currentTarget]);

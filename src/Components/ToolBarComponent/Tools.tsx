@@ -7,74 +7,74 @@ import { MdCleaningServices } from "react-icons/md";
 import { IoIosColorFill } from "react-icons/io";
 
 import ToolIcon from "./ToolIcon";
-import { useMenuStore } from "../../Store/MenuStore";
 
-import { Tools as ToolList } from "../../constants/ToolConst";
 import { useBoardStore } from "../../Store/BoardStore";
 
 import { HexColorPicker } from "react-colorful";
+import { useToolStore } from "../../features/tools/toolStore";
+import { Tools as ToolList } from "../../features/tools/tools";
+import { useStyleStore } from "../../features/styles/styleStore";
 
 const Tools = () => {
-  const tool = useMenuStore((state) => state.tool);
-  const setTool = useMenuStore((state) => state.setTool);
+  const currentTool = useToolStore((state) => state.currentTool);
+  const setCurrentTool = useToolStore((state) => state.setCurrentTool);
   const clearShapes = useBoardStore((state) => state.clearShapes);
-  // const [showColorPalet, setShowColorPalet] = useState(true);
-  const setColor = useMenuStore((state) => state.setColor);
-  const showColorPalet = useMenuStore((state) => state.showColorPalet);
-  const setShowColorPalet = useMenuStore((state) => state.setShowColorPalet);
+  const setColor = useStyleStore((state) => state.setColor);
+  const showColorPalet = useStyleStore((state) => state.showColorPalet);
+  const toggleColorPalet = useStyleStore((state) => state.toggleColorPalet);
   return (
     <div className="flex flex-col p-2 gap-1 border-r border-b border-gray-200">
       <ToolIcon
         Icon={LuRectangleHorizontal}
         size={40}
-        isActive={tool === ToolList.Rectangle}
+        isActive={currentTool === ToolList.Rectangle}
         opFunc={() => {
-          setTool("Rectangle");
+          setCurrentTool(ToolList.Rectangle);
         }}
       />
       <ToolIcon
         Icon={IoEllipseOutline}
         size={40}
-        isActive={tool === ToolList.Circle}
+        isActive={currentTool === ToolList.Circle}
         opFunc={() => {
-          setTool("Circle");
+          setCurrentTool(ToolList.Circle);
         }}
       />
       <ToolIcon
         Icon={GiPencilRuler}
         size={40}
-        isActive={tool === ToolList.Line}
+        isActive={currentTool === ToolList.Line}
         opFunc={() => {
-          setTool("Line");
+          setCurrentTool(ToolList.Line);
         }}
       />
       <ToolIcon
         Icon={FaPencil}
         size={40}
-        isActive={tool === ToolList.Scribble}
+        isActive={currentTool === ToolList.Scribble}
         opFunc={() => {
-          setTool("Scribble");
+          setCurrentTool(ToolList.Scribble);
         }}
       />
       <ToolIcon
         Icon={FaHandSpock}
         size={40}
-        isActive={tool === ToolList.Move}
+        isActive={currentTool === ToolList.Move}
         opFunc={() => {
-          setTool("Move");
+          setCurrentTool(ToolList.Move);
         }}
       />
       <ToolIcon
         Icon={MdCleaningServices}
         size={40}
-        isActive={tool === ToolList.Clear}
+        isActive={currentTool === ToolList.Clear}
         opFunc={() => {
           clearShapes();
         }}
       />
       <div className="relative">
         <div
-          onClick={() => setShowColorPalet(!showColorPalet)}
+          onClick={() => toggleColorPalet(!showColorPalet)}
           className={`p-2  rounded-md cursor-pointer transition-colors duration-300`}
         >
           <IoIosColorFill size={40} />
