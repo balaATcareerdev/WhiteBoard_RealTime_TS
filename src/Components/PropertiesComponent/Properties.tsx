@@ -5,7 +5,7 @@ import PropertiesButton from "./PropertiesPanelButtons/PropertiesButton";
 import { GoDuplicate } from "react-icons/go";
 import { MdDelete } from "react-icons/md";
 import { FaRegObjectUngroup } from "react-icons/fa";
-import type { LayerNode, UpdateType } from "../../Data/LayerData";
+import type { LayerNode } from "../../features/layers/type";
 import { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import SaveColorButton from "./PropertiesPanelButtons/SaveColorButton";
@@ -13,8 +13,9 @@ import RemoveColorButton from "./PropertiesPanelButtons/RemoveColorButton";
 import { FaTurnUp } from "react-icons/fa6";
 import { FaTurnDown } from "react-icons/fa6";
 import useLayerMenuHandlers from "../../Hooks/useLayerMenuHandlers";
-import { useLayerStore } from "../../Store/LayerStore";
-import { Tools } from "../../constants/ToolConst";
+import { Tools } from "../../features/tools/tools";
+import { useSelectionStore } from "../../features/selection/selectionStores";
+import type { UpdateAction } from "../../features/history/type";
 
 interface PropertiesProps {
   node: LayerNode;
@@ -85,10 +86,12 @@ const Properties = ({ node }: PropertiesProps) => {
   const duplicateLayer = useBoardStore((state) => state.duplicateLayer);
   const { handleUpDown } = useLayerMenuHandlers();
   const unGroup = useBoardStore((state) => state.unGroup);
-  const activeLayer = useLayerStore((state) => state.activeLayer);
+  // const activeLayer = useLayerStore((state) => state.activeLayer);
+
+  const activeId = useSelectionStore((state) => state.activeId);
 
   const [currentUpdateAction, setCurrentUpdateAction] =
-    useState<UpdateType | null>(null);
+    useState<UpdateAction | null>(null);
 
   const addNewUndo = useBoardStore((state) => state.addNewUndo);
 
@@ -120,7 +123,7 @@ const Properties = ({ node }: PropertiesProps) => {
             Icon={FaRegObjectUngroup}
             text="Ungroup"
             color="#FFA500"
-            funct={() => unGroup(activeLayer)}
+            funct={() => unGroup(activeId)}
           />
         )}
         <PropertiesButton

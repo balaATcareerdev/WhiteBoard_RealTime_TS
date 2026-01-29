@@ -8,6 +8,7 @@ import { findPositionOfNewShape } from "../Utils/NewShapeUtils";
 import { Tools } from "../features/tools/tools";
 import useShapeChangeHandlers from "./useShapeChangeHandlers";
 import { type AddAction } from "../features/history/type";
+import { useSelectionStore } from "../features/selection/selectionStores";
 
 export default function useDrawHandlers({
   spaceDown = false,
@@ -20,7 +21,9 @@ export default function useDrawHandlers({
   const setTransformElem = useLayerStore((state) => state.setTransformElem);
   const tool = useMenuStore((state) => state.tool);
   const allShapes = useBoardStore((state) => state.allShapes);
-  const activeLayer = useLayerStore((state) => state.activeLayer);
+
+  const activeId = useSelectionStore((state) => state.activeId);
+
   const color = useMenuStore((state) => state.color);
   const setShowColorPalet = useMenuStore((state) => state.setShowColorPalet);
   const strokeWidth = useMenuStore((state) => state.strokeWidth);
@@ -101,7 +104,7 @@ export default function useDrawHandlers({
               name: `${Tools.Circle}-new`,
               type: "shape",
               shapeType: tool,
-              parentId: activeLayer,
+              parentId: activeId,
               pos: newPosition,
               visibility: true,
               lock: false,
@@ -130,7 +133,7 @@ export default function useDrawHandlers({
               name: `${Tools.Line}-new`,
               type: "shape",
               shapeType: tool,
-              parentId: activeLayer,
+              parentId: activeId,
               pos: newPosition,
               visibility: true,
               lock: false,
@@ -157,7 +160,7 @@ export default function useDrawHandlers({
               name: `${Tools.Scribble}-new`,
               type: "shape",
               shapeType: tool,
-              parentId: activeLayer,
+              parentId: activeId,
               pos: newPosition,
               visibility: true,
               lock: false,

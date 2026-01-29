@@ -1,13 +1,13 @@
-import type { LayerData } from "../../Data/LayerData";
+import type { LayerTree } from "../../features/layers/type";
+import { useSelectionStore } from "../../features/selection/selectionStores";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
 import { useBoardStore } from "../../Store/BoardStore";
-import { useLayerStore } from "../../Store/LayerStore";
 import Header from "../CommonComponent/Header";
 import Properties from "../PropertiesComponent/Properties";
 import ShapeList from "./ShapeList";
 
 interface LayerPanelProps {
-  layerData: LayerData;
+  layerData: LayerTree;
 }
 
 const LayerPanel = ({ layerData }: LayerPanelProps) => {
@@ -15,13 +15,13 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
     return layerData.nodes[b].pos - layerData.nodes[a].pos;
   });
 
-  const activeLayer = useLayerStore((state) => state.activeLayer);
+  const activeId = useSelectionStore((state) => state.activeId);
 
   const createGroup = useBoardStore((state) => state.createGroup);
 
-  const selectedLayers = useLayerStore((state) => state.selectedLayers);
+  const selectedIds = useSelectionStore((state) => state.selectedIds);
 
-  const unSelectAllLayers = useLayerStore((state) => state.unSelectAllLayers);
+  const clearSelection = useSelectionStore((state) => state.clearSelection);
 
   const { deactiveTransformation } = useDrawHandlers();
 
@@ -43,8 +43,8 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
         <button
           className="text-lg font-outfit outline outline-[#155dfc] text-[#155dfc] px-2 py-1 rounded-lg cursor-pointer hover:outline-none hover:bg-[#155dfc] hover:text-white active:scale-95 transition-all duration-300 active:bg-blue-500"
           onClick={() => {
-            createGroup(selectedLayers);
-            unSelectAllLayers();
+            createGroup(selectedIds);
+            clearSelection();
             deactiveTransformation();
           }}
         >
@@ -56,9 +56,9 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
         <ShapeList sortedLayerData={sortedLayerData} layerData={layerData} />
       </div>
       {/* Properties */}
-      {activeLayer !== "root" && layerData.nodes[activeLayer] && (
+      {activeId !== "root" && layerData.nodes[activeId] && (
         <div className="max-h-[40%] min-h-0 overflow-y-auto border-t border-gray-300 no-scrollbar">
-          <Properties node={layerData.nodes[activeLayer]} />
+          <Properties node={layerData.nodes[activeId]} />
         </div>
       )}
     </div>

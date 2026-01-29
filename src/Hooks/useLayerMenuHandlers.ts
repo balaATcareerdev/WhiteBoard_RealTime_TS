@@ -1,15 +1,17 @@
 import type { LayerNode } from "../features/layers/type";
+import { useSelectionStore } from "../features/selection/selectionStores";
 import { useBoardStore } from "../Store/BoardStore";
-import { useLayerStore } from "../Store/LayerStore";
 
 export default function useLayerMenuHandlers() {
   const allShapes = useBoardStore((state) => state.allShapes);
-  const activeLayer = useLayerStore((state) => state.activeLayer);
+
+  const activeId = useSelectionStore((state) => state.activeId);
+
   const updateShapeNodes = useBoardStore((state) => state.updateShapeNodes);
 
   function handleUpDown(state: "Up" | "Down") {
     const nodes: Record<string, LayerNode> = allShapes.nodes;
-    const node = nodes[activeLayer];
+    const node = nodes[activeId];
 
     if (node.lock) return;
     const targetChildren = getSiblingsNode(node, nodes);
@@ -17,7 +19,7 @@ export default function useLayerMenuHandlers() {
     // update the position based on the target and selected node
     const siblingsNode = getSiblingsNodeData(nodes, targetChildren);
 
-    const index = siblingsNode.findIndex((node) => node.id === activeLayer);
+    const index = siblingsNode.findIndex((node) => node.id === activeId);
     let updatedSiblings: LayerNode[] = [];
     if (state === "Down") {
       updatedSiblings = siblingsNode.slice(index, index + 2);

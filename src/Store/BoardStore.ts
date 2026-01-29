@@ -3,7 +3,6 @@ import { create } from "zustand";
 import { createRef, type RefObject } from "react";
 import { getAncestorsOfShape } from "../Utils/NewGroupUtils";
 import { getDestinationLayer } from "../Utils/NewGroupUtils";
-import { useLayerStore } from "./LayerStore";
 import type {
   GroupNode,
   LayerNode,
@@ -11,6 +10,7 @@ import type {
   ShapeNode,
 } from "../features/layers/type";
 import type { HistoryAction } from "../features/history/type";
+import { useSelectionStore } from "../features/selection/selectionStores";
 
 interface BoardStoreProps {
   allShapes: LayerTree;
@@ -649,7 +649,7 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
       }
     }
 
-    useLayerStore.getState().setActiveLayer(newGroupId);
+    useSelectionStore.getState().setActive(newGroupId);
 
     set({
       allShapes: {

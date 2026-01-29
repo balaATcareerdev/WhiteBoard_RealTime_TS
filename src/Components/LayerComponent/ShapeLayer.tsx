@@ -1,4 +1,3 @@
-import { type ShapeNode } from "../../Data/LayerData";
 import { useLayerStore } from "../../Store/LayerStore";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
 import {
@@ -11,6 +10,8 @@ import { AiTwotoneLock } from "react-icons/ai";
 import { AiTwotoneUnlock } from "react-icons/ai";
 import { PiEyesFill } from "react-icons/pi";
 import { PiSmileyXEyes } from "react-icons/pi";
+import { useSelectionStore } from "../../features/selection/selectionStores";
+import type { ShapeNode } from "../../features/layers/type";
 
 interface ShapeLayerProps {
   node: ShapeNode;
@@ -18,9 +19,9 @@ interface ShapeLayerProps {
 }
 
 const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
-  const setActiveLayer = useLayerStore((state) => state.setActiveLayer);
+  const setActive = useSelectionStore((state) => state.setActive);
 
-  const activeLayer = useLayerStore((state) => state.activeLayer);
+  const activeId = useSelectionStore((state) => state.activeId);
 
   const transformElem = useLayerStore((state) => state.transformElem);
   const allShapes = useBoardStore((state) => state.allShapes);
@@ -31,32 +32,32 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
 
   const setLockShape = useBoardStore((state) => state.setLockShape);
 
-  const setSelectedLayers = useLayerStore((state) => state.setSelectedLayers);
+  const toggle = useSelectionStore((state) => state.toggle);
 
-  const selectedLayers = useLayerStore((state) => state.selectedLayers);
+  const selectedIds = useSelectionStore((state) => state.selectedIds);
 
   const onMultiSelect = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedLayers(node.id, !selectedLayers.includes(node.id));
-    setActiveLayer("root");
+    toggle(node.id);
+    setActive("root");
   };
 
   return (
     <div
       className={`grid grid-cols-[1fr_30px_30px] cursor-pointer items-center ${
         node.parentId === "root" ? "px-2" : ""
-      } ${activeLayer === node.id ? "bg-blue-50 text-[#155dfc]" : ""}
-      ${selectedLayers.includes(node.id) ? "bg-red-100 text-red-500" : activeLayer === node.id ? "bg-blue-50 text-[#155dfc]" : ""}
+      } ${activeId === node.id ? "bg-blue-50 text-[#155dfc]" : ""}
+      ${selectedIds.includes(node.id) ? "bg-red-100 text-red-500" : activeId === node.id ? "bg-blue-50 text-[#155dfc]" : ""}
       my-2 hover:bg-gray-100`}
       onClick={(e) => {
         if (e.shiftKey) {
           onMultiSelect(e);
           return;
         }
-        setActiveLayer(node.id);
+        setActive(node.id);
         const layerToDraw = layerToDrawShape(allShapes, node.id);
         setLayerToDraw(layerToDraw);
-        if (activeLayer === node.id) {
+        if (activeId === node.id) {
           deactiveTransformation();
         } else {
           activateTrasformationFromList(node.id);

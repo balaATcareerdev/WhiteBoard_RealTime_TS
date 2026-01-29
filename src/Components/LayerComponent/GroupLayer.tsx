@@ -1,5 +1,4 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { GroupNode, LayerData } from "../../Data/LayerData";
 import { FaAngleDown } from "react-icons/fa";
 import { useLayerStore } from "../../Store/LayerStore";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
@@ -13,12 +12,14 @@ import { PiEyesFill } from "react-icons/pi";
 import { PiSmileyXEyes } from "react-icons/pi";
 
 import ShapeList from "./ShapeList";
+import { useSelectionStore } from "../../features/selection/selectionStores";
+import type { GroupNode, LayerTree } from "../../features/layers/type";
 
 interface GroupLayerProps {
   node: GroupNode;
   open: boolean;
   childElements: string[];
-  layerData: LayerData;
+  layerData: LayerTree;
   setOpen: Dispatch<SetStateAction<boolean>>;
   toggleVisibility: (id: string) => void;
 }
@@ -31,9 +32,9 @@ const GroupLayer = ({
   setOpen,
   toggleVisibility,
 }: GroupLayerProps) => {
-  const setActiveLayer = useLayerStore((state) => state.setActiveLayer);
+  const setActive = useSelectionStore((state) => state.setActive);
 
-  const activeLayer = useLayerStore((state) => state.activeLayer);
+  const activeId = useSelectionStore((state) => state.activeId);
   const transformElem = useLayerStore((state) => state.transformElem);
 
   const { deactiveTransformation } = useDrawHandlers();
@@ -48,10 +49,10 @@ const GroupLayer = ({
       {/* Header */}
       <div
         className={`grid grid-cols-[1fr_30px_30px] cursor-pointer hover:bg-gray-100 ${
-          activeLayer === node.id ? "bg-blue-50 text-[#155dfc]" : ""
+          activeId === node.id ? "bg-blue-50 text-[#155dfc]" : ""
         }`}
         onClick={() => {
-          setActiveLayer(node.id);
+          setActive(node.id);
           const layerToDraw = layerToDrawShape(allShapes, node.id);
           setLayerToDraw(layerToDraw);
         }}
