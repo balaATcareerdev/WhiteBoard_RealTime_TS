@@ -504,6 +504,12 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
         nodes: newNodes,
       },
     });
+
+    get().addNewUndo({
+      type: "Remove",
+      startingPos: { x: 0, y: 0 },
+      shapeDetails: node as ShapeNode,
+    });
   },
 
   unGroup: (activeLayer) => {
@@ -701,6 +707,12 @@ export const useBoardStore = create<BoardStoreProps>((set, get) => ({
         root: root,
         nodes: updatedNodesPos,
       },
+    });
+
+    get().addNewUndo({
+      type: "Add",
+      startingPos: { x: 0, y: 0 },
+      shapeDetails: updatedNodesPos[newId] as ShapeNode,
     });
   },
 
