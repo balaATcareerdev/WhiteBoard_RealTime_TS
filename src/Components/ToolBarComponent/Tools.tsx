@@ -8,17 +8,16 @@ import { IoIosColorFill } from "react-icons/io";
 
 import ToolIcon from "./ToolIcon";
 
-import { useBoardStore } from "../../Store/BoardStore";
-
 import { HexColorPicker } from "react-colorful";
 import { useToolStore } from "../../features/tools/toolStore";
 import { Tools as ToolList } from "../../features/tools/tools";
 import { useStyleStore } from "../../features/styles/styleStore";
+import { useLayerStore } from "../../features/layers/layerStore";
 
 const Tools = () => {
   const currentTool = useToolStore((state) => state.currentTool);
   const setCurrentTool = useToolStore((state) => state.setCurrentTool);
-  const clearShapes = useBoardStore((state) => state.clearShapes);
+  const clearShapes = useLayerStore((state) => state.clearShapes);
   const setColor = useStyleStore((state) => state.setColor);
   const showColorPalet = useStyleStore((state) => state.showColorPalet);
   const toggleColorPalet = useStyleStore((state) => state.toggleColorPalet);

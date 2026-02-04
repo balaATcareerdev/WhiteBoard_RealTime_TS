@@ -2,7 +2,6 @@ import type { Dispatch, SetStateAction } from "react";
 import { FaAngleDown } from "react-icons/fa";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
 import { layerToDrawShape } from "../../Utils/ShapeDataUtils";
-import { useBoardStore } from "../../Store/BoardStore";
 import Icon from "./Icon";
 import { FcFolder } from "react-icons/fc";
 import { AiTwotoneLock } from "react-icons/ai";
@@ -15,6 +14,7 @@ import { useSelectionStore } from "../../features/selection/selectionStores";
 import type { GroupNode, LayerTree } from "../../features/layers/type";
 import { useTransformStore } from "../../features/transform/transformStore";
 import { useLayerTargetStore } from "../../features/layers/layerTargetStore";
+import { useLayerStore } from "../../features/layers/layerStore";
 
 interface GroupLayerProps {
   node: GroupNode;
@@ -43,8 +43,8 @@ const GroupLayer = ({
   const setTargetLayerId = useLayerTargetStore(
     (state) => state.setTargetLayerId,
   );
-  const allShapes = useBoardStore((state) => state.allShapes);
-  const setLockShape = useBoardStore((state) => state.setLockShape);
+  const allShapes = useLayerStore((state) => state.allShapes);
+  const setLockShape = useLayerStore((state) => state.setLockShape);
 
   return (
     <div

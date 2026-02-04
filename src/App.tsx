@@ -2,10 +2,10 @@ import LayerPanel from "./Components/LayerComponent/LayerPanel";
 import Menu from "./Components/ToolBarComponent/Menu";
 import Tools from "./Components/ToolBarComponent/Tools";
 import WorkBoard from "./Components/WorkBoardComponent/WorkBoard";
-import { useBoardStore } from "./Store/BoardStore";
+import { useLayerStore } from "./features/layers/layerStore";
 
 const App = () => {
-  const layerData = useBoardStore((state) => state.allShapes);
+  const layerData = useLayerStore((state) => state.allShapes);
 
   return (
     <div className="font-outfit min-h-screen h-screen flex flex-col overflow-hidden">

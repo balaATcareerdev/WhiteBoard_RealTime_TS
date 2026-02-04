@@ -3,7 +3,6 @@ import {
   layerToDrawShape,
   parentGroupVisibility,
 } from "../../Utils/ShapeDataUtils";
-import { useBoardStore } from "../../Store/BoardStore";
 import Icon from "./Icon";
 import { AiTwotoneLock } from "react-icons/ai";
 import { AiTwotoneUnlock } from "react-icons/ai";
@@ -13,6 +12,7 @@ import { useSelectionStore } from "../../features/selection/selectionStores";
 import type { ShapeNode } from "../../features/layers/type";
 import { useTransformStore } from "../../features/transform/transformStore";
 import { useLayerTargetStore } from "../../features/layers/layerTargetStore";
+import { useLayerStore } from "../../features/layers/layerStore";
 
 interface ShapeLayerProps {
   node: ShapeNode;
@@ -25,7 +25,7 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
   const activeId = useSelectionStore((state) => state.activeId);
 
   const transformElemId = useTransformStore((state) => state.transformELemId);
-  const allShapes = useBoardStore((state) => state.allShapes);
+  const allShapes = useLayerStore((state) => state.allShapes);
 
   const { activateTrasformationFromList, deactiveTransformation } =
     useDrawHandlers();
@@ -33,7 +33,7 @@ const ShapeLayer = ({ node, toggleVisibility }: ShapeLayerProps) => {
     (state) => state.setTargetLayerId,
   );
 
-  const setLockShape = useBoardStore((state) => state.setLockShape);
+  const setLockShape = useLayerStore((state) => state.setLockShape);
 
   const toggle = useSelectionStore((state) => state.toggle);
 

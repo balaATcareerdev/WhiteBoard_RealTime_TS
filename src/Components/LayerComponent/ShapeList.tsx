@@ -1,10 +1,10 @@
-import type { LayerData } from "../../Data/LayerData.ts";
-import { useBoardStore } from "../../Store/BoardStore.ts";
+import { useLayerStore } from "../../features/layers/layerStore.ts";
+import type { LayerTree } from "../../features/layers/type.ts";
 import RenderLayerItem from "./RenderLayerItem.tsx";
 
 interface ShapeListProps {
   sortedLayerData?: string[];
-  layerData: LayerData;
+  layerData: LayerTree;
   childElements?: string[];
 }
 
@@ -13,7 +13,9 @@ const ShapeList = ({
   layerData,
   childElements,
 }: ShapeListProps) => {
-  const toggleVisibility = useBoardStore((state) => state.toggleVisibility);
+  const toggleVisibility = useLayerStore(
+    (state) => state.toggleVisiblityOfLayer,
+  );
 
   return (
     <div>

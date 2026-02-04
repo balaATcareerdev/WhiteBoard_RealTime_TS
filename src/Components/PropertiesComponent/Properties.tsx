@@ -1,4 +1,3 @@
-import { useBoardStore } from "../../Store/BoardStore";
 import Header from "../CommonComponent/Header";
 import PropertiesAction from "./PropertiesAction";
 import PropertiesButton from "./PropertiesPanelButtons/PropertiesButton";
@@ -17,13 +16,15 @@ import { Tools } from "../../features/tools/tools";
 import { useSelectionStore } from "../../features/selection/selectionStores";
 import type { UpdateAction } from "../../features/history/type";
 import { useStyleStore } from "../../features/styles/styleStore";
+import { useHistoryStore } from "../../features/history/historyStore";
+import { useLayerStore } from "../../features/layers/layerStore";
 
 interface PropertiesProps {
   node: LayerNode;
 }
 
 const Properties = ({ node }: PropertiesProps) => {
-  const updateProps = useBoardStore((state) => state.updateProps);
+  const updateProps = useLayerStore((state) => state.updateProps);
 
   // local typing
   const [localTemp, setLocalTemp] = useState(() => {
@@ -83,18 +84,17 @@ const Properties = ({ node }: PropertiesProps) => {
 
   const [fillColorPaletVisible, setFillColorPaletVisible] = useState(false);
   const [strokeColorPaletVisible, setStrokeColorPaletVisible] = useState(false);
-  const deleteShapeGroup = useBoardStore((state) => state.deleteShapeGroup);
-  const duplicateLayer = useBoardStore((state) => state.duplicateLayer);
+  const deleteShapeGroup = useLayerStore((state) => state.deleteShapeGroup);
+  const duplicateLayer = useLayerStore((state) => state.duplicateLayer);
   const { handleUpDown } = useLayerMenuHandlers();
-  const unGroup = useBoardStore((state) => state.unGroup);
-  // const activeLayer = useLayerStore((state) => state.activeLayer);
+  const unGroup = useLayerStore((state) => state.unGroup);
 
   const activeId = useSelectionStore((state) => state.activeId);
 
   const [currentUpdateAction, setCurrentUpdateAction] =
     useState<UpdateAction | null>(null);
 
-  const addNewUndo = useBoardStore((state) => state.addNewUndo);
+  const addNewUndo = useHistoryStore((state) => state.addNewUndo);
 
   const setStrokeWidth = useStyleStore((state) => state.setStrokeWidth);
 

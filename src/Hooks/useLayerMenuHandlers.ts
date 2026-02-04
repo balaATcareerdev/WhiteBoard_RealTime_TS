@@ -1,13 +1,13 @@
+import { useLayerStore } from "../features/layers/layerStore";
 import type { LayerNode } from "../features/layers/type";
 import { useSelectionStore } from "../features/selection/selectionStores";
-import { useBoardStore } from "../Store/BoardStore";
 
 export default function useLayerMenuHandlers() {
-  const allShapes = useBoardStore((state) => state.allShapes);
+  const allShapes = useLayerStore((state) => state.allShapes);
 
   const activeId = useSelectionStore((state) => state.activeId);
 
-  const updateShapeNodes = useBoardStore((state) => state.updateShapeNodes);
+  const updateShapeNodes = useLayerStore((state) => state.updateShapeNodes);
 
   function handleUpDown(state: "Up" | "Down") {
     const nodes: Record<string, LayerNode> = allShapes.nodes;

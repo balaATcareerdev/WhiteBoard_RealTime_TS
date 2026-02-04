@@ -1,15 +1,17 @@
 import Konva from "konva";
-import { useBoardStore } from "../Store/BoardStore";
 import type { UpdateAction } from "../features/history/type";
+import { useLayerStore } from "../features/layers/layerStore";
+import { useHistoryStore } from "../features/history/historyStore";
 
 const lastTransform = new WeakMap<
   Konva.Node,
   { rotation: number; scaleX: number; scaleY: number }
 >();
 export default function useShapeChangeHandlers() {
-  const allShapes = useBoardStore((state) => state.allShapes);
-  const addNewUndo = useBoardStore((state) => state.addNewUndo);
-  const updateSingleShape = useBoardStore((state) => state.updateSingleShape);
+  const allShapes = useLayerStore((state) => state.allShapes);
+
+  const addNewUndo = useHistoryStore((state) => state.addNewUndo);
+  const updateSingleShape = useHistoryStore((state) => state.updateSingleShape);
 
   function dragShape(
     e: Konva.KonvaEventObject<DragEvent>,

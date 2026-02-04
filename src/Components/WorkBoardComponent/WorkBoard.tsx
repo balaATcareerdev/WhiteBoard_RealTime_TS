@@ -1,26 +1,26 @@
 import { useRef, useState, useLayoutEffect, useEffect } from "react";
 import { Stage, Layer, Transformer } from "react-konva";
 import Konva from "konva";
-import { type LayerData } from "../../Data/LayerData";
 import RenderNode from "./RenderNode";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
 import type { KonvaEventObject } from "konva/lib/Node";
 import CurrentShapeRender from "./CurrentShapeRender";
-import { useBoardStore } from "../../Store/BoardStore";
+import { useCanvasStore } from "../../features/canvas/canvasStore";
+import type { LayerTree } from "../../features/layers/type";
 
 interface WorkBoardProps {
-  layerData: LayerData;
+  layerData: LayerTree;
 }
 
 const WorkBoard = ({ layerData }: WorkBoardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const stageRef = useBoardStore((state) => state.stageRef);
+  const stageRef = useCanvasStore((state) => state.stageRef);
 
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [spaceDown, setSpaceDown] = useState(false);
-  const transformerRef = useBoardStore((state) => state.transformerRef);
+  const transformerRef = useCanvasStore((state) => state.transformerRef);
 
   const {
     handleMouseClick,

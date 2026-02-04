@@ -1,4 +1,5 @@
-import type { ShapeNode, UpdateType } from "../../../Data/LayerData";
+import type { UpdateAction } from "../../../features/history/type";
+import type { ShapeNode } from "../../../features/layers/type";
 
 interface SaveColorButtonProps {
   setFunc: (visible: boolean) => void;
@@ -8,7 +9,7 @@ interface SaveColorButtonProps {
     value: string | number | number[] | undefined,
   ) => void;
   value: string;
-  setCurrentUpdateAction: (action: UpdateType) => void;
+  setCurrentUpdateAction: (action: UpdateAction) => void;
   node: ShapeNode;
   propertyType: "Fill" | "Stroke";
 }
@@ -21,7 +22,7 @@ const SaveColorButton = ({
   setCurrentUpdateAction,
   propertyType,
 }: SaveColorButtonProps) => {
-  const currentState: UpdateType = {
+  const currentState: UpdateAction = {
     type: "Update",
     id: node.id,
     parentId: node.parentId,

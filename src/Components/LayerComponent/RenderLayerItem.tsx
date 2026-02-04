@@ -1,11 +1,11 @@
 import { useState } from "react";
-import type { LayerData } from "../../Data/LayerData";
 import GroupLayer from "./GroupLayer";
 import ShapeLayer from "./ShapeLayer";
+import type { LayerTree } from "../../features/layers/type";
 
 interface RenderLayerItemProps {
   shapeId: string;
-  layerData: LayerData;
+  layerData: LayerTree;
   toggleVisibility: (id: string) => void;
 }
 

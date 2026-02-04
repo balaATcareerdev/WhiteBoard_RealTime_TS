@@ -11,6 +11,9 @@ import { useTransformStore } from "../features/transform/transformStore";
 import { useLayerTargetStore } from "../features/layers/layerTargetStore";
 import { useToolStore } from "../features/tools/toolStore";
 import { useStyleStore } from "../features/styles/styleStore";
+import { useLayerStore } from "../features/layers/layerStore";
+import { useCanvasStore } from "../features/canvas/canvasStore";
+import { useHistoryStore } from "../features/history/historyStore";
 
 export default function useDrawHandlers({
   spaceDown = false,
@@ -19,23 +22,23 @@ export default function useDrawHandlers({
 } = {}) {
   const [currentAction, setCurrentAction] = useState<AddAction | null>(null);
   const isDrawing = useRef<boolean>(false);
-  const addNewShape = useBoardStore((state) => state.addNewShape);
+  const addNewShape = useLayerStore((state) => state.addNewShape);
   const setTransformElemId = useTransformStore(
     (state) => state.setTransformElemId,
   );
   const currentTool = useToolStore((state) => state.currentTool);
-  const allShapes = useBoardStore((state) => state.allShapes);
+  const allShapes = useLayerStore((state) => state.allShapes);
 
   const activeId = useSelectionStore((state) => state.activeId);
 
   const color = useStyleStore((state) => state.color);
   const toggleColorPalet = useStyleStore((state) => state.toggleColorPalet);
   const strokeWidth = useStyleStore((state) => state.strokeWidth);
-  const addNewUndo = useBoardStore((state) => state.addNewUndo);
-  const stageRef = useBoardStore((state) => state.stageRef);
-  const transformerRef = useBoardStore((state) => state.transformerRef);
+  const addNewUndo = useHistoryStore((state) => state.addNewUndo);
+  const stageRef = useCanvasStore((state) => state.stageRef);
+  const transformerRef = useCanvasStore((state) => state.transformerRef);
   const targetLayerId = useLayerTargetStore((state) => state.targetLayerId);
-  const undoStack = useBoardStore((state) => state.undoStack);
+  const undoStack = useHistoryStore((state) => state.undoStack);
   const { seedTransform } = useShapeChangeHandlers();
 
   useEffect(() => {

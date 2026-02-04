@@ -1,6 +1,6 @@
 import { Circle, Line, Rect } from "react-konva";
-import type { ShapeNode } from "../../Data/LayerData";
-import { Tools } from "../../constants/ToolConst";
+import type { ShapeNode } from "../../features/layers/type";
+import { Tools } from "../../features/tools/tools";
 
 interface CurrentShapeRenderProps {
   shapeDetails?: ShapeNode;

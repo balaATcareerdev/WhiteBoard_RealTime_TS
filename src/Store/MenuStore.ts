@@ -1,47 +1,47 @@
-import { create } from "zustand";
+// import { create } from "zustand";
 
-export type ToolType =
-  | "Rectangle"
-  | "Circle"
-  | "Scribble"
-  | "Line"
-  | "Move"
-  | "Clear"
-  | "ColorPic"
-  | "Undo"
-  | "Redo";
+// export type ToolType =
+//   | "Rectangle"
+//   | "Circle"
+//   | "Scribble"
+//   | "Line"
+//   | "Move"
+//   | "Clear"
+//   | "ColorPic"
+//   | "Undo"
+//   | "Redo";
 
-interface MenuStoreProps {
-  tool: ToolType;
-  color: string;
-  showColorPalet: boolean;
-  strokeWidth: number;
-  setTool: (newTool: ToolType) => void;
-  setColor: (newColor: string) => void;
-  setShowColorPalet: (newState: boolean) => void;
-  setStrokeWidth: (newWidth: number) => void;
-}
+// interface MenuStoreProps {
+//   tool: ToolType;
+//   color: string;
+//   showColorPalet: boolean;
+//   strokeWidth: number;
+//   setTool: (newTool: ToolType) => void;
+//   setColor: (newColor: string) => void;
+//   setShowColorPalet: (newState: boolean) => void;
+//   setStrokeWidth: (newWidth: number) => void;
+// }
 
-export const useMenuStore = create<MenuStoreProps>((set) => ({
-  tool: "Rectangle",
-  color: "#000000",
-  showColorPalet: false,
-  strokeWidth: 4,
+// export const useMenuStore = create<MenuStoreProps>((set) => ({
+//   tool: "Rectangle",
+//   color: "#000000",
+//   showColorPalet: false,
+//   strokeWidth: 4,
 
-  setTool: (newTool: ToolType) => {
-    set({
-      tool: newTool,
-    });
-  },
-  setColor: (newColor) => {
-    set({ color: newColor });
-  },
+//   setTool: (newTool: ToolType) => {
+//     set({
+//       tool: newTool,
+//     });
+//   },
+//   setColor: (newColor) => {
+//     set({ color: newColor });
+//   },
 
-  setShowColorPalet: (newState) => {
-    set({ showColorPalet: newState });
-  },
+//   setShowColorPalet: (newState) => {
+//     set({ showColorPalet: newState });
+//   },
 
-  setStrokeWidth: (newWidth) => {
-    set({ strokeWidth: newWidth });
-  },
-}));
+//   setStrokeWidth: (newWidth) => {
+//     set({ strokeWidth: newWidth });
+//   },
+// }));

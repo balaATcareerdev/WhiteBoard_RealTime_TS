@@ -1,11 +1,11 @@
+import { useHistoryStore } from "../features/history/historyStore";
 import type { HistoryAction } from "../features/history/type";
-import { useBoardStore } from "../Store/BoardStore";
 
 export default function useUndoRedoHandlers() {
-  const undoStack = useBoardStore((state) => state.undoStack);
-  const redoStack = useBoardStore((state) => state.redoStack);
-  const modifyStacks = useBoardStore((state) => state.modifyStacks);
-  const updateShapesUndoRedo = useBoardStore(
+  const undoStack = useHistoryStore((state) => state.undoStack);
+  const redoStack = useHistoryStore((state) => state.redoStack);
+  const modifyStacks = useHistoryStore((state) => state.modifyStacks);
+  const updateShapesUndoRedo = useHistoryStore(
     (state) => state.updateShapesUndoRedo,
   );
 

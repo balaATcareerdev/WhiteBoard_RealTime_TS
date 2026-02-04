@@ -1,7 +1,7 @@
+import { useLayerStore } from "../../features/layers/layerStore";
 import type { LayerTree } from "../../features/layers/type";
 import { useSelectionStore } from "../../features/selection/selectionStores";
 import useDrawHandlers from "../../Hooks/useDrawHandlers";
-import { useBoardStore } from "../../Store/BoardStore";
 import Header from "../CommonComponent/Header";
 import Properties from "../PropertiesComponent/Properties";
 import ShapeList from "./ShapeList";
@@ -17,7 +17,7 @@ const LayerPanel = ({ layerData }: LayerPanelProps) => {
 
   const activeId = useSelectionStore((state) => state.activeId);
 
-  const createGroup = useBoardStore((state) => state.createGroup);
+  const createGroup = useLayerStore((state) => state.createGroup);
 
   const selectedIds = useSelectionStore((state) => state.selectedIds);
 
