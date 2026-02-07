@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { FaAngleDown } from "react-icons/fa";
-import useDrawHandlers from "../../Hooks/useDrawHandlers";
-import { layerToDrawShape } from "../../Utils/ShapeDataUtils";
+import useDrawHandlers from "../../hooks/useDrawHandlers";
+import { layerToDrawShape } from "../../Utils/layerSelectors";
 import Icon from "./Icon";
 import { FcFolder } from "react-icons/fc";
 import { AiTwotoneLock } from "react-icons/ai";

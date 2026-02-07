@@ -4,7 +4,7 @@ import { MdOutlineRedo } from "react-icons/md";
 import MenuIcon from "./MenuIcon";
 import { IoCloudDownload } from "react-icons/io5";
 import { FaSave } from "react-icons/fa";
-import useUndoRedoHandlers from "../../Hooks/useUndoRedoHandlers";
+import useUndoRedoHandlers from "../../hooks/useUndoRedoHandlers";
 
 const Menu = () => {
   const [whiteboardName, setWhiteboardName] = useState<string>("Whiteboard");

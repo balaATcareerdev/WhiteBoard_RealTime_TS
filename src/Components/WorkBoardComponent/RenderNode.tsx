@@ -1,7 +1,7 @@
 import { Circle, Group, Line, Rect } from "react-konva";
 import Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
-import useShapeChangeHandlers from "../../Hooks/useShapeChangeHandlers";
+import useShapeChangeHandlers from "../../hooks/useShapeChangeHandlers";
 import { useToolStore } from "../../features/tools/toolStore";
 import { Tools } from "../../features/tools/tools";
 import type {

@@ -3,7 +3,7 @@ import type { GroupNode, LayerNode, LayerTree, ShapeNode } from "./type";
 import {
   getAncestorsOfShape,
   getDestinationLayer,
-} from "../../Utils/NewGroupUtils";
+} from "../../Utils/treeUtils";
 
 interface LayerState {
   allShapes: LayerTree;

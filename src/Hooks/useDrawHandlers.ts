@@ -1,12 +1,8 @@
 import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
 import { useEffect, useRef, useState } from "react";
-import { useBoardStore } from "../Store/BoardStore";
-import { findPositionOfNewShape } from "../Utils/NewShapeUtils";
-import { Tools } from "../features/tools/tools";
-import useShapeChangeHandlers from "./useShapeChangeHandlers";
+import { Tools, type Tool } from "../features/tools/tools";
 import { type AddAction } from "../features/history/type";
-import { useSelectionStore } from "../features/selection/selectionStores";
 import { useTransformStore } from "../features/transform/transformStore";
 import { useLayerTargetStore } from "../features/layers/layerTargetStore";
 import { useToolStore } from "../features/tools/toolStore";
@@ -14,6 +10,119 @@ import { useStyleStore } from "../features/styles/styleStore";
 import { useLayerStore } from "../features/layers/layerStore";
 import { useCanvasStore } from "../features/canvas/canvasStore";
 import { useHistoryStore } from "../features/history/historyStore";
+import useShapeChangeHandlers from "./useShapeChangeHandlers";
+import { findPositionOfNewShape } from "../Utils/shapePositionUtils";
+
+function getPointer(stage: Konva.Stage) {
+  const pointer = stage.getPointerPosition();
+  if (!pointer) return null;
+
+  return {
+    x: (pointer.x - stage.x()) / stage.scaleX(),
+    y: (pointer.y - stage.y()) / stage.scaleY(),
+  };
+}
+
+function createAddAction(
+  tool: Tool,
+  x: number,
+  y: number,
+  newPos: number,
+  targetLayerId: string,
+  color: string,
+  strokeWidth: number,
+): AddAction | null {
+  const base = {
+    type: "Add",
+    id: crypto.randomUUID(),
+    parentId: targetLayerId,
+    pos: newPos,
+    visibility: true,
+    lock: false,
+  };
+
+  switch (tool) {
+    case Tools.Rectangle:
+      return {
+        type: "Add",
+        startingPos: { x, y },
+        shapeDetails: {
+          ...base,
+          name: `${Tools.Rectangle}-New`,
+          type: "shape",
+          shapeType: Tools.Rectangle,
+          props: {
+            x,
+            y,
+            width: 0,
+            height: 0,
+            stroke: color,
+            fill: undefined,
+            strokeWidth,
+            rotation: 0,
+          },
+        },
+      };
+
+    case Tools.Circle:
+      return {
+        type: "Add",
+        startingPos: { x, y },
+        shapeDetails: {
+          ...base,
+          name: `${Tools.Circle}-new`,
+          type: "shape",
+          shapeType: Tools.Circle,
+          props: {
+            x,
+            y,
+            radius: 0,
+            stroke: color,
+            fill: undefined,
+            strokeWidth,
+          },
+        },
+      };
+
+    case Tools.Line:
+      return {
+        type: "Add",
+        startingPos: { x, y },
+        shapeDetails: {
+          ...base,
+          name: `${Tools.Line}-new`,
+          type: "shape",
+          shapeType: Tools.Line,
+          props: {
+            rotation: 0,
+            points: [x, y, x, y],
+            stroke: color,
+            strokeWidth,
+          },
+        },
+      };
+
+    case Tools.Scribble:
+      return {
+        type: "Add",
+        startingPos: { x, y },
+        shapeDetails: {
+          ...base,
+          name: `${Tools.Scribble}-new`,
+          type: "shape",
+          shapeType: Tools.Scribble,
+          props: {
+            points: [x, y, x, y],
+            stroke: color,
+            strokeWidth,
+          },
+        },
+      };
+
+    default:
+      return null;
+  }
+}
 
 export default function useDrawHandlers({
   spaceDown = false,
@@ -28,8 +137,6 @@ export default function useDrawHandlers({
   );
   const currentTool = useToolStore((state) => state.currentTool);
   const allShapes = useLayerStore((state) => state.allShapes);
-
-  const activeId = useSelectionStore((state) => state.activeId);
 
   const color = useStyleStore((state) => state.color);
   const toggleColorPalet = useStyleStore((state) => state.toggleColorPalet);
@@ -59,12 +166,11 @@ export default function useDrawHandlers({
     }
 
     // get pointer
-    const pointer = stage.getPointerPosition();
+    const pointer = getPointer(stage);
     if (!pointer) return;
 
     // convert pointer coordinates to stage coordinates
-    const x = (pointer.x - stage.x()) / stage.scaleX();
-    const y = (pointer.y - stage.y()) / stage.scaleY();
+    const { x, y } = pointer;
 
     const newPosition = findPositionOfNewShape(allShapes, targetLayerId);
 
@@ -72,86 +178,45 @@ export default function useDrawHandlers({
     switch (currentTool) {
       case Tools.Rectangle:
         {
-          const action: AddAction = {
-            type: "Add",
-            startingPos: { x, y },
-            shapeDetails: {
-              id: crypto.randomUUID(),
-              name: `${Tools.Rectangle}-New`,
-              type: "shape",
-              shapeType: "Rectangle",
-              parentId: targetLayerId,
-              pos: newPosition,
-              visibility: true,
-              lock: false,
-              props: {
-                x,
-                y,
-                width: 0,
-                height: 0,
-                stroke: color,
-                fill: undefined,
-                strokeWidth: strokeWidth,
-                rotation: 0,
-              },
-            },
-          };
-
+          const action = createAddAction(
+            Tools.Rectangle,
+            x,
+            y,
+            newPosition,
+            targetLayerId,
+            color,
+            strokeWidth,
+          );
           setCurrentAction(action);
         }
         break;
 
       case Tools.Circle:
         {
-          const action: AddAction = {
-            type: "Add",
-            startingPos: { x, y },
-            shapeDetails: {
-              id: crypto.randomUUID(),
-              name: `${Tools.Circle}-new`,
-              type: "shape",
-              shapeType: currentTool,
-              parentId: activeId,
-              pos: newPosition,
-              visibility: true,
-              lock: false,
-              props: {
-                x,
-                y,
-                radius: 0,
-                stroke: color,
-                fill: undefined,
-                strokeWidth: strokeWidth,
-              },
-            },
-          };
-
+          const action = createAddAction(
+            Tools.Circle,
+            x,
+            y,
+            newPosition,
+            targetLayerId,
+            color,
+            strokeWidth,
+          );
           setCurrentAction(action);
         }
         break;
 
       case Tools.Line:
         {
-          const action: AddAction = {
-            type: "Add",
-            startingPos: { x, y },
-            shapeDetails: {
-              id: crypto.randomUUID(),
-              name: `${Tools.Line}-new`,
-              type: "shape",
-              shapeType: currentTool,
-              parentId: activeId,
-              pos: newPosition,
-              visibility: true,
-              lock: false,
-              props: {
-                rotation: 0,
-                points: [x, y, x, y],
-                stroke: color,
-                strokeWidth: strokeWidth,
-              },
-            },
-          };
+          const action = createAddAction(
+            Tools.Line,
+            x,
+            y,
+            newPosition,
+            targetLayerId,
+            color,
+            strokeWidth,
+          );
 
           setCurrentAction(action);
         }
@@ -159,25 +224,15 @@ export default function useDrawHandlers({
 
       case Tools.Scribble:
         {
-          const action: AddAction = {
-            type: "Add",
-            startingPos: { x, y },
-            shapeDetails: {
-              id: crypto.randomUUID(),
-              name: `${Tools.Scribble}-new`,
-              type: "shape",
-              shapeType: currentTool,
-              parentId: activeId,
-              pos: newPosition,
-              visibility: true,
-              lock: false,
-              props: {
-                points: [x, y, x, y],
-                stroke: color,
-                strokeWidth: strokeWidth,
-              },
-            },
-          };
+          const action = createAddAction(
+            Tools.Scribble,
+            x,
+            y,
+            newPosition,
+            targetLayerId,
+            color,
+            strokeWidth,
+          );
           setCurrentAction(action);
         }
         break;
@@ -197,8 +252,7 @@ export default function useDrawHandlers({
     if (!pointer) return;
 
     // convert pointer coordinates to stage coordinates
-    const x = (pointer.x - stageRef.current.x()) / stageRef.current.scaleX();
-    const y = (pointer.y - stageRef.current.y()) / stageRef.current.scaleY();
+    const { x, y } = pointer;
 
     switch (currentTool) {
       case Tools.Rectangle:

@@ -25,7 +25,7 @@ export default function useUndoRedoHandlers() {
     //? update redo with the latest action
     const updatedRedoStack: HistoryAction[] = [
       ...redoStack,
-      InverseType(latestAction),
+      inverseType(latestAction),
     ];
     modifyStacks(updatedRedoStack, "redo");
 
@@ -43,7 +43,7 @@ export default function useUndoRedoHandlers() {
     const latestRedo = redoStack[redoStack.length - 1];
     const updatedUndoStack: HistoryAction[] = [
       ...undoStack,
-      InverseType(latestRedo),
+      inverseType(latestRedo),
     ];
 
     //? update undo with the latestRedo
@@ -53,7 +53,7 @@ export default function useUndoRedoHandlers() {
     updateShapesUndoRedo(latestRedo, "redo");
   }
 
-  function InverseType(action: HistoryAction): HistoryAction {
+  function inverseType(action: HistoryAction): HistoryAction {
     switch (action.type) {
       case "Add":
         return {

@@ -1,4 +1,4 @@
-import type { LayerNode } from "../Data/LayerData";
+import type { LayerNode } from "../features/layers/type";
 
 export function getAncestorsOfShape(
   id: string,
@@ -19,13 +19,9 @@ export function getAncestorsOfShape(
 
 export function getDestinationLayer(ancestorsList: string[][]) {
   const result = ancestorsList.map((ancestors) => ancestors.length);
-
   const index = result.indexOf(Math.min(...result));
-
   const target = ancestorsList[index];
-
   const commonArrays: string[] = [];
-
   target.map((step) => {
     if (ancestorsList.every((ancestors) => ancestors.includes(step))) {
       commonArrays.push(step);

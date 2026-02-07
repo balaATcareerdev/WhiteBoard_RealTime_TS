@@ -1,7 +1,7 @@
 import { useLayerStore } from "../../features/layers/layerStore";
 import type { LayerTree } from "../../features/layers/type";
 import { useSelectionStore } from "../../features/selection/selectionStores";
-import useDrawHandlers from "../../Hooks/useDrawHandlers";
+import useDrawHandlers from "../../hooks/useDrawHandlers";
 import Header from "../CommonComponent/Header";
 import Properties from "../PropertiesComponent/Properties";
 import ShapeList from "./ShapeList";

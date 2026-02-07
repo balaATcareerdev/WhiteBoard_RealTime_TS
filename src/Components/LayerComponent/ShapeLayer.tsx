@@ -1,8 +1,4 @@
-import useDrawHandlers from "../../Hooks/useDrawHandlers";
-import {
-  layerToDrawShape,
-  parentGroupVisibility,
-} from "../../Utils/ShapeDataUtils";
+import useDrawHandlers from "../../hooks/useDrawHandlers";
 import Icon from "./Icon";
 import { AiTwotoneLock } from "react-icons/ai";
 import { AiTwotoneUnlock } from "react-icons/ai";
@@ -13,6 +9,10 @@ import type { ShapeNode } from "../../features/layers/type";
 import { useTransformStore } from "../../features/transform/transformStore";
 import { useLayerTargetStore } from "../../features/layers/layerTargetStore";
 import { useLayerStore } from "../../features/layers/layerStore";
+import {
+  layerToDrawShape,
+  parentGroupVisibility,
+} from "../../Utils/layerSelectors";
 
 interface ShapeLayerProps {
   node: ShapeNode;

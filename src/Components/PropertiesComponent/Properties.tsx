@@ -11,7 +11,7 @@ import SaveColorButton from "./PropertiesPanelButtons/SaveColorButton";
 import RemoveColorButton from "./PropertiesPanelButtons/RemoveColorButton";
 import { FaTurnUp } from "react-icons/fa6";
 import { FaTurnDown } from "react-icons/fa6";
-import useLayerMenuHandlers from "../../Hooks/useLayerMenuHandlers";
+import useLayerMenuHandlers from "../../hooks/useLayerMenuHandlers";
 import { Tools } from "../../features/tools/tools";
 import { useSelectionStore } from "../../features/selection/selectionStores";
 import type { UpdateAction } from "../../features/history/type";

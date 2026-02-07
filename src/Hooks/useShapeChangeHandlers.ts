@@ -13,6 +13,15 @@ export default function useShapeChangeHandlers() {
   const addNewUndo = useHistoryStore((state) => state.addNewUndo);
   const updateSingleShape = useHistoryStore((state) => state.updateSingleShape);
 
+  function getTransformNode(e: Konva.KonvaEventObject<Event>) {
+    const target = e.target;
+    if (target instanceof Konva.Transformer) {
+      return target.nodes()[0];
+    }
+
+    return target;
+  }
+
   function dragShape(
     e: Konva.KonvaEventObject<DragEvent>,
     id: string,
@@ -49,8 +58,8 @@ export default function useShapeChangeHandlers() {
   }
 
   function startTransform(e: Konva.KonvaEventObject<Event>) {
-    const tr = e.target as any;
-    const node: Konva.Node = tr._attachedNodes?.[0] || e.target;
+    const node = getTransformNode(e);
+    if (!node) return;
 
     lastTransform.set(node, {
       rotation: node.rotation(),
@@ -60,8 +69,8 @@ export default function useShapeChangeHandlers() {
   }
 
   function transformShape(e: Konva.KonvaEventObject<Event>, id: string) {
-    const tr = e.target as any;
-    const node: Konva.Node = tr._attachedNodes?.[0] || e.target;
+    const node = getTransformNode(e);
+    if (!node) return;
 
     const prev = lastTransform.get(node);
     if (!prev) return;
@@ -73,7 +82,6 @@ export default function useShapeChangeHandlers() {
       Math.abs(node.scaleX() - prev.scaleX) > EPS ||
       Math.abs(node.scaleY() - prev.scaleY) > EPS;
 
-    const isRotate = rotated;
     const isScale = !rotated && scaled;
 
     const currentShape = allShapes.nodes[id];
@@ -105,7 +113,6 @@ export default function useShapeChangeHandlers() {
           ? { width: newWidth, height: newHeight, x: node.x(), y: node.y() }
           : { rotation: node.rotation() },
       };
-      console.log("Step");
 
       addNewUndo(action);
       updateSingleShape(action);
