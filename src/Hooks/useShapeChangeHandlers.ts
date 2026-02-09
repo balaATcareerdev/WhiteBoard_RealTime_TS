@@ -7,6 +7,7 @@ const lastTransform = new WeakMap<
   Konva.Node,
   { rotation: number; scaleX: number; scaleY: number }
 >();
+
 export default function useShapeChangeHandlers() {
   const allShapes = useLayerStore((state) => state.allShapes);
 

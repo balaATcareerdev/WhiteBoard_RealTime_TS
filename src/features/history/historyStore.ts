@@ -13,6 +13,7 @@ interface historyState {
     actionType: "undo" | "redo",
   ) => void;
   updateSingleShape: (action: HistoryAction) => void;
+  clearHistory: () => void;
 }
 
 function removeFromParent(tree: LayerTree, id: string, parentId: string) {
@@ -86,6 +87,8 @@ export const useHistoryStore = create<historyState>((set) => ({
         nodes[id] = action.shapeDetails;
         addToParent(tree, id, parentId);
       } else if (action.type === "Update") {
+        console.log("Undo Action", action);
+
         const node = nodes[action.id];
         if (node?.type === "shape") {
           Object.assign(node.props, action.prev);
@@ -103,15 +106,28 @@ export const useHistoryStore = create<historyState>((set) => ({
       }
 
       if (action.type === "Update") {
+        console.log("Redo Action", action);
+
         const node = nodes[id];
+        console.log(node);
+
         if (node?.type === "shape") {
-          Object.assign(node.props, action.next);
+          Object.assign(node.props, action.prev);
         }
       }
     }
 
+    console.log("Tree", tree);
+
     useLayerStore.setState({
       allShapes: tree,
+    });
+  },
+
+  clearHistory: () => {
+    set({
+      undoStack: [],
+      redoStack: [],
     });
   },
 }));

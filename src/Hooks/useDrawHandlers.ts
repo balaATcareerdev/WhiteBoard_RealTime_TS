@@ -12,6 +12,7 @@ import { useCanvasStore } from "../features/canvas/canvasStore";
 import { useHistoryStore } from "../features/history/historyStore";
 import useShapeChangeHandlers from "./useShapeChangeHandlers";
 import { findPositionOfNewShape } from "../Utils/shapePositionUtils";
+import { useSelectionStore } from "../features/selection/selectionStores";
 
 function getPointer(stage: Konva.Stage) {
   const pointer = stage.getPointerPosition();
@@ -146,11 +147,18 @@ export default function useDrawHandlers({
   const transformerRef = useCanvasStore((state) => state.transformerRef);
   const targetLayerId = useLayerTargetStore((state) => state.targetLayerId);
   const undoStack = useHistoryStore((state) => state.undoStack);
+  const activeId = useSelectionStore((state) => state.activeId);
+  const setActiveId = useSelectionStore((state) => state.setActive);
   const { seedTransform } = useShapeChangeHandlers();
+  const redoStack = useHistoryStore((state) => state.redoStack);
 
   useEffect(() => {
     console.log(undoStack);
   }, [undoStack]);
+
+  useEffect(() => {
+    console.log("Redo Stack", redoStack);
+  }, [redoStack]);
 
   // draw the shape
   function handleMouseClick(e: KonvaEventObject<MouseEvent>) {
@@ -248,7 +256,11 @@ export default function useDrawHandlers({
     // do nothing when not drawing
     if (!isDrawing.current) return;
     if (!stageRef.current) return;
-    const pointer = stageRef.current.getPointerPosition();
+
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const pointer = getPointer(stage);
     if (!pointer) return;
 
     // convert pointer coordinates to stage coordinates
@@ -391,6 +403,7 @@ export default function useDrawHandlers({
 
     if (!newShapeData) return;
     addNewShape(newShapeData, targetLayerId);
+    setActiveId(newShapeData.id);
 
     setCurrentAction(null);
   }
@@ -410,7 +423,9 @@ export default function useDrawHandlers({
     const stage = transformerRef.current?.getStage();
 
     if (!stage) return;
+
     const node = stage.findOne(`#${id}`);
+    console.log(node);
 
     if (!node) return;
 

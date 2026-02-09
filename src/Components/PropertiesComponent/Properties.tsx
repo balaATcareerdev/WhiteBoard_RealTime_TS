@@ -49,6 +49,12 @@ const Properties = ({ node }: PropertiesProps) => {
     return temp;
   });
 
+  const allShapes = useLayerStore((state) => state.allShapes);
+
+  useEffect(() => {
+    console.log("Shapes", allShapes);
+  }, [allShapes]);
+
   useEffect(() => {
     if (!node) return;
     const temp: any = {
@@ -134,6 +140,7 @@ const Properties = ({ node }: PropertiesProps) => {
           text="Up"
           color="#0078D4"
           funct={() => {
+            console.log("Up Button Click");
             handleUpDown("Up");
           }}
           disabled={node.lock}

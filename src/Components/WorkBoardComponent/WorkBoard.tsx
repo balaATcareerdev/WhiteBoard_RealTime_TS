@@ -136,7 +136,13 @@ const WorkBoard = ({ layerData }: WorkBoardProps) => {
               activateTransformation={activateTransformation}
             />
           ))}
-          <Transformer ref={transformerRef} />
+          <Transformer
+            ref={transformerRef}
+            anchorSize={20}
+            anchorCornerRadius={10}
+            borderStroke="#155dfc"
+            borderDash={[6, 10]}
+          />
         </Layer>
       </Stage>
     </div>

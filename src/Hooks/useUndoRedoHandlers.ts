@@ -50,6 +50,8 @@ export default function useUndoRedoHandlers() {
     modifyStacks(updatedUndoStack, "undo");
 
     //? update shape
+    console.log(latestRedo);
+
     updateShapesUndoRedo(latestRedo, "redo");
   }
 

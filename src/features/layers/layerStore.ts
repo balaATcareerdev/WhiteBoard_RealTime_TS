@@ -4,6 +4,7 @@ import {
   getAncestorsOfShape,
   getDestinationLayer,
 } from "../../Utils/treeUtils";
+import { useHistoryStore } from "../history/historyStore";
 
 interface LayerState {
   allShapes: LayerTree;
@@ -54,18 +55,24 @@ export const useLayerStore = create<LayerState>((set) => ({
   toggleVisiblityOfLayer: (id) => {
     set((state) => {
       const tree = state.allShapes;
-      const node = tree.nodes[id];
+      const nodes = { ...tree.nodes };
+      const node = nodes[id];
 
       if (!node) return state;
 
       if (node.type === "group") {
         node.children.forEach((childId) => {
-          const child = tree.nodes[childId];
+          const child = nodes[childId];
           if (childId) child.visibility = node.visibility;
         });
       }
 
-      return { allShapes: tree };
+      return {
+        allShapes: {
+          ...state.allShapes,
+          nodes,
+        },
+      };
     });
   },
 
@@ -93,24 +100,38 @@ export const useLayerStore = create<LayerState>((set) => ({
 
       return { allShapes: tree };
     });
+
+    // Clear Undo and redo History when you clear the board
+    useHistoryStore.getState().clearHistory();
   },
 
   updateShapeNodes: (updated) => {
     set((state) => {
-      const tree = state.allShapes;
+      const newNodes = { ...state.allShapes.nodes };
+
       updated.forEach((item) => {
-        const node = tree.nodes[item.id];
-        if (node) node.pos = item.pos;
+        const oldNode = newNodes[item.id];
+        if (!oldNode) return;
+
+        newNodes[item.id] = {
+          ...oldNode,
+          pos: item.pos,
+        };
       });
 
-      return { allShapes: tree };
+      return {
+        allShapes: {
+          ...state.allShapes,
+          nodes: newNodes,
+        },
+      };
     });
   },
 
   deleteShapeGroup: (id) => {
     set((state) => {
       const tree = state.allShapes;
-      const nodes = tree.nodes;
+      const nodes = { ...tree.nodes };
       const node = nodes[id];
       if (!node) return state;
 
@@ -125,7 +146,12 @@ export const useLayerStore = create<LayerState>((set) => ({
         }
       };
       deleteNode(id);
-      return { allShapes: tree };
+      return {
+        allShapes: {
+          ...state.allShapes,
+          nodes,
+        },
+      };
     });
   },
 
@@ -164,8 +190,8 @@ export const useLayerStore = create<LayerState>((set) => ({
   duplicateLayer: (shapeId) => {
     set((state) => {
       const tree = state.allShapes;
-      const nodes = tree.nodes;
-      const node = tree.nodes[shapeId];
+      const nodes = { ...tree.nodes };
+      const node = nodes[shapeId];
       if (!node) return state;
 
       const newId = crypto.randomUUID();
@@ -179,7 +205,7 @@ export const useLayerStore = create<LayerState>((set) => ({
       nodes[newId] = copyNode;
       addToParent(tree, newId, node.parentId);
 
-      return { allShapes: tree };
+      return { allShapes: { ...state.allShapes, nodes } };
     });
   },
 
