@@ -17,6 +17,8 @@ export default function useUndoRedoHandlers() {
 
     if (!latestAction) return;
 
+    console.log("Latest Action", latestAction);
+
     const updatedUndoStack = undoStack.slice(0, -1);
 
     //? update undo without the latest action
@@ -50,7 +52,7 @@ export default function useUndoRedoHandlers() {
     modifyStacks(updatedUndoStack, "undo");
 
     //? update shape
-    console.log(latestRedo);
+    // console.log(latestRedo);
 
     updateShapesUndoRedo(latestRedo, "redo");
   }
@@ -75,6 +77,18 @@ export default function useUndoRedoHandlers() {
           type: "Update",
           prev: action.next,
           next: action.prev,
+        };
+
+      case "AddGroup":
+        return {
+          ...action,
+          type: "RemoveGroup",
+        };
+
+      case "RemoveGroup":
+        return {
+          ...action,
+          type: "AddGroup",
         };
 
       default:

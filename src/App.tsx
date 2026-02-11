@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import LayerPanel from "./Components/LayerComponent/LayerPanel";
 import Menu from "./Components/ToolBarComponent/Menu";
 import Tools from "./Components/ToolBarComponent/Tools";
@@ -6,6 +7,10 @@ import { useLayerStore } from "./features/layers/layerStore";
 
 const App = () => {
   const layerData = useLayerStore((state) => state.allShapes);
+
+  useEffect(() => {
+    console.log(layerData);
+  }, [layerData]);
 
   return (
     <div className="font-outfit min-h-screen h-screen flex flex-col overflow-hidden">

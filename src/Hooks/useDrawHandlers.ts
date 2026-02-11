@@ -152,13 +152,13 @@ export default function useDrawHandlers({
   const { seedTransform } = useShapeChangeHandlers();
   const redoStack = useHistoryStore((state) => state.redoStack);
 
-  useEffect(() => {
-    console.log(undoStack);
-  }, [undoStack]);
+  // useEffect(() => {
+  //   console.log(undoStack);
+  // }, [undoStack]);
 
-  useEffect(() => {
-    console.log("Redo Stack", redoStack);
-  }, [redoStack]);
+  // useEffect(() => {
+  //   console.log("Redo Stack", redoStack);
+  // }, [redoStack]);
 
   // draw the shape
   function handleMouseClick(e: KonvaEventObject<MouseEvent>) {

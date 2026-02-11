@@ -140,11 +140,27 @@ export const useLayerStore = create<LayerState>((set) => ({
       const deleteNode = (nId: string) => {
         const node = nodes[nId];
         if (!node) return;
+
         if (node.type === "group") {
           node.children.forEach(deleteNode);
           delete nodes[nId];
         }
       };
+      if (node.type !== "group") {
+        useHistoryStore.getState().addNewUndo({
+          type: "Remove",
+          startingPos: { x: 0, y: 0 },
+          shapeDetails: {
+            ...node,
+          },
+        });
+      } else {
+        useHistoryStore.getState().addNewUndo({
+          type: "RemoveGroup",
+          startingPos: { x: 0, y: 0 },
+          groupDetails: { ...(node as GroupNode) },
+        });
+      }
       deleteNode(id);
       return {
         allShapes: {
@@ -240,7 +256,7 @@ export const useLayerStore = create<LayerState>((set) => ({
       if (!selectedShapeIds.length) return state;
 
       const tree = state.allShapes;
-      const nodes = tree.nodes;
+      const nodes = { ...tree.nodes };
 
       const allAncestors = selectedShapeIds.map((id) => {
         return getAncestorsOfShape(id, nodes);
@@ -272,7 +288,20 @@ export const useLayerStore = create<LayerState>((set) => ({
         removeFromParent(tree, id, node.parentId);
         node.parentId = newId;
       });
-      return { allShapes: tree };
+
+      // add undo
+      useHistoryStore.getState().addNewUndo({
+        type: "AddGroup",
+        startingPos: { x: 0, y: 0 },
+        groupDetails: newGroup,
+      });
+
+      return {
+        allShapes: {
+          ...state.allShapes,
+          nodes,
+        },
+      };
     });
   },
 }));

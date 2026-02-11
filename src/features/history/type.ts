@@ -1,4 +1,4 @@
-import type { ShapeNode } from "../layers/type";
+import type { GroupNode, ShapeNode } from "../layers/type";
 
 export interface AddAction {
   type: "Add";
@@ -20,4 +20,21 @@ export interface UpdateAction {
   next: Partial<ShapeNode["props"]>;
 }
 
-export type HistoryAction = AddAction | RemoveAction | UpdateAction;
+export type RemoveGroupAction = {
+  type: "RemoveGroup";
+  startingPos: { x: number; y: number };
+  groupDetails: GroupNode;
+};
+
+export type AddGroupAction = {
+  type: "AddGroup";
+  startingPos: { x: number; y: number };
+  groupDetails: GroupNode;
+};
+
+export type HistoryAction =
+  | AddAction
+  | RemoveAction
+  | UpdateAction
+  | RemoveGroupAction
+  | AddGroupAction;

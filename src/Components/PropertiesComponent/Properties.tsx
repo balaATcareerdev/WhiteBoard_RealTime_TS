@@ -51,9 +51,9 @@ const Properties = ({ node }: PropertiesProps) => {
 
   const allShapes = useLayerStore((state) => state.allShapes);
 
-  useEffect(() => {
-    console.log("Shapes", allShapes);
-  }, [allShapes]);
+  // useEffect(() => {
+  //   console.log("Shapes", allShapes);
+  // }, [allShapes]);
 
   useEffect(() => {
     if (!node) return;
@@ -106,6 +106,8 @@ const Properties = ({ node }: PropertiesProps) => {
 
   useEffect(() => {
     if (currentUpdateAction) {
+      console.log(currentUpdateAction);
+
       addNewUndo(currentUpdateAction);
     }
   }, [currentUpdateAction, addNewUndo]);
@@ -119,7 +121,9 @@ const Properties = ({ node }: PropertiesProps) => {
           Icon={GoDuplicate}
           text="Duplicate"
           color="#289947"
-          funct={() => duplicateLayer(node.id)}
+          funct={() => {
+            duplicateLayer(node.id);
+          }}
         />
         <PropertiesButton
           Icon={MdDelete}
@@ -196,17 +200,15 @@ const Properties = ({ node }: PropertiesProps) => {
                     })
                   }
                   onBlur={(e) => {
-                    inputValueUpdate(
-                      node.id,
-                      e.target.name,
-                      Number(localTemp.x),
-                    );
+                    const prevValue = node.props.x;
+                    const newValue = Number(localTemp.x);
+                    inputValueUpdate(node.id, e.target.name, newValue);
                     setCurrentUpdateAction({
                       type: "Update",
                       id: node.id,
                       parentId: node.parentId,
-                      prev: { x: node.props.x },
-                      next: { x: Number(localTemp.x) },
+                      prev: { x: prevValue },
+                      next: { x: newValue },
                     });
                   }}
                   onKeyDown={handleKeyDown}
