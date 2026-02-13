@@ -159,6 +159,10 @@ export default function useDrawHandlers({
     console.log("Redo Stack", redoStack);
   }, [redoStack]);
 
+  useEffect(() => {
+    if (targetLayerId) console.log("Target", targetLayerId);
+  }, [targetLayerId]);
+
   // draw the shape
   function handleMouseClick(e: KonvaEventObject<MouseEvent>) {
     if (spaceDown) return;
@@ -190,7 +194,7 @@ export default function useDrawHandlers({
             x,
             y,
             newPosition,
-            targetLayerId,
+            targetLayerId ? targetLayerId : "root",
             color,
             strokeWidth,
           );
@@ -205,7 +209,7 @@ export default function useDrawHandlers({
             x,
             y,
             newPosition,
-            targetLayerId,
+            targetLayerId ? targetLayerId : "root",
             color,
             strokeWidth,
           );
@@ -220,7 +224,7 @@ export default function useDrawHandlers({
             x,
             y,
             newPosition,
-            targetLayerId,
+            targetLayerId ? targetLayerId : "root",
             color,
             strokeWidth,
           );
@@ -236,7 +240,7 @@ export default function useDrawHandlers({
             x,
             y,
             newPosition,
-            targetLayerId,
+            targetLayerId ? targetLayerId : "root",
             color,
             strokeWidth,
           );

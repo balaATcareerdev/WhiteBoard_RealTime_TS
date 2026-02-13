@@ -210,33 +210,58 @@ export const useLayerStore = create<LayerState>((set) => ({
     set((state) => {
       const tree = state.allShapes;
       const nodes = { ...tree.nodes };
-      const node = nodes[shapeId];
-      if (!node) return state;
+      const originalNode = nodes[shapeId];
+      if (!originalNode) return state;
 
-      const newId = crypto.randomUUID();
-      let copyNode: typeof node;
-      if (node.type === "group") {
-        copyNode = {
-          ...node,
-          id: newId,
-          name: node.name + " Copy",
-          pos: node.pos + 1,
-          props: { ...node.props },
-          children: [...node.children],
-        };
-      } else {
-        copyNode = {
-          ...node,
-          id: newId,
-          name: node.name + " Copy",
-          pos: node.pos + 1,
-          props: { ...node.props },
-        };
-      }
-      nodes[newId] = copyNode;
-      addToParent(tree, newId, node.parentId);
+      const cloneSubTree = (id: string, parentId: string) => {
+        const node = nodes[id];
+        if (!node) return null;
 
-      createdNode = copyNode as ShapeNode;
+        const newId = crypto.randomUUID();
+
+        let cloneNode: typeof node;
+
+        if (node.type === "group") {
+          const updatedChildren: string[] = [];
+
+          cloneNode = {
+            ...node,
+            id: newId,
+            parentId,
+            pos: node.pos + 1,
+            props: { ...node.props },
+            children: updatedChildren,
+          };
+
+          nodes[newId] = cloneNode;
+
+          node.children.forEach((childId) => {
+            const childCloneId = cloneSubTree(childId, newId);
+            if (childCloneId) {
+              updatedChildren.push(childCloneId);
+            }
+          });
+        } else {
+          cloneNode = {
+            ...node,
+            id: newId,
+            parentId,
+            pos: node.pos + 1,
+            props: { ...node.props },
+          };
+
+          nodes[newId] = cloneNode;
+        }
+
+        return newId;
+      };
+
+      const newRootId = cloneSubTree(shapeId, originalNode.parentId);
+      if (!newRootId) return state;
+
+      addToParent(tree, newRootId, originalNode.parentId);
+
+      createdNode = nodes[newRootId] as ShapeNode;
 
       return { allShapes: { ...state.allShapes, nodes } };
     });
