@@ -2,11 +2,6 @@ import { create } from "zustand";
 import type { HistoryAction } from "./type";
 import type { LayerTree } from "../layers/type";
 import { useLayerStore } from "../layers/layerStore";
-import { use } from "react";
-import {
-  getAncestorsOfShape,
-  getDestinationLayer,
-} from "../../Utils/treeUtils";
 
 interface historyState {
   undoStack: HistoryAction[];

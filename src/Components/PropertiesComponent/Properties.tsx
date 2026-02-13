@@ -51,9 +51,9 @@ const Properties = ({ node }: PropertiesProps) => {
 
   const allShapes = useLayerStore((state) => state.allShapes);
 
-  // useEffect(() => {
-  //   console.log("Shapes", allShapes);
-  // }, [allShapes]);
+  useEffect(() => {
+    console.log("Shapes", allShapes);
+  }, [allShapes]);
 
   useEffect(() => {
     if (!node) return;
@@ -115,7 +115,6 @@ const Properties = ({ node }: PropertiesProps) => {
   return (
     <div className="border-t border-gray-200 p-2">
       <Header title="Properties" />
-
       <div className="flex gap-1 mt-5">
         <PropertiesButton
           Icon={GoDuplicate}
@@ -157,7 +156,6 @@ const Properties = ({ node }: PropertiesProps) => {
           disabled={node.lock}
         />
       </div>
-
       {/* Name */}
       <div className="mt-2">
         <PropertiesAction text="Name" />
@@ -176,7 +174,6 @@ const Properties = ({ node }: PropertiesProps) => {
           }
         />
       </div>
-
       {/* Position */}
       {node.type === "shape" &&
         node.shapeType !== "Line" &&
@@ -214,7 +211,6 @@ const Properties = ({ node }: PropertiesProps) => {
                   onKeyDown={handleKeyDown}
                 />
               </div>
-
               <div>
                 <span className="text-gray-600">y</span>
                 <input
@@ -231,33 +227,33 @@ const Properties = ({ node }: PropertiesProps) => {
                     })
                   }
                   onBlur={(e) => {
-                    inputValueUpdate(
-                      node.id,
-                      e.target.name,
-                      Number(localTemp.y),
-                    );
+                    const prevValue = node.props.y;
+                    const newValue = Number(localTemp.y);
+                    inputValueUpdate(node.id, e.target.name, newValue);
                     setCurrentUpdateAction({
                       type: "Update",
                       id: node.id,
                       parentId: node.parentId,
-                      prev: { y: node.props.y },
-                      next: { y: Number(localTemp.y) },
+                      prev: { y: prevValue },
+                      next: { y: newValue },
                     });
                   }}
                   onKeyDown={handleKeyDown}
-                />
-              </div>
-            </div>
+                />{" "}
+              </div>{" "}
+            </div>{" "}
           </div>
-        )}
-
-      {/* Width and Height for Rectangle */}
+        )}{" "}
+      {/* Width and Height for Rectangle */}{" "}
       {node.type === "shape" && node.shapeType === "Rectangle" && (
         <div className="mt-2">
-          <PropertiesAction text="Size" />
+          {" "}
+          <PropertiesAction text="Size" />{" "}
           <div className="flex gap-1">
+            {" "}
             <div>
-              <span className="text-gray-600">w</span>
+              {" "}
+              <span className="text-gray-600">w</span>{" "}
               <input
                 type="text"
                 className="bg-gray-200 box-border w-full outline-none p-1 font-outfit rounded-md"
@@ -272,23 +268,20 @@ const Properties = ({ node }: PropertiesProps) => {
                   })
                 }
                 onBlur={(e) => {
-                  inputValueUpdate(
-                    node.id,
-                    e.target.name,
-                    Number(localTemp.width),
-                  );
+                  const prevValue = node.props.width;
+                  const newValue = Number(localTemp.width);
+                  inputValueUpdate(node.id, e.target.name, newValue);
                   setCurrentUpdateAction({
                     type: "Update",
                     id: node.id,
                     parentId: node.parentId,
-                    prev: { width: node.props.width },
-                    next: { width: Number(localTemp.width) },
+                    prev: { width: prevValue },
+                    next: { width: newValue },
                   });
                 }}
                 onKeyDown={handleKeyDown}
               />
             </div>
-
             <div>
               <span className="text-gray-600">h</span>
               <input
@@ -305,16 +298,14 @@ const Properties = ({ node }: PropertiesProps) => {
                   })
                 }
                 onBlur={(e) => {
-                  inputValueUpdate(
-                    node.id,
-                    e.target.name,
-                    Number(localTemp.height),
-                  );
+                  const prevValue = node.props.height;
+                  const newValue = Number(localTemp.height);
+                  inputValueUpdate(node.id, e.target.name, newValue);
                   setCurrentUpdateAction({
                     type: "Update",
                     id: node.id,
                     parentId: node.parentId,
-                    prev: { height: node.props.height },
+                    prev: { height: prevValue },
                     next: { height: Number(localTemp.height) },
                   });
                 }}
@@ -324,7 +315,6 @@ const Properties = ({ node }: PropertiesProps) => {
           </div>
         </div>
       )}
-
       {/* Radius */}
       {node.type === "shape" && node.shapeType === "Circle" && (
         <div className="mt-2">
@@ -343,24 +333,21 @@ const Properties = ({ node }: PropertiesProps) => {
               })
             }
             onBlur={(e) => {
-              inputValueUpdate(
-                node.id,
-                e.target.name,
-                Number(localTemp.radius),
-              );
+              const prevValue = node.props.radius;
+              const newValue = Number(localTemp.radius);
+              inputValueUpdate(node.id, e.target.name, newValue);
               setCurrentUpdateAction({
                 type: "Update",
                 id: node.id,
                 parentId: node.parentId,
-                prev: { radius: node.props.radius },
-                next: { radius: Number(localTemp.radius) },
+                prev: { radius: prevValue },
+                next: { radius: newValue },
               });
             }}
             onKeyDown={handleKeyDown}
           />
         </div>
       )}
-
       {/* Points */}
       {node.type === "shape" && node.shapeType === "Line" && (
         <div className="mt-2">
@@ -394,17 +381,15 @@ const Properties = ({ node }: PropertiesProps) => {
                           });
                         }}
                         onBlur={(e) => {
-                          inputValueUpdate(
-                            node.id,
-                            e.target.name,
-                            localTemp.points,
-                          );
+                          const prevValue = node.props.points;
+                          const newValue = localTemp.points;
+                          inputValueUpdate(node.id, e.target.name, newValue);
                           setCurrentUpdateAction({
                             type: "Update",
                             id: node.id,
                             parentId: node.parentId,
-                            prev: { points: node.props.points },
-                            next: { points: localTemp.points },
+                            prev: { points: prevValue },
+                            next: { points: newValue },
                           });
                         }}
                         onKeyDown={handleKeyDown}
@@ -440,17 +425,15 @@ const Properties = ({ node }: PropertiesProps) => {
                         });
                       }}
                       onBlur={(e) => {
-                        inputValueUpdate(
-                          node.id,
-                          e.target.name,
-                          localTemp.points,
-                        );
+                        const prevValue = node.props.points;
+                        const newValue = localTemp.points;
+                        inputValueUpdate(node.id, e.target.name, newValue);
                         setCurrentUpdateAction({
                           type: "Update",
                           id: node.id,
                           parentId: node.parentId,
-                          prev: { points: node.props.points },
-                          next: { points: localTemp.points },
+                          prev: { points: prevValue },
+                          next: { points: newValue },
                         });
                       }}
                       onKeyDown={handleKeyDown}
@@ -461,7 +444,6 @@ const Properties = ({ node }: PropertiesProps) => {
           </div>
         </div>
       )}
-
       {/* Rotation */}
       {node.type === "shape" && (
         <div className="mt-2">
@@ -479,18 +461,26 @@ const Properties = ({ node }: PropertiesProps) => {
                   : Number(e.target.value),
               });
             }}
-            onBlur={(e) =>
+            onBlur={(e) => {
+              const prevValue = node.props.rotation;
+              const newValue = Number(localTemp.rotation);
               inputValueUpdate(
                 node.id,
                 e.target.name,
                 Number(localTemp.rotation),
-              )
-            }
+              );
+              setCurrentUpdateAction({
+                type: "Update",
+                id: node.id,
+                parentId: node.parentId,
+                prev: { rotation: prevValue },
+                next: { rotation: newValue },
+              });
+            }}
             onKeyDown={handleKeyDown}
           />
         </div>
       )}
-
       {/* Fill Color */}
       {node.type === "shape" && (
         <div>
@@ -638,7 +628,6 @@ const Properties = ({ node }: PropertiesProps) => {
           </div>
         </div>
       )}
-
       {/* Stroke Width */}
       {node.type === "shape" && (
         <div className="mt-5">
@@ -662,8 +651,17 @@ const Properties = ({ node }: PropertiesProps) => {
                 });
               }}
               onMouseUp={(e) => {
+                const prevValue = node.props.strokeWidth;
+                const newValue = Number(localTemp.strokeWidth);
                 setStrokeWidth(Number(e.currentTarget.value));
-                inputValueUpdate(node.id, "strokeWidth", localTemp.strokeWidth);
+                inputValueUpdate(node.id, "strokeWidth", newValue);
+                setCurrentUpdateAction({
+                  type: "Update",
+                  id: node.id,
+                  parentId: node.parentId,
+                  prev: { strokeWidth: prevValue },
+                  next: { strokeWidth: newValue },
+                });
               }}
             />
           </div>

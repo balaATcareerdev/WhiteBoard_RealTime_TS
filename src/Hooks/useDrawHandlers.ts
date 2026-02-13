@@ -147,18 +147,17 @@ export default function useDrawHandlers({
   const transformerRef = useCanvasStore((state) => state.transformerRef);
   const targetLayerId = useLayerTargetStore((state) => state.targetLayerId);
   const undoStack = useHistoryStore((state) => state.undoStack);
-  const activeId = useSelectionStore((state) => state.activeId);
   const setActiveId = useSelectionStore((state) => state.setActive);
   const { seedTransform } = useShapeChangeHandlers();
   const redoStack = useHistoryStore((state) => state.redoStack);
 
-  // useEffect(() => {
-  //   console.log(undoStack);
-  // }, [undoStack]);
+  useEffect(() => {
+    console.log(undoStack);
+  }, [undoStack]);
 
-  // useEffect(() => {
-  //   console.log("Redo Stack", redoStack);
-  // }, [redoStack]);
+  useEffect(() => {
+    console.log("Redo Stack", redoStack);
+  }, [redoStack]);
 
   // draw the shape
   function handleMouseClick(e: KonvaEventObject<MouseEvent>) {

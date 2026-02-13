@@ -15,6 +15,7 @@ interface LayerState {
   deleteShapeGroup: (shapeOrGroupId: string) => void;
   unGroup: (activeLayer: string) => void;
   createGroup: (selectedShapeIds: string[]) => void;
+  createDuplicate: (shapeId: string) => ShapeNode | null;
   duplicateLayer: (shapeId: string) => void;
   setLockShape: (id: string) => void;
   updateProps: (
@@ -203,7 +204,9 @@ export const useLayerStore = create<LayerState>((set) => ({
     });
   },
 
-  duplicateLayer: (shapeId) => {
+  createDuplicate: (shapeId) => {
+    let createdNode: ShapeNode | null = null;
+
     set((state) => {
       const tree = state.allShapes;
       const nodes = { ...tree.nodes };
@@ -211,17 +214,45 @@ export const useLayerStore = create<LayerState>((set) => ({
       if (!node) return state;
 
       const newId = crypto.randomUUID();
-      const copyNode = {
-        ...node,
-        id: newId,
-        name: node.name + " Copy",
-        pos: node.pos + 1,
-      };
-
+      let copyNode: typeof node;
+      if (node.type === "group") {
+        copyNode = {
+          ...node,
+          id: newId,
+          name: node.name + " Copy",
+          pos: node.pos + 1,
+          props: { ...node.props },
+          children: [...node.children],
+        };
+      } else {
+        copyNode = {
+          ...node,
+          id: newId,
+          name: node.name + " Copy",
+          pos: node.pos + 1,
+          props: { ...node.props },
+        };
+      }
       nodes[newId] = copyNode;
       addToParent(tree, newId, node.parentId);
 
+      createdNode = copyNode as ShapeNode;
+
       return { allShapes: { ...state.allShapes, nodes } };
+    });
+
+    return createdNode;
+  },
+
+  duplicateLayer: (shapeId) => {
+    const copyNode = useLayerStore.getState().createDuplicate(shapeId);
+
+    if (!copyNode) return;
+
+    useHistoryStore.getState().addNewUndo({
+      type: "Add",
+      startingPos: { x: 0, y: 0 },
+      shapeDetails: copyNode,
     });
   },
 
